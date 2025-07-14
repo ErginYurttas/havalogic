@@ -12,10 +12,8 @@ export default function CreateMenu() {
     country: "",
     city: "",
     system: "",
-    responsible: "", // Yeni alan
+    responsible: "",
   });
-
-  if (!context) return null;
 
   const menuItems = [
     "Airport", "Factory", "Hospital", "Mall",
@@ -70,7 +68,10 @@ export default function CreateMenu() {
     setActiveItem(null);
   };
 
-  if (context.value === "Hello") return null;
+  // ✅ context yoksa component'in içeriğini render etme
+  if (!context || context.value === "Hello") {
+    return <></>;
+  }
 
   return (
     <div className="pt-4 flex flex-col items-start max-w-md">
