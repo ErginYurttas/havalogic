@@ -4,15 +4,16 @@ import React, { useContext, useState } from "react";
 import { MyContext } from "@/context/MyContextProvider";
 
 export default function Navbar() {
+  // ✅ Hook'lar koşulsuz tanımlanmalı
   const context = useContext(MyContext);
-
-  if (!context) return null;
-
-  const { value, setValue } = context;
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // ✅ Koşullu render yalnızca return seviyesinde yapılmalı
+  if (!context) return null;
+
+  const { value, setValue } = context;
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
