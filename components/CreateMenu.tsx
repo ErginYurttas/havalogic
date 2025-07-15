@@ -1,10 +1,16 @@
 "use client";
 
 import React, { useContext, useState } from "react";
+import { useRouter } from "next/navigation";
 import { MyContext } from "@/context/MyContextProvider";
 
-export default function CreateMenu() {
+interface CreateMenuProps {
+  onSaveComplete?: () => void;
+}
+
+export default function CreateMenu({ onSaveComplete }: CreateMenuProps) {
   const context = useContext(MyContext);
+  const router = useRouter();
   const [activeItem, setActiveItem] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
@@ -14,6 +20,8 @@ export default function CreateMenu() {
     system: "",
     responsible: "",
   });
+
+  if (!context || context.value === "Hello") return null;
 
   const menuItems = [
     "Airport", "Factory", "Hospital", "Mall",
@@ -52,26 +60,16 @@ export default function CreateMenu() {
       return;
     }
 
-    console.log("Saved project data:", {
+    const queryParams = new URLSearchParams({
       category: activeItem,
       ...formData,
-    });
-    alert("Project saved successfully!");
+    }).toString();
 
-    setFormData({
-      projectName: "",
-      country: "",
-      city: "",
-      system: "",
-      responsible: "",
-    });
-    setActiveItem(null);
+    router.push(`/project?${queryParams}`);
+
+    // Paneli kapatmak için callback çalıştır
+    if (onSaveComplete) onSaveComplete();
   };
-
-  // ✅ context yoksa component'in içeriğini render etme
-  if (!context || context.value === "Hello") {
-    return <></>;
-  }
 
   return (
     <div className="pt-4 flex flex-col items-start max-w-md">
@@ -95,35 +93,35 @@ export default function CreateMenu() {
                   value={formData.projectName}
                   onChange={handleInputChange}
                   placeholder="Project Name"
-                  className="w-full px-2 py-1 border border-gray-300 rounded"
+                  className="w-full px-2 py-1 border border-gray-300 rounded bg-blue-50"
                 />
                 <input
                   name="country"
                   value={formData.country}
                   onChange={handleInputChange}
                   placeholder="Country"
-                  className="w-full px-2 py-1 border border-gray-300 rounded"
+                  className="w-full px-2 py-1 border border-gray-300 rounded bg-blue-50"
                 />
                 <input
                   name="city"
                   value={formData.city}
                   onChange={handleInputChange}
                   placeholder="City"
-                  className="w-full px-2 py-1 border border-gray-300 rounded"
+                  className="w-full px-2 py-1 border border-gray-300 rounded bg-blue-50"
                 />
                 <input
                   name="system"
                   value={formData.system}
                   onChange={handleInputChange}
-                  placeholder="System (e.g. HVAC, KNX, CCTV)"
-                  className="w-full px-2 py-1 border border-gray-300 rounded"
+                  placeholder="System"
+                  className="w-full px-2 py-1 border border-gray-300 rounded bg-blue-50"
                 />
                 <input
                   name="responsible"
                   value={formData.responsible}
                   onChange={handleInputChange}
-                  placeholder="Responsible Person"
-                  className="w-full px-2 py-1 border border-gray-300 rounded"
+                  placeholder="Responsible"
+                  className="w-full px-2 py-1 border border-gray-300 rounded bg-blue-50"
                 />
                 <button
                   onClick={handleSave}

@@ -15,7 +15,6 @@ const buttonList = [
   { label: "User Guide", emoji: "📘" },
   { label: "Contact", emoji: "📞" },
   { label: "About", emoji: "ℹ️" },
-
 ];
 
 export default function DashboardMenu() {
@@ -32,7 +31,6 @@ export default function DashboardMenu() {
       return;
     }
 
-    // Sadece Create aktif, diğerleri pasif uyarı verir
     const implemented = ["Create"];
     if (!implemented.includes(label)) {
       alert(`${label} feature will be available soon.`);
@@ -68,7 +66,7 @@ export default function DashboardMenu() {
       {/* Menü kutusu: Create seçildiğinde, login varsa */}
       {activePanel === "Create" && isLoggedIn && (
         <div className="absolute top-full left-0 w-full bg-black bg-opacity-70 p-6 rounded-b shadow-lg z-20 max-w-6xl mx-auto">
-          <CreateMenu />
+          <CreateMenu onSaveComplete={() => setActivePanel(null)} />
         </div>
       )}
     </div>
