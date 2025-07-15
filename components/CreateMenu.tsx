@@ -4,14 +4,13 @@ import React, { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MyContext } from "@/context/MyContextProvider";
 
-interface CreateMenuProps {
-  onSaveComplete?: () => void;
-}
-
-export default function CreateMenu({ onSaveComplete }: CreateMenuProps) {
+export default function CreateMenu() {
   const context = useContext(MyContext);
   const router = useRouter();
+
   const [activeItem, setActiveItem] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+  const [selectedSystem, setSelectedSystem] = useState("");
 
   const [formData, setFormData] = useState({
     projectName: "",
@@ -21,15 +20,20 @@ export default function CreateMenu({ onSaveComplete }: CreateMenuProps) {
     responsible: "",
   });
 
-  if (!context || context.value === "Hello") return null;
-
   const menuItems = [
     "Airport", "Factory", "Hospital", "Mall",
     "Office", "Resident", "School", "Other",
   ].sort((a, b) => a.localeCompare(b));
 
+  const systems = [
+    "Ahu", "Air Curtain", "Boiler", "Booster", "Chiller", "Clean Room", "Collector",
+    "Cooling Tower", "Data Center", "Fan", "Fcu", "Generator", "Heat Exchanger",
+    "Heat Reclaim", "Pump", "Surgery Room", "Unit Heater", "Ups", "Vav",
+    "Water Tank", "Weather", "Other (manual entrance)"
+  ];
+
   const handleItemClick = (item: string) => {
-    setActiveItem((prev) => (prev === item ? null : item));
+    setActiveItem(item);
     setFormData({
       projectName: "",
       country: "",
@@ -37,11 +41,11 @@ export default function CreateMenu({ onSaveComplete }: CreateMenuProps) {
       system: "",
       responsible: "",
     });
+    setSaved(false);
+    setSelectedSystem("");
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -60,16 +64,16 @@ export default function CreateMenu({ onSaveComplete }: CreateMenuProps) {
       return;
     }
 
-    const queryParams = new URLSearchParams({
-      category: activeItem,
-      ...formData,
-    }).toString();
-
-    router.push(`/project?${queryParams}`);
-
-    // Paneli kapatmak için callback çalıştır
-    if (onSaveComplete) onSaveComplete();
+    setSaved(true); // Kaydedildi olarak işaretle
   };
+
+  const handleProceed = () => {
+    router.push(
+      `/project?category=${activeItem}&projectName=${formData.projectName}&country=${formData.country}&city=${formData.city}&system=${selectedSystem}&responsible=${formData.responsible}`
+    );
+  };
+
+  if (!context || context.value === "Hello") return null;
 
   return (
     <div className="pt-4 flex flex-col items-start max-w-md">
@@ -93,35 +97,35 @@ export default function CreateMenu({ onSaveComplete }: CreateMenuProps) {
                   value={formData.projectName}
                   onChange={handleInputChange}
                   placeholder="Project Name"
-                  className="w-full px-2 py-1 border border-gray-300 rounded bg-blue-50"
+                  className="w-full px-2 py-1 border border-gray-300 rounded"
                 />
                 <input
                   name="country"
                   value={formData.country}
                   onChange={handleInputChange}
                   placeholder="Country"
-                  className="w-full px-2 py-1 border border-gray-300 rounded bg-blue-50"
+                  className="w-full px-2 py-1 border border-gray-300 rounded"
                 />
                 <input
                   name="city"
                   value={formData.city}
                   onChange={handleInputChange}
                   placeholder="City"
-                  className="w-full px-2 py-1 border border-gray-300 rounded bg-blue-50"
+                  className="w-full px-2 py-1 border border-gray-300 rounded"
                 />
                 <input
                   name="system"
                   value={formData.system}
                   onChange={handleInputChange}
-                  placeholder="System"
-                  className="w-full px-2 py-1 border border-gray-300 rounded bg-blue-50"
+                  placeholder="System (optional)"
+                  className="w-full px-2 py-1 border border-gray-300 rounded"
                 />
                 <input
                   name="responsible"
                   value={formData.responsible}
                   onChange={handleInputChange}
-                  placeholder="Responsible"
-                  className="w-full px-2 py-1 border border-gray-300 rounded bg-blue-50"
+                  placeholder="Responsible Person"
+                  className="w-full px-2 py-1 border border-gray-300 rounded"
                 />
                 <button
                   onClick={handleSave}
@@ -129,6 +133,35 @@ export default function CreateMenu({ onSaveComplete }: CreateMenuProps) {
                 >
                   Save
                 </button>
+
+                {saved && (
+                  <div className="mt-4">
+                    <label className="block mb-1 font-medium text-sm">
+                      Select System
+                    </label>
+                    <select
+                      value={selectedSystem}
+                      onChange={(e) => setSelectedSystem(e.target.value)}
+                      className="w-full px-2 py-1 border border-gray-300 rounded"
+                    >
+                      <option value="">-- Choose a system --</option>
+                      {systems.map((sys) => (
+                        <option key={sys} value={sys}>
+                          {sys}
+                        </option>
+                      ))}
+                    </select>
+
+                    {selectedSystem && (
+                      <button
+                        onClick={handleProceed}
+                        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 mt-3"
+                      >
+                        Proceed
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </li>
