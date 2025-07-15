@@ -4,12 +4,15 @@ import React, { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MyContext } from "@/context/MyContextProvider";
 
-export default function CreateMenu() {
+interface CreateMenuProps {
+  onSaveComplete?: () => void;
+}
+
+export default function CreateMenu({ onSaveComplete }: CreateMenuProps) {
   const context = useContext(MyContext);
   const router = useRouter();
-
   const [activeItem, setActiveItem] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
+  const [showSystemOptions, setShowSystemOptions] = useState(false);
   const [selectedSystem, setSelectedSystem] = useState("");
 
   const [formData, setFormData] = useState({
@@ -25,15 +28,18 @@ export default function CreateMenu() {
     "Office", "Resident", "School", "Other",
   ].sort((a, b) => a.localeCompare(b));
 
-  const systems = [
-    "Ahu", "Air Curtain", "Boiler", "Booster", "Chiller", "Clean Room", "Collector",
-    "Cooling Tower", "Data Center", "Fan", "Fcu", "Generator", "Heat Exchanger",
-    "Heat Reclaim", "Pump", "Surgery Room", "Unit Heater", "Ups", "Vav",
-    "Water Tank", "Weather", "Other (manual entrance)"
+  const systemOptions = [
+    "Ahu", "Air Curtain", "Boiler", "Booster", "Chiller",
+    "Clean Room", "Collector", "Cooling Tower", "Data Center",
+    "Fan", "Fcu", "Generator", "Heat Exchanger", "Heat Reclaim",
+    "Pump", "Surgery Room", "Unit Heater", "Ups", "Vav",
+    "Water Tank", "Weather", "Other (manual entrance)",
   ];
 
+  if (!context || context.value === "Hello") return null;
+
   const handleItemClick = (item: string) => {
-    setActiveItem(item);
+    setActiveItem((prev) => (prev === item ? null : item));
     setFormData({
       projectName: "",
       country: "",
@@ -41,7 +47,7 @@ export default function CreateMenu() {
       system: "",
       responsible: "",
     });
-    setSaved(false);
+    setShowSystemOptions(false);
     setSelectedSystem("");
   };
 
@@ -55,29 +61,37 @@ export default function CreateMenu() {
 
   const handleSave = () => {
     const { projectName, country, city, system, responsible } = formData;
+
     if (!activeItem) {
       alert("Please select a project category.");
       return;
     }
+
     if (!projectName || !country || !city || !system || !responsible) {
       alert("Please fill in all the fields.");
       return;
     }
 
-    setSaved(true); // Kaydedildi olarak işaretle
-  };
+    const query = new URLSearchParams({
+      category: activeItem,
+      projectName,
+      country,
+      city,
+      system,
+      responsible,
+    }).toString();
 
-  const handleProceed = () => {
-    router.push(
-      `/project?category=${activeItem}&projectName=${formData.projectName}&country=${formData.country}&city=${formData.city}&system=${selectedSystem}&responsible=${formData.responsible}`
-    );
-  };
+    // Menü kapatma callback'i (örneğin Dashboard'da paneli kapatmak için)
+    if (onSaveComplete) {
+      onSaveComplete();
+    }
 
-  if (!context || context.value === "Hello") return null;
+    router.push(`/project?${query}`);
+  };
 
   return (
-    <div className="pt-4 flex flex-col items-start max-w-md">
-      <ul className="bg-white text-black rounded shadow-lg p-4 w-72 space-y-4">
+    <div className="pt-4 flex flex-col items-start max-w-3xl">
+      <ul className="bg-white text-black rounded shadow-lg p-4 w-full space-y-4">
         {menuItems.map((item) => (
           <li key={item} className="cursor-pointer">
             <p
@@ -114,54 +128,50 @@ export default function CreateMenu() {
                   className="w-full px-2 py-1 border border-gray-300 rounded"
                 />
                 <input
-                  name="system"
-                  value={formData.system}
-                  onChange={handleInputChange}
-                  placeholder="System (optional)"
-                  className="w-full px-2 py-1 border border-gray-300 rounded"
-                />
-                <input
                   name="responsible"
                   value={formData.responsible}
                   onChange={handleInputChange}
                   placeholder="Responsible Person"
                   className="w-full px-2 py-1 border border-gray-300 rounded"
                 />
+
+                <button
+                  onClick={() => setShowSystemOptions(!showSystemOptions)}
+                  className="bg-gray-100 px-3 py-1 rounded border text-sm"
+                >
+                  Create System
+                </button>
+
+                {showSystemOptions && (
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    {systemOptions.map((sys) => (
+                      <button
+                        key={sys}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            system: sys,
+                          }));
+                          setSelectedSystem(sys);
+                        }}
+                        className={`px-2 py-1 rounded border text-xs ${
+                          selectedSystem === sys
+                            ? "bg-blue-600 text-white"
+                            : "bg-white hover:bg-blue-100"
+                        }`}
+                      >
+                        {sys}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 <button
                   onClick={handleSave}
                   className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 mt-2"
                 >
                   Save
                 </button>
-
-                {saved && (
-                  <div className="mt-4">
-                    <label className="block mb-1 font-medium text-sm">
-                      Select System
-                    </label>
-                    <select
-                      value={selectedSystem}
-                      onChange={(e) => setSelectedSystem(e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-300 rounded"
-                    >
-                      <option value="">-- Choose a system --</option>
-                      {systems.map((sys) => (
-                        <option key={sys} value={sys}>
-                          {sys}
-                        </option>
-                      ))}
-                    </select>
-
-                    {selectedSystem && (
-                      <button
-                        onClick={handleProceed}
-                        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 mt-3"
-                      >
-                        Proceed
-                      </button>
-                    )}
-                  </div>
-                )}
               </div>
             )}
           </li>
