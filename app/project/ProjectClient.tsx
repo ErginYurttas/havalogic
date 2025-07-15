@@ -14,7 +14,7 @@ export default function ProjectClient() {
   const responsible = searchParams.get("responsible");
 
   const actions = [
-    "Create System",
+    "Add System",
     "Add Panel",
     "Add Material",
     "Add Module",

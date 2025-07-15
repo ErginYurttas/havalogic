@@ -63,9 +63,9 @@ export default function DashboardMenu() {
         </div>
       </div>
 
-      {/* Menü kutusu: Create seçildiğinde, login varsa */}
+      {/* Only "Create" renders a panel */}
       {activePanel === "Create" && isLoggedIn && (
-        <div className="absolute top-full left-0 w-full bg-black bg-opacity-70 p-6 rounded-b shadow-lg z-20 max-w-6xl mx-auto">
+        <div className="absolute left-0 w-full bg-black bg-opacity-70 p-6 z-20 max-w-6xl mx-auto">
           <CreateMenu onSaveComplete={() => setActivePanel(null)} />
         </div>
       )}
