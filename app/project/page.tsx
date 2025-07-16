@@ -1,21 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function ProjectPage() {
+// useSearchParams içeren ana bileşeni ayırıyoruz
+function ProjectContent() {
   const searchParams = useSearchParams();
   const [showSystems, setShowSystems] = useState(false);
 
   const systemOptions = [
-    "Ahu", "Air Curtain", "Boiler", "Booster", "Chiller", "Clean Room", "Collector", "Cooling Tower",
-    "Data Center", "Fan", "Fcu", "Generator", "Heat Exchanger", "Heat Reclaim", "Office", "Pump", "Surgery Room", 
-    "Unit Heater", "Ups", "Vav", "Manual Entry"
+    "Ahu", "Air Curtain", "Boiler", "Booster", "Chiller", 
+    "Clean Room", "Collector", "Cooling Tower", "Data Center", 
+    "Fan", "Fcu", "Generator", "Heat Exchanger", "Heat Reclaim", 
+    "Office", "Pump", "Surgery Room", "Unit Heater", "Ups", 
+    "Vav", "Manual Entry"
   ];
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      {/* PROJE BİLGİLERİ (ORİJİNAL YAPINIZ AYNEN KORUNDU) */}
+      {/* PROJE BİLGİLERİ */}
       <h2 className="text-2xl font-semibold mb-4">Project Overview</h2>
       <div className="mb-6 text-gray-700 space-y-1">
         <p><strong>Category:</strong> {searchParams.get("category")}</p>
@@ -33,7 +36,7 @@ export default function ProjectPage() {
         <div className="relative">
           <button
             onClick={() => setShowSystems(!showSystems)}
-            className="w-[150px] px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-left" // 🔴 Genişlik 150px
+            className="w-[150px] px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-left"
           >
             Add System
           </button>
@@ -43,7 +46,7 @@ export default function ProjectPage() {
               {systemOptions.map((sys) => (
                 <div
                   key={sys}
-                  className="px-4 py-2 text-gray-800 hover:bg-blue-100 cursor-pointer border-b border-gray-200 last:border-b-0" // 🔴 text-gray-800 eklendi
+                  className="px-4 py-2 text-gray-800 hover:bg-blue-100 cursor-pointer border-b border-gray-200 last:border-b-0"
                   onClick={() => alert(`Selected: ${sys}`)}
                 >
                   {sys}
@@ -53,7 +56,7 @@ export default function ProjectPage() {
           )}
         </div>
 
-        {/* Diğer Butonlar (Aynı Genişlikte) */}
+        {/* Diğer Butonlar */}
         <button className="w-[150px] px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-left">
           Add Panel
         </button>
@@ -62,5 +65,14 @@ export default function ProjectPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+// Ana sayfa bileşeni Suspense ile sarmalanmış hali
+export default function ProjectPage() {
+  return (
+    <Suspense fallback={<div className="p-6">Loading project data...</div>}>
+      <ProjectContent />
+    </Suspense>
   );
 }
