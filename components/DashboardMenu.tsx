@@ -40,6 +40,10 @@ export default function DashboardMenu() {
     setActivePanel((prev) => (prev === label ? null : label));
   };
 
+  const handleSaveComplete = () => {
+    setActivePanel(null); // ✅ Save sonrası popup'ı kapat
+  };
+
   return (
     <div className="relative w-full">
       {/* Toolbar */}
@@ -63,10 +67,10 @@ export default function DashboardMenu() {
         </div>
       </div>
 
-      {/* Only "Create" renders a panel */}
+      {/* Create popup */}
       {activePanel === "Create" && isLoggedIn && (
-        <div className="absolute left-0 w-full bg-black bg-opacity-70 p-6 z-20 max-w-6xl mx-auto">
-          <CreateMenu onSaveComplete={() => setActivePanel(null)} />
+        <div className="absolute top-full left-0 w-full p-6 z-20 max-w-6xl mx-auto">
+          <CreateMenu onSave={() => setActivePanel(null)} />
         </div>
       )}
     </div>
