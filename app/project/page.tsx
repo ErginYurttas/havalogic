@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation"; // useRouter eklendi
 
-// useSearchParams içeren ana bileşeni ayırıyoruz
 function ProjectContent() {
   const searchParams = useSearchParams();
+  const router = useRouter(); // yönlendirme hook'u
   const [showSystems, setShowSystems] = useState(false);
 
   const systemOptions = [
@@ -16,9 +16,16 @@ function ProjectContent() {
     "Vav", "Manual Entry"
   ];
 
+  const handleSystemSelect = (sys: string) => {
+    if (sys === "Ahu") {
+      router.push("/project/ahu");
+    } else {
+      alert(`Selected: ${sys}`);
+    }
+  };
+
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      {/* PROJE BİLGİLERİ */}
       <h2 className="text-2xl font-semibold mb-4">Project Overview</h2>
       <div className="mb-6 text-gray-700 space-y-1">
         <p><strong>Category:</strong> {searchParams.get("category")}</p>
@@ -29,10 +36,8 @@ function ProjectContent() {
         <p><strong>Responsible:</strong> {searchParams.get("responsible")}</p>
       </div>
 
-      {/* Butonlar */}
       <h3 className="text-lg font-semibold mb-2">Next Steps</h3>
       <div className="flex flex-col items-start gap-4">
-        {/* Add System Butonu */}
         <div className="relative">
           <button
             onClick={() => setShowSystems(!showSystems)}
@@ -40,14 +45,14 @@ function ProjectContent() {
           >
             Add System
           </button>
-          
+
           {showSystems && (
             <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded shadow max-h-[300px] overflow-y-auto z-50">
               {systemOptions.map((sys) => (
                 <div
                   key={sys}
                   className="px-4 py-2 text-gray-800 hover:bg-blue-100 cursor-pointer border-b border-gray-200 last:border-b-0"
-                  onClick={() => alert(`Selected: ${sys}`)}
+                  onClick={() => handleSystemSelect(sys)} // sadece bu satır değişti
                 >
                   {sys}
                 </div>
@@ -56,7 +61,6 @@ function ProjectContent() {
           )}
         </div>
 
-        {/* Diğer Butonlar */}
         <button className="w-[150px] px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-left">
           Add Panel
         </button>
@@ -68,7 +72,6 @@ function ProjectContent() {
   );
 }
 
-// Ana sayfa bileşeni Suspense ile sarmalanmış hali
 export default function ProjectPage() {
   return (
     <Suspense fallback={<div className="p-6">Loading project data...</div>}>
