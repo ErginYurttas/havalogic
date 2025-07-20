@@ -12,16 +12,17 @@ import {
 
 interface LoginFormProps {
   onSuccess: () => void;
+  onCancel: () => void;
   setIsLoggedIn: (value: boolean) => void;
 }
 
-export const LoginForm = ({ onSuccess, setIsLoggedIn }: LoginFormProps) => {
+export const LoginForm = ({ onSuccess, onCancel, setIsLoggedIn }: LoginFormProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setError('');
 
     if (email === 'admin' && password === '1234') {
@@ -52,75 +53,75 @@ export const LoginForm = ({ onSuccess, setIsLoggedIn }: LoginFormProps) => {
         <Box component="form" onSubmit={handleSubmit} noValidate>
           <Stack spacing={2} mt={1}>
             <TextField
-              label="Username"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              fullWidth
-              required
-              size="small"
-              sx={{
-                input: {
-                  backgroundColor: '#fff'
-                },
-                '& .MuiInputBase-input': {
-                  color: '#000'
-                },
-                '& .MuiInputLabel-root': {
-                  color: '#1976d2',
-                  fontSize: '0.875rem',
-                  '&.Mui-focused': { color: '#1976d2' }
-                },
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': {
-                    borderColor: 'rgba(25, 118, 210, 0.3)',
-                    borderRadius: '6px'
-                  },
-                  '&:hover fieldset': {
-                    borderColor: '#1976d2'
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#1976d2',
-                    borderWidth: '1px'
-                  }
-                }
-              }}
-            />
+  label="Username"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  fullWidth
+  required
+  size="small"
+  sx={{
+    input: {
+      backgroundColor: '#fff'
+    },
+    '& .MuiInputBase-input': {
+      color: '#000'
+    },
+    '& .MuiInputLabel-root': {
+      color: '#1976d2',
+      fontSize: '0.875rem',
+      '&.Mui-focused': { color: '#1976d2' }
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: '#ccc',             // Normal durumda gri çerçeve
+        borderRadius: '6px'
+      },
+      '&:hover fieldset': {
+        borderColor: '#999'             // Hover olduğunda daha koyu gri
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#1976d2',         // Focus durumunda mavi
+        borderWidth: '1px'
+      }
+    }
+  }}
+/>
 
             <TextField
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              fullWidth
-              required
-              size="small"
-              sx={{
-                input: {
-                  backgroundColor: '#fff'
-                },
-                '& .MuiInputBase-input': {
-                  color: '#000'
-                },
-                '& .MuiInputLabel-root': {
-                  color: '#1976d2',
-                  fontSize: '0.875rem',
-                  '&.Mui-focused': { color: '#1976d2' }
-                },
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': {
-                    borderColor: 'rgba(25, 118, 210, 0.3)',
-                    borderRadius: '6px'
-                  },
-                  '&:hover fieldset': {
-                    borderColor: '#1976d2'
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#1976d2',
-                    borderWidth: '1px'
-                  }
-                }
-              }}
-            />
+  label="Password"
+  type="password"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  fullWidth
+  required
+  size="small"
+  sx={{
+    input: {
+      backgroundColor: '#fff'
+    },
+    '& .MuiInputBase-input': {
+      color: '#000'
+    },
+    '& .MuiInputLabel-root': {
+      color: '#1976d2',
+      fontSize: '0.875rem',
+      '&.Mui-focused': { color: '#1976d2' }
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: '#ccc',
+        borderRadius: '6px'
+      },
+      '&:hover fieldset': {
+        borderColor: '#999'
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#1976d2',
+        borderWidth: '1px'
+      }
+    }
+  }}
+/>
 
             {error && (
               <Typography color="error" fontSize="0.8rem" textAlign="center">
@@ -140,7 +141,7 @@ export const LoginForm = ({ onSuccess, setIsLoggedIn }: LoginFormProps) => {
         }}
       >
         <Button
-          onClick={() => setIsLoggedIn(false)}
+          onClick={onCancel}
           variant="outlined"
           size="small"
           sx={{ textTransform: 'none' }}

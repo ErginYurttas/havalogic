@@ -1,4 +1,14 @@
-import { Box, Typography, Button, Stack, Container, Snackbar } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Button,
+  Stack,
+  Container,
+  Snackbar,
+  MenuItem,
+  Select,
+  SelectChangeEvent
+} from '@mui/material';
 import { styled } from '@mui/system';
 import AddIcon from '@mui/icons-material/Add';
 import Dialog from '@mui/material/Dialog';
@@ -11,15 +21,15 @@ import { LoginForm } from '../components/LoginForm';
 import { LoginModalWrapper } from '../components/LoginModalWrapper';
 
 interface FormData {
+  projectName: string;
   buildingType: string;
   system: string;
   city: string;
   country: string;
   responsible: string;
-  [key: string]: string; // Index signature ekliyoruz
+  [key: string]: string;
 }
 
-// 1. Stil Tanımları (Aynen Korundu)
 const ModernButton = styled(Button)({
   borderRadius: '8px',
   padding: '8px 16px',
@@ -74,13 +84,13 @@ const HeroText = styled(Typography)({
   }
 });
 
-// 2. Ana Bileşen
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [showAlert, setShowAlert] = React.useState(false);
   const [showLogin, setShowLogin] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [formData, setFormData] = React.useState<FormData>({
+    projectName: '',
     buildingType: '',
     system: '',
     city: '',
@@ -98,9 +108,20 @@ export default function Home() {
 
   const handleClose = () => setOpen(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    if (name) {
+      setFormData((prev) => ({ ...prev, [name]: String(value) }));
+    }
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent) => {
+    const { name, value } = e.target;
+    if (name) {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = () => {
@@ -110,28 +131,11 @@ export default function Home() {
 
   return (
     <Box sx={{ backgroundColor: '#f5f7fa' }}>
-      {/* Üst Navigasyon */}
-      <Box sx={{
-        py: 2,
-        px: 4,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: 'white',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.08)'
-      }}>
-        <Typography variant="h5" sx={{ 
-          fontFamily: 'inherit',
-          fontWeight: 500,
-          textTransform: 'lowercase',
-          fontSize: '1.5rem',
-          letterSpacing: '0.02em',
-          display: 'flex',
-          alignItems: 'center'
-        }}>
+      {/* Header */}
+      <Box sx={{ py: 2, px: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
+        <Typography variant="h5" sx={{ fontFamily: 'inherit', fontWeight: 500, textTransform: 'lowercase', fontSize: '1.5rem', letterSpacing: '0.02em' }}>
           havalogic
         </Typography>
-
         <Stack direction="row" spacing={2}>
           <PrimaryButton>Demo Request</PrimaryButton>
           <PrimaryButton onClick={() => setShowLogin(true)} sx={{ marginLeft: '8px', textTransform: 'none' }}>
@@ -140,16 +144,9 @@ export default function Home() {
         </Stack>
       </Box>
 
-      {/* Hero Alanı */}
+      {/* Hero */}
       <HeroSection>
-        <Container sx={{
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          position: 'relative',
-          zIndex: 2,
-          py: 10
-        }}>
+        <Container sx={{ height: '100%', display: 'flex', alignItems: 'center', position: 'relative', zIndex: 2, py: 10 }}>
           <Box sx={{ width: '50%' }}>
             <HeroText variant="h2" sx={{ mb: 3, fontSize: '3.5rem' }}>
               Create your projects accurately and quickly
@@ -158,11 +155,7 @@ export default function Home() {
               We've built something amazing, stay tuned!
             </Typography>
             <Stack direction="row" spacing={2}>
-              <PrimaryButton
-                startIcon={<AddIcon sx={{ fontSize: '1rem' }} />}
-                sx={{ minWidth: '140px' }}
-                onClick={() => isLoggedIn ? handleOpen() : setShowAlert(true)}
-              >
+              <PrimaryButton startIcon={<AddIcon sx={{ fontSize: '1rem' }} />} sx={{ minWidth: '140px' }} onClick={() => isLoggedIn ? handleOpen() : setShowAlert(true)}>
                 New Project
               </PrimaryButton>
               <OutlinedButton sx={{ color: 'white', borderColor: 'rgba(255, 255, 255, 0.7)', '&:hover': { borderColor: 'white' } }}>
@@ -171,53 +164,85 @@ export default function Home() {
             </Stack>
           </Box>
 
-          <Box sx={{ width: '50%', display: 'flex', justifyContent: 'center', position: 'relative' }}>
-            <Box sx={{
-              width: '100%',
-              maxWidth: '500px',
-              height: '400px',
-              backgroundImage: 'url(/assets/hvac-dashboard.png)',
-              backgroundSize: 'cover',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              borderRadius: '16px',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
-            }} />
+          <Box sx={{ width: '50%', display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ width: '100%', maxWidth: '500px', height: '400px', backgroundImage: 'url(/assets/hvac-dashboard.png)', backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', borderRadius: '16px', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }} />
           </Box>
         </Container>
       </HeroSection>
 
-      {/* New Project Popup */}
-      <Dialog 
-        open={open} 
-        onClose={handleClose} 
-        maxWidth="sm" 
-        fullWidth
-        sx={{
-          '& .MuiPaper-root': {
-            background: 'linear-gradient(to bottom, #f8fafc, #e6f0fa)',
-            borderRadius: '12px',
-            boxShadow: '0 4px 20px rgba(25, 118, 210, 0.15)'
-          }
-        }}
-      >
-        <DialogTitle sx={{ 
-          color: '#1976d2',
-          fontWeight: 600,
-          borderBottom: '1px solid rgba(25, 118, 210, 0.1)',
-          backgroundColor: 'transparent'
-        }}>
+      {/* Create Project Popup */}
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth sx={{ '& .MuiPaper-root': { background: 'linear-gradient(to bottom, #f8fafc, #e6f0fa)', borderRadius: '12px', boxShadow: '0 4px 20px rgba(25, 118, 210, 0.15)' } }}>
+        <DialogTitle sx={{ color: '#1976d2', fontWeight: 600, borderBottom: '1px solid rgba(25, 118, 210, 0.1)' }}>
           Create New Project
         </DialogTitle>
         <DialogContent sx={{ py: 3 }}>
           <Stack spacing={3}>
-            {(['buildingType', 'system', 'city', 'country', 'responsible'] as const).map((field) => (
+            <TextField
+              name="projectName"
+              label="Project Name"
+              fullWidth
+              size="small"
+              value={formData.projectName}
+              onChange={handleChange}
+              sx={{
+                '& .MuiInputLabel-root': { color: '#1976d2' },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: 'rgba(25, 118, 210, 0.3)' },
+                  '&:hover fieldset': { borderColor: '#1976d2' }
+                }
+              }}
+            />
+            <Select
+              name="buildingType"
+              value={formData.buildingType}
+              onChange={handleSelectChange}
+              displayEmpty
+              size="small"
+              fullWidth
+              sx={{
+                bgcolor: '#fff',
+                '& .MuiInputBase-input': { color: '#000' },
+                '& fieldset': { borderColor: 'rgba(25, 118, 210, 0.3)' },
+                '&:hover fieldset': { borderColor: '#1976d2' }
+              }}
+            >
+              <MenuItem value="" disabled>Select Building Type</MenuItem>
+              <MenuItem value="Hospital">Hospital</MenuItem>
+              <MenuItem value="Mall">Mall</MenuItem>
+              <MenuItem value="Office">Office</MenuItem>
+              <MenuItem value="Other">Other</MenuItem>
+            </Select>
+            <Select
+              name="system"
+              value={formData.system}
+              onChange={handleSelectChange}
+              displayEmpty
+              size="small"
+              fullWidth
+              sx={{
+                bgcolor: '#fff',
+                '& .MuiInputBase-input': { color: '#000' },
+                '& fieldset': { borderColor: 'rgba(25, 118, 210, 0.3)' },
+                '&:hover fieldset': { borderColor: '#1976d2' }
+              }}
+            >
+              <MenuItem value="" disabled>Select System</MenuItem>
+              <MenuItem value="HVAC">HVAC</MenuItem>
+              <MenuItem value="KNX">KNX</MenuItem>
+              <MenuItem value="Fire Detecting Systems">Fire Detecting Systems</MenuItem>
+              <MenuItem value="Energy Monitoring">Energy Monitoring</MenuItem>
+              <MenuItem value="CCTV">CCTV</MenuItem>
+              <MenuItem value="Access">Access</MenuItem>
+            </Select>
+            {(['city', 'country', 'responsible'] as const).map((field) => (
               <TextField
                 key={field}
                 name={field}
                 label={field.charAt(0).toUpperCase() + field.slice(1)}
                 fullWidth
                 size="small"
+                value={formData[field]}
+                onChange={handleChange}
                 sx={{
                   '& .MuiInputLabel-root': { color: '#1976d2' },
                   '& .MuiOutlinedInput-root': {
@@ -225,24 +250,17 @@ export default function Home() {
                     '&:hover fieldset': { borderColor: '#1976d2' }
                   }
                 }}
-                value={formData[field]}
-                onChange={handleChange}
               />
             ))}
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, py: 2, borderTop: '1px solid rgba(25, 118, 210, 0.1)' }}>
-          <OutlinedButton 
-            onClick={handleClose}
-            sx={{ color: '#1976d2', '&:hover': { backgroundColor: 'rgba(25, 118, 210, 0.05)' } }}
-          >
-            Cancel
-          </OutlinedButton>
+          <OutlinedButton onClick={handleClose}>Cancel</OutlinedButton>
           <PrimaryButton onClick={handleSubmit}>Save Project</PrimaryButton>
         </DialogActions>
       </Dialog>
 
-      {/* Login Uyarısı */}
+      {/* Snackbar */}
       <Snackbar
         open={showAlert}
         autoHideDuration={3000}
@@ -252,7 +270,6 @@ export default function Home() {
         sx={{ '& .MuiSnackbarContent-root': { backgroundColor: '#d21947ff', color: 'white' } }}
       />
 
-      {/* ✅ MODERN LOGIN MODAL → TAM BURAYA KOYULDU */}
       <LoginModalWrapper
         open={showLogin}
         onClose={() => setShowLogin(false)}
@@ -265,4 +282,3 @@ export default function Home() {
     </Box>
   );
 }
-

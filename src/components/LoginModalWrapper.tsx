@@ -47,7 +47,11 @@ export const LoginModalWrapper = ({
         },
       }}
     >
-      <LoginForm onSuccess={onSuccess} setIsLoggedIn={setIsLoggedIn} />
+      <LoginForm
+        onSuccess={onSuccess}
+        onCancel={onClose}
+        setIsLoggedIn={setIsLoggedIn}
+      />
     </Dialog>
   );
 };
