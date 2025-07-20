@@ -235,23 +235,40 @@ export default function Home() {
               <MenuItem value="Access">Access</MenuItem>
             </Select>
             {(['city', 'country', 'responsible'] as const).map((field) => (
-              <TextField
-                key={field}
-                name={field}
-                label={field.charAt(0).toUpperCase() + field.slice(1)}
-                fullWidth
-                size="small"
-                value={formData[field]}
-                onChange={handleChange}
-                sx={{
-                  '& .MuiInputLabel-root': { color: '#1976d2' },
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': { borderColor: 'rgba(25, 118, 210, 0.3)' },
-                    '&:hover fieldset': { borderColor: '#1976d2' }
-                  }
-                }}
-              />
-            ))}
+  <TextField
+    key={field}
+    name={field}
+    label={field.charAt(0).toUpperCase() + field.slice(1)}
+    fullWidth
+    size="small"
+    value={formData[field]}
+    onChange={handleChange}
+    sx={{
+      input: {
+        backgroundColor: '#fff',
+        color: '#000'
+      },
+      '& .MuiInputLabel-root': {
+        color: '#1976d2',
+        fontSize: '0.875rem',
+        '&.Mui-focused': { color: '#1976d2' }
+      },
+      '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+          borderColor: 'rgba(25, 118, 210, 0.3)',
+          borderRadius: '6px'
+        },
+        '&:hover fieldset': {
+          borderColor: '#1976d2'
+        },
+        '&.Mui-focused fieldset': {
+          borderColor: '#1976d2',
+          borderWidth: '1px'
+        }
+      }
+    }}
+  />
+))}
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, py: 2, borderTop: '1px solid rgba(25, 118, 210, 0.1)' }}>
