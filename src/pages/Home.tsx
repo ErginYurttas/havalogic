@@ -153,9 +153,9 @@ export default function Home() {
     return; // Fonksiyonu durdur
   }
 
-  console.log('Form Data:', formData);
+  localStorage.setItem('currentProject', JSON.stringify(formData));
   handleClose();
-  window.location.href = '/projects'; // Yönlendirme
+  window.location.href = '/projects'; 
 };
 
   return (
