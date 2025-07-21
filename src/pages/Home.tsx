@@ -94,6 +94,7 @@ export default function Home() {
   const [open, setOpen] = React.useState(false);
   const [showLearnMoreAlert, setShowLearnMoreAlert] = React.useState(false);
   const [showDemoAlert, setShowDemoAlert] = React.useState(false);
+  const [validationError, setValidationError] = React.useState(false);
   const [formData, setFormData] = React.useState<FormData>({
     projectName: '',
     buildingType: '',
@@ -141,9 +142,21 @@ export default function Home() {
   };
 
   const handleSubmit = () => {
-    console.log('Form Data:', formData);
-    handleClose();
-  };
+  // Eksik alan kontrolü
+  if (!formData.projectName || 
+      !formData.buildingType || 
+      !formData.system || 
+      !formData.city || 
+      !formData.country || 
+      !formData.responsible) {
+    setValidationError(true); // Validasyon hatasını tetikle
+    return; // Fonksiyonu durdur
+  }
+
+  console.log('Form Data:', formData);
+  handleClose();
+  window.location.href = '/projects'; // Yönlendirme
+};
 
   return (
     <Box sx={{ backgroundColor: '#f5f7fa' }}>
@@ -331,7 +344,7 @@ export default function Home() {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar'lar */}
+      
       <Snackbar
         open={showAlert}
         autoHideDuration={3000}
@@ -373,6 +386,20 @@ export default function Home() {
           } 
         }}
       />
+
+      <Snackbar
+  open={validationError}
+  autoHideDuration={3000}
+  onClose={() => setValidationError(false)}
+  message="Please fill in all required fields"
+  anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+  sx={{ 
+    '& .MuiSnackbarContent-root': { 
+      backgroundColor: '#d21947',
+      color: 'white'
+    } 
+  }}
+/>
 
       <LoginModalWrapper
   open={showLogin}
