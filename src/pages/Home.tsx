@@ -148,17 +148,22 @@ export default function Home() {
   return (
     <Box sx={{ backgroundColor: '#f5f7fa' }}>
       {/* Header */}
-      <Box sx={{ py: 2, px: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
-        <Typography variant="h5" sx={{ fontFamily: 'inherit', fontWeight: 500, textTransform: 'lowercase', fontSize: '1.5rem', letterSpacing: '0.02em' }}>
-          havalogic
-        </Typography>
+      <Box sx={{ 
+      py: 2, 
+      px: 4, 
+      display: 'flex', 
+      justifyContent: 'flex-end', // 'space-between' yerine 'flex-end'
+      alignItems: 'center',
+      backgroundColor: 'white',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.08)' 
+    }}>
         <Stack direction="row" spacing={2} alignItems="center">
           <Typography 
-  variant="body1" 
-  sx={{ 
-    mr: 2, 
-    fontWeight: 500,
-    color: '#1976d2' // Mavi renk eklendi
+          variant="body1" 
+          sx={{ 
+          mr: 2, 
+          fontWeight: 500,
+          color: '#1976d2' // Mavi renk eklendi
   }}
 >
   {username}
