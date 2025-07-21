@@ -13,7 +13,7 @@ const Transition = forwardRef(function Transition(
 interface LoginModalWrapperProps {
   open: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (username: string) => void;
   setIsLoggedIn: (value: boolean) => void;
 }
 
@@ -48,7 +48,7 @@ export const LoginModalWrapper = ({
       }}
     >
       <LoginForm
-        onSuccess={onSuccess}
+        onSuccess={(username) => onSuccess(username)} // Kullanıcı adını iletiyoruz
         onCancel={onClose}
         setIsLoggedIn={setIsLoggedIn}
       />

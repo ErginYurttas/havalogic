@@ -7,10 +7,12 @@ import {
   Snackbar,
   MenuItem,
   Select,
-  SelectChangeEvent
+  SelectChangeEvent,
+  Avatar
 } from '@mui/material';
 import { styled } from '@mui/system';
 import AddIcon from '@mui/icons-material/Add';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -86,9 +88,12 @@ const HeroText = styled(Typography)({
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [username, setUsername] = React.useState('Hello Guest');
   const [showAlert, setShowAlert] = React.useState(false);
   const [showLogin, setShowLogin] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [showLearnMoreAlert, setShowLearnMoreAlert] = React.useState(false);
+  const [showDemoAlert, setShowDemoAlert] = React.useState(false);
   const [formData, setFormData] = React.useState<FormData>({
     projectName: '',
     buildingType: '',
@@ -97,6 +102,17 @@ export default function Home() {
     country: '',
     responsible: ''
   });
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUsername('Hello Guest');
+  };
+
+  const handleLoginSuccess = (user: string) => {
+    setIsLoggedIn(true);
+    setUsername(user);
+    setShowLogin(false);
+  };
 
   const handleOpen = () => {
     if (isLoggedIn) {
@@ -136,11 +152,34 @@ export default function Home() {
         <Typography variant="h5" sx={{ fontFamily: 'inherit', fontWeight: 500, textTransform: 'lowercase', fontSize: '1.5rem', letterSpacing: '0.02em' }}>
           havalogic
         </Typography>
-        <Stack direction="row" spacing={2}>
-          <PrimaryButton>Demo Request</PrimaryButton>
-          <PrimaryButton onClick={() => setShowLogin(true)} sx={{ marginLeft: '8px', textTransform: 'none' }}>
-            Login
-          </PrimaryButton>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Typography 
+  variant="body1" 
+  sx={{ 
+    mr: 2, 
+    fontWeight: 500,
+    color: '#1976d2' // Mavi renk eklendi
+  }}
+>
+  {username}
+</Typography>
+          <PrimaryButton onClick={() => setShowDemoAlert(true)}>Demo Request</PrimaryButton>
+          {isLoggedIn ? (
+            <PrimaryButton 
+              onClick={handleLogout}
+              startIcon={<ExitToAppIcon />}
+              sx={{ marginLeft: '8px', textTransform: 'none' }}
+            >
+              Logout
+            </PrimaryButton>
+          ) : (
+            <PrimaryButton 
+              onClick={() => setShowLogin(true)} 
+              sx={{ marginLeft: '8px', textTransform: 'none' }}
+            >
+              Login
+            </PrimaryButton>
+          )}
         </Stack>
       </Box>
 
@@ -155,10 +194,17 @@ export default function Home() {
               We've built something amazing, stay tuned!
             </Typography>
             <Stack direction="row" spacing={2}>
-              <PrimaryButton startIcon={<AddIcon sx={{ fontSize: '1rem' }} />} sx={{ minWidth: '140px' }} onClick={() => isLoggedIn ? handleOpen() : setShowAlert(true)}>
+              <PrimaryButton 
+                startIcon={<AddIcon sx={{ fontSize: '1rem' }} />} 
+                sx={{ minWidth: '140px' }} 
+                onClick={() => isLoggedIn ? handleOpen() : setShowAlert(true)}
+              >
                 New Project
               </PrimaryButton>
-              <OutlinedButton sx={{ color: 'white', borderColor: 'rgba(255, 255, 255, 0.7)', '&:hover': { borderColor: 'white' } }}>
+              <OutlinedButton 
+                sx={{ color: 'white', borderColor: 'rgba(255, 255, 255, 0.7)', '&:hover': { borderColor: 'white' } }}
+                onClick={() => setShowLearnMoreAlert(true)}
+              >
                 Learn More
               </OutlinedButton>
             </Stack>
@@ -188,7 +234,10 @@ export default function Home() {
                 '& .MuiInputLabel-root': { color: '#1976d2' },
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': { borderColor: 'rgba(25, 118, 210, 0.3)' },
-                  '&:hover fieldset': { borderColor: '#1976d2' }
+                  '&:hover fieldset': { borderColor: '#1976d2' },
+                  '& .MuiInputBase-input': { 
+                    color: '#000000',
+                  },
                 }
               }}
             />
@@ -235,40 +284,40 @@ export default function Home() {
               <MenuItem value="Access">Access</MenuItem>
             </Select>
             {(['city', 'country', 'responsible'] as const).map((field) => (
-  <TextField
-    key={field}
-    name={field}
-    label={field.charAt(0).toUpperCase() + field.slice(1)}
-    fullWidth
-    size="small"
-    value={formData[field]}
-    onChange={handleChange}
-    sx={{
-      input: {
-        backgroundColor: '#fff',
-        color: '#000'
-      },
-      '& .MuiInputLabel-root': {
-        color: '#1976d2',
-        fontSize: '0.875rem',
-        '&.Mui-focused': { color: '#1976d2' }
-      },
-      '& .MuiOutlinedInput-root': {
-        '& fieldset': {
-          borderColor: 'rgba(25, 118, 210, 0.3)',
-          borderRadius: '6px'
-        },
-        '&:hover fieldset': {
-          borderColor: '#1976d2'
-        },
-        '&.Mui-focused fieldset': {
-          borderColor: '#1976d2',
-          borderWidth: '1px'
-        }
-      }
-    }}
-  />
-))}
+              <TextField
+                key={field}
+                name={field}
+                label={field.charAt(0).toUpperCase() + field.slice(1)}
+                fullWidth
+                size="small"
+                value={formData[field]}
+                onChange={handleChange}
+                sx={{
+                  input: {
+                    backgroundColor: '#fff',
+                    color: '#000'
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: '#1976d2',
+                    fontSize: '0.875rem',
+                    '&.Mui-focused': { color: '#1976d2' }
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'rgba(25, 118, 210, 0.3)',
+                      borderRadius: '6px'
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#1976d2'
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#1976d2',
+                      borderWidth: '1px'
+                    }
+                  }
+                }}
+              />
+            ))}
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, py: 2, borderTop: '1px solid rgba(25, 118, 210, 0.1)' }}>
@@ -277,25 +326,55 @@ export default function Home() {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar */}
+      {/* Snackbar'lar */}
       <Snackbar
         open={showAlert}
         autoHideDuration={3000}
         onClose={() => setShowAlert(false)}
         message="Please log in or continue with demo"
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        sx={{ '& .MuiSnackbarContent-root': { backgroundColor: '#d21947ff', color: 'white' } }}
+        sx={{ 
+          '& .MuiSnackbarContent-root': { 
+            backgroundColor: '#d21947ff',
+            color: 'white' 
+          } 
+        }}
+      />
+      <Snackbar
+        open={showLearnMoreAlert}
+        autoHideDuration={3000}
+        onClose={() => setShowLearnMoreAlert(false)}
+        message="Under construction"
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{ 
+          '& .MuiSnackbarContent-root': { 
+            backgroundColor: '#FFA500',
+            color: 'black',
+            fontWeight: 500 
+          } 
+        }}
+      />
+      <Snackbar
+        open={showDemoAlert}
+        autoHideDuration={3000}
+        onClose={() => setShowDemoAlert(false)}
+        message="Under construction"
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{ 
+          '& .MuiSnackbarContent-root': { 
+            backgroundColor: '#FFA500',
+            color: 'black',
+            fontWeight: 500 
+          } 
+        }}
       />
 
       <LoginModalWrapper
-        open={showLogin}
-        onClose={() => setShowLogin(false)}
-        onSuccess={() => {
-          setIsLoggedIn(true);
-          setShowLogin(false);
-        }}
-        setIsLoggedIn={setIsLoggedIn}
-      />
+  open={showLogin}
+  onClose={() => setShowLogin(false)}
+  onSuccess={handleLoginSuccess} // Bu satır doğru, değiştirmeyin
+  setIsLoggedIn={setIsLoggedIn}
+/>
     </Box>
   );
 }

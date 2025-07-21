@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 
 interface LoginFormProps {
-  onSuccess: () => void;
+  onSuccess: (username: string) => void; // Değişti
   onCancel: () => void;
   setIsLoggedIn: (value: boolean) => void;
 }
@@ -28,7 +28,7 @@ export const LoginForm = ({ onSuccess, onCancel, setIsLoggedIn }: LoginFormProps
     if (email === 'admin' && password === '1234') {
       setIsLoggedIn(true);
       localStorage.setItem('isLoggedIn', 'true');
-      onSuccess();
+      onSuccess(email); // Değişti (email'i parametre olarak gönderiyoruz)
     } else {
       setError('Invalid username or password');
     }
@@ -53,75 +53,75 @@ export const LoginForm = ({ onSuccess, onCancel, setIsLoggedIn }: LoginFormProps
         <Box component="form" onSubmit={handleSubmit} noValidate>
           <Stack spacing={2} mt={1}>
             <TextField
-  label="Username"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-  fullWidth
-  required
-  size="small"
-  sx={{
-    input: {
-      backgroundColor: '#fff'
-    },
-    '& .MuiInputBase-input': {
-      color: '#000'
-    },
-    '& .MuiInputLabel-root': {
-      color: '#1976d2',
-      fontSize: '0.875rem',
-      '&.Mui-focused': { color: '#1976d2' }
-    },
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: '#ccc',             // Normal durumda gri çerçeve
-        borderRadius: '6px'
-      },
-      '&:hover fieldset': {
-        borderColor: '#999'             // Hover olduğunda daha koyu gri
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#1976d2',         // Focus durumunda mavi
-        borderWidth: '1px'
-      }
-    }
-  }}
-/>
+              label="Username"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              fullWidth
+              required
+              size="small"
+              sx={{
+                input: {
+                  backgroundColor: '#fff'
+                },
+                '& .MuiInputBase-input': {
+                  color: '#000'
+                },
+                '& .MuiInputLabel-root': {
+                  color: '#1976d2',
+                  fontSize: '0.875rem',
+                  '&.Mui-focused': { color: '#1976d2' }
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: '#ccc',
+                    borderRadius: '6px'
+                  },
+                  '&:hover fieldset': {
+                    borderColor: '#999'
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#1976d2',
+                    borderWidth: '1px'
+                  }
+                }
+              }}
+            />
 
             <TextField
-  label="Password"
-  type="password"
-  value={password}
-  onChange={(e) => setPassword(e.target.value)}
-  fullWidth
-  required
-  size="small"
-  sx={{
-    input: {
-      backgroundColor: '#fff'
-    },
-    '& .MuiInputBase-input': {
-      color: '#000'
-    },
-    '& .MuiInputLabel-root': {
-      color: '#1976d2',
-      fontSize: '0.875rem',
-      '&.Mui-focused': { color: '#1976d2' }
-    },
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: '#ccc',
-        borderRadius: '6px'
-      },
-      '&:hover fieldset': {
-        borderColor: '#999'
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#1976d2',
-        borderWidth: '1px'
-      }
-    }
-  }}
-/>
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              fullWidth
+              required
+              size="small"
+              sx={{
+                input: {
+                  backgroundColor: '#fff'
+                },
+                '& .MuiInputBase-input': {
+                  color: '#000'
+                },
+                '& .MuiInputLabel-root': {
+                  color: '#1976d2',
+                  fontSize: '0.875rem',
+                  '&.Mui-focused': { color: '#1976d2' }
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: '#ccc',
+                    borderRadius: '6px'
+                  },
+                  '&:hover fieldset': {
+                    borderColor: '#999'
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#1976d2',
+                    borderWidth: '1px'
+                  }
+                }
+              }}
+            />
 
             {error && (
               <Typography color="error" fontSize="0.8rem" textAlign="center">
