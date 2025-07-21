@@ -157,7 +157,7 @@ export const LoginForm = ({ onSuccess, onCancel, setIsLoggedIn }: LoginFormProps
             textTransform: 'none',
             bgcolor: '#1976d2',
             '&:hover': {
-              bgcolor: '#1565c0',
+            bgcolor: '#1565c0',
             },
           }}
         >
