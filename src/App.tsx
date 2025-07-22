@@ -9,7 +9,7 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/projects" element={<Project />} /> {/* URL remains /projects */}
+       <Route path="/projects" element={<Project />} />
       </Routes>
     </ThemeProvider>
   )

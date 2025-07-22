@@ -1,9 +1,15 @@
-import { Box, Button, Typography, Stack, Container, AppBar, Toolbar } from '@mui/material';
+import {
+  Box,
+  Button,
+  Typography,
+  Stack,
+  Container,
+  Snackbar
+} from '@mui/material';
 import { styled } from '@mui/system';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-// Home.tsx ile TAM AYNI stiller
 const ModernButton = styled(Button)({
   borderRadius: '8px',
   padding: '8px 16px',
@@ -32,63 +38,66 @@ const PrimaryButton = styled(ModernButton)({
 export default function Project() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { projectData } = location.state || {};
+  const locationData = location.state as { projectData?: any };
+const localStorageData = localStorage.getItem('currentProject');
+const projectData = locationData?.projectData || (localStorageData ? JSON.parse(localStorageData) : null);
 
   const handleLogout = () => {
     navigate('/');
   };
 
+  const handleBackToHome = () => {
+    navigate('/');
+  };
+
   return (
-    <Box sx={{ 
+    <Box sx={{
       minHeight: '100vh',
       background: 'radial-gradient(circle at top right, #1A237E, #000000)',
       color: '#FFFFFF'
     }}>
-      {/* Header - Home.tsx ile TAM AYNI */}
-      <AppBar position="static" sx={{ 
-        backgroundColor: 'white', 
-        boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-        py: 1
+      {/* Header - Home.tsx ile aynı yapı */}
+      <Box sx={{
+        py: 2,
+        px: 4,
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.08)'
       }}>
-        <Toolbar sx={{ 
-          display: 'flex', 
-          justifyContent: 'flex-end',
-          px: 4
-        }}>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Typography variant="body1" sx={{ 
-              mr: 2, 
-              fontWeight: 500,
-              color: '#1976d2' // Mavi renk
-            }}>
-              {projectData?.responsible || 'Admin'}
-            </Typography>
-            <PrimaryButton 
-              startIcon={<ExitToAppIcon sx={{ fontSize: '1rem' }} />}
-              onClick={handleLogout}
-              sx={{ 
-                marginLeft: '8px', 
-                textTransform: 'none',
-                minWidth: '100px'
-              }}
-            >
-              Logout
-            </PrimaryButton>
-          </Stack>
-        </Toolbar>
-      </AppBar>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Typography variant="body1" sx={{
+            mr: 2,
+            fontWeight: 500,
+            color: '#1976d2'
+          }}>
+            {projectData?.responsible || 'Admin'}
+          </Typography>
+          <PrimaryButton
+            startIcon={<ExitToAppIcon sx={{ fontSize: '1rem' }} />}
+            onClick={handleLogout}
+            sx={{
+              marginLeft: '8px',
+              textTransform: 'none',
+              minWidth: '100px'
+            }}
+          >
+            Logout
+          </PrimaryButton>
+        </Stack>
+      </Box>
 
       {/* Proje Detayları */}
-      <Container maxWidth="md" sx={{ py: 6, px: 4 }}>
-        {/* Proje Bilgileri */}
-        <Box sx={{ 
+      <Container maxWidth="sm" sx={{ py: 6, px: 2 }}>
+        <Box sx={{
           backgroundColor: 'rgba(255, 255, 255, 0.1)',
           borderRadius: '12px',
           p: 4,
           mb: 6
         }}>
-          <Typography variant="h5" sx={{ 
-            mb: 3, 
+          <Typography variant="h5" sx={{
+            mb: 3,
             color: 'white',
             fontWeight: 600
           }}>
@@ -115,20 +124,21 @@ export default function Project() {
         </Box>
 
         {/* Butonlar */}
-        <Typography variant="h5" sx={{ 
-          mb: 3, 
+        <Typography variant="h5" sx={{
+          mb: 3,
           color: 'white',
           fontWeight: 600
         }}>
           Project Actions
         </Typography>
-        
+
         <Stack spacing={2} sx={{ maxWidth: '300px' }}>
           <PrimaryButton sx={{ width: '100%' }}>Add System</PrimaryButton>
           <PrimaryButton sx={{ width: '100%' }}>Add Panel</PrimaryButton>
           <PrimaryButton sx={{ width: '100%' }}>Add Material</PrimaryButton>
           <PrimaryButton sx={{ width: '100%' }}>Add Hardware</PrimaryButton>
           <PrimaryButton sx={{ width: '100%' }}>Add Software</PrimaryButton>
+          <PrimaryButton sx={{ width: '100%' }} onClick={handleBackToHome}>Back to Home</PrimaryButton>
         </Stack>
       </Container>
     </Box>
