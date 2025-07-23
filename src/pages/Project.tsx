@@ -89,7 +89,13 @@ export default function Project() {
       </Box>
 
       {/* Proje Detayları */}
-      <Container maxWidth="sm" sx={{ py: 6, px: 2 }}>
+      <Container maxWidth="sm" sx={{ 
+        py: 6,
+  px: 2,
+  maxWidth: '600px',
+  ml: 4, // sola yaslama
+  mr: 'auto' // ortalama engellenir
+        }}>
         <Box sx={{
           backgroundColor: 'rgba(255, 255, 255, 0.1)',
           borderRadius: '12px',
