@@ -38,9 +38,9 @@ const PrimaryButton = styled(ModernButton)({
 export default function Project() {
   const navigate = useNavigate();
   const location = useLocation();
-  const locationData = location.state as { projectData?: any };
-const localStorageData = localStorage.getItem('currentProject');
-const projectData = locationData?.projectData || (localStorageData ? JSON.parse(localStorageData) : null);
+  const localStorageData = localStorage.getItem('currentProject');
+  const projectData = localStorageData ? JSON.parse(localStorageData) : null;
+  const loggedInUser = localStorage.getItem('loggedInUser');
 
   const handleLogout = () => {
     navigate('/');
@@ -68,12 +68,12 @@ const projectData = locationData?.projectData || (localStorageData ? JSON.parse(
       }}>
         <Stack direction="row" spacing={2} alignItems="center">
           <Typography variant="body1" sx={{
-            mr: 2,
-            fontWeight: 500,
-            color: '#1976d2'
-          }}>
-            {projectData?.responsible || 'Admin'}
-          </Typography>
+  mr: 2,
+  fontWeight: 500,
+  color: '#1976d2'
+}}>
+  {loggedInUser || 'User'}
+</Typography>
           <PrimaryButton
             startIcon={<ExitToAppIcon sx={{ fontSize: '1rem' }} />}
             onClick={handleLogout}

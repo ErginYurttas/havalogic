@@ -113,6 +113,7 @@ export default function Home() {
     setIsLoggedIn(true);
     setUsername(user);
     setShowLogin(false);
+    localStorage.setItem('loggedInUser', user);
   };
 
   const handleOpen = () => {
