@@ -150,7 +150,7 @@ export default function BoilerPage() {
               Back to Project Overview
             </PrimaryButton>
           </Stack>
-        </Box>a
+        </Box>
       </Container>
     </Box>
   );

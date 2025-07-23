@@ -150,7 +150,7 @@ export default function VavPage() {
               Back to Project Overview
             </PrimaryButton>
           </Stack>
-        </Box>a
+        </Box>
       </Container>
     </Box>
   );

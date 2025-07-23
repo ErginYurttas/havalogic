@@ -110,14 +110,14 @@ export default function DatacenterPage() {
           }}
         >
           <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
-            Datacenter System Input
+            Data Center System Input
           </Typography>
 
           <Stack spacing={2}>
             <TextField
               fullWidth
               variant="outlined"
-              placeholder="Datacenter Project Code"
+              placeholder="Data Center Project Code"
               value={projectCode}
               onChange={(e) => setProjectCode(e.target.value)}
               InputProps={{
@@ -127,7 +127,7 @@ export default function DatacenterPage() {
             <TextField
               fullWidth
               variant="outlined"
-              placeholder="Datacenter Description"
+              placeholder="Data Center Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               InputProps={{
@@ -137,7 +137,7 @@ export default function DatacenterPage() {
             <TextField
               fullWidth
               variant="outlined"
-              placeholder="Datacenter Located"
+              placeholder="Data Center Located"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               InputProps={{
@@ -145,12 +145,12 @@ export default function DatacenterPage() {
               }}
             />
 
-            <PrimaryButton sx={{ width: '100%' }}>Save Datacenter</PrimaryButton>
+            <PrimaryButton sx={{ width: '100%' }}>Save Data Center</PrimaryButton>
             <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>
               Back to Project Overview
             </PrimaryButton>
           </Stack>
-        </Box>a
+        </Box>
       </Container>
     </Box>
   );

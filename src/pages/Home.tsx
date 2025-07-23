@@ -295,12 +295,13 @@ export default function Home() {
               }}
             >
               <MenuItem value="" disabled>Select System</MenuItem>
-              <MenuItem value="HVAC">HVAC</MenuItem>
-              <MenuItem value="KNX">KNX</MenuItem>
-              <MenuItem value="Fire Detecting Systems">Fire Detecting Systems</MenuItem>
-              <MenuItem value="Energy Monitoring">Energy Monitoring</MenuItem>
-              <MenuItem value="CCTV">CCTV</MenuItem>
               <MenuItem value="Access">Access</MenuItem>
+              <MenuItem value="CCTV">Cctv</MenuItem>
+              <MenuItem value="Energy Monitoring">Energy</MenuItem>
+              <MenuItem value="Fire Detecting Systems">Fire Detecting Systems</MenuItem>
+              <MenuItem value="HVAC">Hvac</MenuItem>
+              <MenuItem value="KNX">Knx</MenuItem>
+
             </Select>
             {(['city', 'country', 'responsible'] as const).map((field) => (
               <TextField

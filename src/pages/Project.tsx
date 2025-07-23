@@ -175,7 +175,32 @@ export default function Project() {
               }
             }}
           >
-            {['Ahu', 'Fan', 'Fcu', 'Vav', 'Chiller', 'Boiler', 'Pump', 'Room', 'Datacenter', 'Other (manual entry)']
+            {[
+            'Ahu', 
+            'Air Curtain',
+            'Boiler', 
+            'Booster', 
+            'Chiller', 
+            'Clean Room', 
+            'Collector', 
+            'Cooling Tower', 
+            'Data Center', 
+            'Energy Viewing', 
+            'Fan', 
+            'Fcu', 
+            'Generator', 
+            'Heat Exchanger', 
+            'Heat Reclaim', 
+            'Office', 
+            'Pump', 
+            'Surgery Room', 
+            'Unit Heater', 
+            'Ups', 
+            'Vav', 
+            'Water Tank', 
+            'Weather', 
+            'Manual Entry',
+          ]
               .map((item) => (
                 <MenuItem key={item} onClick={() => handleSystemSelect(item)}>
                   {item}

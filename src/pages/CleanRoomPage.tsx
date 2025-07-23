@@ -36,7 +36,7 @@ const PrimaryButton = styled(ModernButton)({
   }
 });
 
-export default function RoomPage() {
+export default function CleanRoomPage() {
   const navigate = useNavigate();
   const loggedInUser = localStorage.getItem('loggedInUser');
 
@@ -110,14 +110,14 @@ export default function RoomPage() {
           }}
         >
           <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
-            Room System Input
+            Clean Room System Input
           </Typography>
 
           <Stack spacing={2}>
             <TextField
               fullWidth
               variant="outlined"
-              placeholder="Room Project Code"
+              placeholder="Clean Room Project Code"
               value={projectCode}
               onChange={(e) => setProjectCode(e.target.value)}
               InputProps={{
@@ -127,7 +127,7 @@ export default function RoomPage() {
             <TextField
               fullWidth
               variant="outlined"
-              placeholder="Room Description"
+              placeholder="Clean Room Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               InputProps={{
@@ -137,7 +137,7 @@ export default function RoomPage() {
             <TextField
               fullWidth
               variant="outlined"
-              placeholder="Room Located"
+              placeholder="Clean Room Located"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               InputProps={{
@@ -145,7 +145,7 @@ export default function RoomPage() {
               }}
             />
 
-            <PrimaryButton sx={{ width: '100%' }}>Save Room</PrimaryButton>
+            <PrimaryButton sx={{ width: '100%' }}>Save Clean Room</PrimaryButton>
             <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>
               Back to Project Overview
             </PrimaryButton>
