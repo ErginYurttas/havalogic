@@ -1,17 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
+  Container,
   Typography,
   TextField,
-  Container,
   Stack,
   Button
 } from '@mui/material';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
-const PrimaryButton = styled(Button)({
+const ModernButton = styled(Button)({
   borderRadius: '8px',
   padding: '8px 16px',
   fontSize: '0.8125rem',
@@ -19,10 +19,20 @@ const PrimaryButton = styled(Button)({
   textTransform: 'none',
   letterSpacing: '0.02em',
   transition: 'all 0.2s ease',
+  border: '1px solid',
+  '&:hover': {
+    transform: 'translateY(-1px)',
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+  }
+});
+
+const PrimaryButton = styled(ModernButton)({
   backgroundColor: '#1976d2',
   color: '#fff',
+  borderColor: 'transparent',
   '&:hover': {
-    backgroundColor: '#1565c0'
+    backgroundColor: '#1565c0',
+    borderColor: 'transparent'
   }
 });
 
@@ -30,43 +40,49 @@ export default function AhuPage() {
   const navigate = useNavigate();
   const loggedInUser = localStorage.getItem('loggedInUser');
 
+  const [projectCode, setProjectCode] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
+
   const handleBack = () => {
     navigate('/projects');
   };
 
+  const handleLogout = () => {
+    navigate('/');
+  };
+
   return (
-    <Box sx={{
-      minHeight: '100vh',
-      background: 'radial-gradient(circle at top right, #1A237E, #000000)',
-      color: '#FFFFFF'
-    }}>
-      
-      {/* Header */}
-      <Box sx={{
-        py: 2,
-        px: 4,
-        display: 'flex',
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-        backgroundColor: 'white',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.08)'
-      }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'radial-gradient(circle at top right, #1A237E, #000000)',
+        color: '#FFFFFF'
+      }}
+    >
+      {/* Navbar */}
+      <Box
+        sx={{
+          py: 2,
+          px: 4,
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          backgroundColor: 'white',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.08)'
+        }}
+      >
         <Stack direction="row" spacing={2} alignItems="center">
-          <Typography variant="body1" sx={{
-            mr: 2,
-            fontWeight: 500,
-            color: '#1976d2'
-          }}>
+          <Typography
+            variant="body1"
+            sx={{ mr: 2, fontWeight: 500, color: '#1976d2' }}
+          >
             {loggedInUser || 'User'}
           </Typography>
           <PrimaryButton
             startIcon={<ExitToAppIcon sx={{ fontSize: '1rem' }} />}
-            onClick={() => navigate('/')}
-            sx={{
-              marginLeft: '8px',
-              textTransform: 'none',
-              minWidth: '100px'
-            }}
+            onClick={handleLogout}
+            sx={{ minWidth: '100px' }}
           >
             Logout
           </PrimaryButton>
@@ -74,51 +90,63 @@ export default function AhuPage() {
       </Box>
 
       {/* Content */}
-      <Container sx={{ px: 0, py: 6 }}>
-        <Box sx={{
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',  // tam eşleşen renk
-          borderRadius: '12px',
-          p: 4,
-          mb: 6,
-          width: '400px',       // tam eşleşen genişlik
-          maxWidth: '100%',
-          ml: 4                 // tam eşleşen konum
-        }}>
+      <Container
+        maxWidth="sm"
+        sx={{
+          py: 6,
+          px: 2,
+          maxWidth: '600px',
+          ml: 4,
+          mr: 'auto'
+        }}
+      >
+        <Box
+          sx={{
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px',
+            p: 4,
+            width: '400px',
+            maxWidth: '100%'
+          }}
+        >
           <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
             AHU System Input
           </Typography>
 
-          <Stack spacing={3}>
+          <Stack spacing={2}>
             <TextField
-              label="AHU Project Code"
               fullWidth
               variant="outlined"
-              size="small"
-              InputProps={{ style: { color: '#000' } }}
-              InputLabelProps={{ style: { color: '#1976d2' } }}
+              placeholder="AHU Project Code"
+              value={projectCode}
+              onChange={(e) => setProjectCode(e.target.value)}
+              InputProps={{
+                style: { color: 'white' }
+              }}
             />
             <TextField
-              label="AHU Description"
               fullWidth
               variant="outlined"
-              size="small"
-              InputProps={{ style: { color: '#000' } }}
-              InputLabelProps={{ style: { color: '#1976d2' } }}
+              placeholder="AHU Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              InputProps={{
+                style: { color: 'white' }
+              }}
             />
             <TextField
-              label="AHU Located"
               fullWidth
               variant="outlined"
-              size="small"
-              InputProps={{ style: { color: '#000' } }}
-              InputLabelProps={{ style: { color: '#1976d2' } }}
+              placeholder="AHU Located"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              InputProps={{
+                style: { color: 'white' }
+              }}
             />
 
-            <PrimaryButton>
-              Save Ahu
-            </PrimaryButton>
-
-            <PrimaryButton onClick={handleBack}>
+            <PrimaryButton sx={{ width: '100%' }}>Save Ahu</PrimaryButton>
+            <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>
               Back to Project Overview
             </PrimaryButton>
           </Stack>

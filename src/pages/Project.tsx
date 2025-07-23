@@ -4,14 +4,13 @@ import {
   Typography,
   Stack,
   Container,
-  Snackbar
+  Menu,
+  MenuItem
 } from '@mui/material';
 import { styled } from '@mui/system';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useLocation, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { Menu, MenuItem } from '@mui/material';
-
 
 const ModernButton = styled(Button)({
   borderRadius: '8px',
@@ -40,23 +39,10 @@ const PrimaryButton = styled(ModernButton)({
 
 export default function Project() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleSystemSelect = (system: string) => {
-  console.log('Selected system:', system);
-  handleClose();
-  navigate(`/${system.toLowerCase()}`);
-};
-  const location = useLocation();
   const localStorageData = localStorage.getItem('currentProject');
   const projectData = localStorageData ? JSON.parse(localStorageData) : null;
   const loggedInUser = localStorage.getItem('loggedInUser');
@@ -69,13 +55,27 @@ export default function Project() {
     navigate('/');
   };
 
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSystemSelect = (system: string) => {
+    const route = system.toLowerCase().replace(/\s/g, '').replace('(', '').replace(')', '');
+    navigate(`/${route}`);
+    handleClose();
+  };
+
   return (
     <Box sx={{
       minHeight: '100vh',
       background: 'radial-gradient(circle at top right, #1A237E, #000000)',
       color: '#FFFFFF'
     }}>
-      {/* Header - Home.tsx ile aynı yapı */}
+      {/* Header */}
       <Box sx={{
         py: 2,
         px: 4,
@@ -87,12 +87,12 @@ export default function Project() {
       }}>
         <Stack direction="row" spacing={2} alignItems="center">
           <Typography variant="body1" sx={{
-  mr: 2,
-  fontWeight: 500,
-  color: '#1976d2'
-}}>
-  {loggedInUser || 'User'}
-</Typography>
+            mr: 2,
+            fontWeight: 500,
+            color: '#1976d2'
+          }}>
+            {loggedInUser || 'User'}
+          </Typography>
           <PrimaryButton
             startIcon={<ExitToAppIcon sx={{ fontSize: '1rem' }} />}
             onClick={handleLogout}
@@ -107,22 +107,22 @@ export default function Project() {
         </Stack>
       </Box>
 
-      {/* Proje Detayları */}
-      <Container maxWidth="sm" sx={{ 
+      {/* Project Details */}
+      <Container maxWidth="sm" sx={{
         py: 6,
-  px: 2,
-  maxWidth: '600px',
-  ml: 4, // sola yaslama
-  mr: 'auto' // ortalama engellenir
-        }}>
+        px: 2,
+        maxWidth: '600px',
+        ml: 4,
+        mr: 'auto'
+      }}>
         <Box sx={{
-  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  borderRadius: '12px',
-  p: 4,
-  mb: 6,
-  width: '400px', // Genişlik eklendi
-  maxWidth: '100%' // responsive destek
-}}>
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          borderRadius: '12px',
+          p: 4,
+          mb: 6,
+          width: '400px',
+          maxWidth: '100%'
+        }}>
           <Typography variant="h5" sx={{
             mb: 3,
             color: 'white',
@@ -150,7 +150,7 @@ export default function Project() {
           </Stack>
         </Box>
 
-        {/* Butonlar */}
+        {/* Buttons */}
         <Typography variant="h5" sx={{
           mb: 3,
           color: 'white',
@@ -161,26 +161,28 @@ export default function Project() {
 
         <Stack spacing={2} sx={{ maxWidth: '300px' }}>
           <PrimaryButton sx={{ width: '100%' }} onClick={handleClick}>
-  Add System
-</PrimaryButton>
-<Menu
-  anchorEl={anchorEl}
-  open={open}
-  onClose={handleClose}
-  MenuListProps={{
-    style: {
-      maxHeight: 200,
-      width: '200px'
-    }
-  }}
->
-  {['Ahu', 'Fan', 'Fcu', 'Vav', 'Chiller', 'Boiler', 'Pump', 'Room', 'Datacenter', 'Other (manual entry)']
-    .map((item) => (
-      <MenuItem key={item} onClick={() => handleSystemSelect(item)}>
-        {item}
-      </MenuItem>
-    ))}
-</Menu>
+            Add System
+          </PrimaryButton>
+
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              style: {
+                maxHeight: 200,
+                width: '200px'
+              }
+            }}
+          >
+            {['Ahu', 'Fan', 'Fcu', 'Vav', 'Chiller', 'Boiler', 'Pump', 'Room', 'Datacenter', 'Other (manual entry)']
+              .map((item) => (
+                <MenuItem key={item} onClick={() => handleSystemSelect(item)}>
+                  {item}
+                </MenuItem>
+              ))}
+          </Menu>
+
           <PrimaryButton sx={{ width: '100%' }}>Add Panel</PrimaryButton>
           <PrimaryButton sx={{ width: '100%' }}>Add Material</PrimaryButton>
           <PrimaryButton sx={{ width: '100%' }}>Add Hardware</PrimaryButton>
