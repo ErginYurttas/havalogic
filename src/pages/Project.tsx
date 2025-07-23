@@ -9,6 +9,9 @@ import {
 import { styled } from '@mui/system';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Menu, MenuItem } from '@mui/material';
+
 
 const ModernButton = styled(Button)({
   borderRadius: '8px',
@@ -37,6 +40,22 @@ const PrimaryButton = styled(ModernButton)({
 
 export default function Project() {
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSystemSelect = (system: string) => {
+  console.log('Selected system:', system);
+  handleClose();
+  navigate(`/${system.toLowerCase()}`);
+};
   const location = useLocation();
   const localStorageData = localStorage.getItem('currentProject');
   const projectData = localStorageData ? JSON.parse(localStorageData) : null;
@@ -97,11 +116,13 @@ export default function Project() {
   mr: 'auto' // ortalama engellenir
         }}>
         <Box sx={{
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-          borderRadius: '12px',
-          p: 4,
-          mb: 6
-        }}>
+  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  borderRadius: '12px',
+  p: 4,
+  mb: 6,
+  width: '400px', // Genişlik eklendi
+  maxWidth: '100%' // responsive destek
+}}>
           <Typography variant="h5" sx={{
             mb: 3,
             color: 'white',
@@ -139,7 +160,27 @@ export default function Project() {
         </Typography>
 
         <Stack spacing={2} sx={{ maxWidth: '300px' }}>
-          <PrimaryButton sx={{ width: '100%' }}>Add System</PrimaryButton>
+          <PrimaryButton sx={{ width: '100%' }} onClick={handleClick}>
+  Add System
+</PrimaryButton>
+<Menu
+  anchorEl={anchorEl}
+  open={open}
+  onClose={handleClose}
+  MenuListProps={{
+    style: {
+      maxHeight: 200,
+      width: '200px'
+    }
+  }}
+>
+  {['Ahu', 'Fan', 'Fcu', 'Vav', 'Chiller', 'Boiler', 'Pump', 'Room', 'Datacenter', 'Other (manual entry)']
+    .map((item) => (
+      <MenuItem key={item} onClick={() => handleSystemSelect(item)}>
+        {item}
+      </MenuItem>
+    ))}
+</Menu>
           <PrimaryButton sx={{ width: '100%' }}>Add Panel</PrimaryButton>
           <PrimaryButton sx={{ width: '100%' }}>Add Material</PrimaryButton>
           <PrimaryButton sx={{ width: '100%' }}>Add Hardware</PrimaryButton>
