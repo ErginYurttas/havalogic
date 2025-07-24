@@ -94,6 +94,23 @@ export default function AhuPage() {
   const [humidificationPieces, setHumidificationPieces] = useState('');
   const [humidificationPower, setHumidificationPower] = useState('');
   const [humidificationVoltage, setHumidificationVoltage] = useState('');
+  const [dehumidificationFunction, setDehumidificationFunction] = useState('');
+  const [dehumidificationPieces, setDehumidificationPieces] = useState('');
+  const [dehumidificationPower, setDehumidificationPower] = useState('');
+  const [dehumidificationVoltage, setDehumidificationVoltage] = useState('');
+  const [preheatingFunction, setPreheatingFunction] = useState('');
+  const [preheatingPieces, setPreheatingPieces] = useState('');
+  const [preheatingPower, setPreheatingPower] = useState('');
+  const [preheatingVoltage, setPreheatingVoltage] = useState('');
+  const [heatingFunction, setHeatingFunction] = useState('');
+  const [heatingPieces, setHeatingPieces] = useState('');
+  const [heatingPower, setHeatingPower] = useState('');
+  const [heatingVoltage, setHeatingVoltage] = useState('');
+  const [coolingFunction, setCoolingFunction] = useState('');
+  const [coolingPieces, setCoolingPieces] = useState('');
+  const [coolingPower, setCoolingPower] = useState('');
+  const [coolingVoltage, setCoolingVoltage] = useState('');
+
 
   const handleBack = () => {
     navigate('/projects');
@@ -238,6 +255,25 @@ export default function AhuPage() {
             {renderDropdown('Humidification Pieces', humidificationPieces, (e) => setHumidificationPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
             {renderDropdown('Humidification Power', humidificationPower, (e) => setHumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
             {renderDropdown('Humidification Voltage', humidificationVoltage, (e) => setHumidificationVoltage(e.target.value), ['230', '380'])}
+            {renderDropdown('Dehumidification Function', dehumidificationFunction, (e) => setDehumidificationFunction(e.target.value), ['none', 'Dehumidification'])}
+            {renderDropdown('Dehumidification Pieces', dehumidificationPieces, (e) => setDehumidificationPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
+            {renderDropdown('Dehumidification Power', dehumidificationPower, (e) => setDehumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
+            {renderDropdown('Dehumidification Voltage', dehumidificationVoltage, (e) => setDehumidificationVoltage(e.target.value), ['230', '380'])}
+            {renderDropdown('Preheating Function', preheatingFunction, (e) => setPreheatingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'Proportional Valve Actuator', 'Staged Electrical Heater', 'Proportional Electrical Heater'])}
+            {renderDropdown('Preheating Pieces', preheatingPieces, (e) => setPreheatingPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
+            {renderDropdown('Preheating Power', preheatingPower, (e) => setPreheatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
+            {renderDropdown('Preheating Voltage', preheatingVoltage, (e) => setPreheatingVoltage(e.target.value), ['24', '230', '380'])}
+            {renderDropdown('Heating Function', heatingFunction, (e) => setHeatingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'Proportional Valve Actuator', 'Staged Electrical Heater', 'Proportional Electrical Heater'])}
+            {renderDropdown('Heating Pieces', heatingPieces, (e) => setHeatingPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
+            {renderDropdown('Heating Power', heatingPower, (e) => setHeatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
+            {renderDropdown('Heating Voltage', heatingVoltage, (e) => setHeatingVoltage(e.target.value), ['24', '230', '380'])}
+            {renderDropdown('Cooling Function', coolingFunction, (e) => setCoolingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'Proportional Valve Actuator', 'Staged DX Unit', 'Proportional DX Unit'])}
+            {renderDropdown('Cooling Pieces', coolingPieces, (e) => setCoolingPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
+            {renderDropdown('Cooling Power', coolingPower, (e) => setCoolingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
+            {renderDropdown('Cooling Voltage', coolingVoltage, (e) => setCoolingVoltage(e.target.value), ['24', '230', '380'])}
+
+
+
             <PrimaryButton sx={{ width: '100%' }}>Save Ahu</PrimaryButton>
             <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>
               Back to Project Overview
