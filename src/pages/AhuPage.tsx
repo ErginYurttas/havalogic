@@ -83,6 +83,17 @@ export default function AhuPage() {
   const [aspPieces, setAspPieces] = useState('');
   const [aspPower, setAspPower] = useState('');
   const [aspVoltage, setAspVoltage] = useState('');
+  const [pumpControl, setPumpControl] = useState('');
+  const [pumpPieces, setPumpPieces] = useState('');
+  const [pumpPower, setPumpPower] = useState('');
+  const [pumpVoltage, setPumpVoltage] = useState('');
+  const [heatRecoveryControl, setHeatRecoveryControl] = useState('');
+  const [heatRecoveryPower, setHeatRecoveryPower] = useState('');
+  const [heatRecoveryVoltage, setHeatRecoveryVoltage] = useState('');
+  const [humidificationFunction, setHumidificationFunction] = useState('');
+  const [humidificationPieces, setHumidificationPieces] = useState('');
+  const [humidificationPower, setHumidificationPower] = useState('');
+  const [humidificationVoltage, setHumidificationVoltage] = useState('');
 
   const handleBack = () => {
     navigate('/projects');
@@ -208,15 +219,25 @@ export default function AhuPage() {
             {/* Dropdownlar */}
             {renderDropdown('AHU Control Type', ahuControl, (e) => setAhuControl(e.target.value), ['MCC', 'Own Panel', 'Smart'])}
             {renderDropdown('AHU Brand', ahuBrand, (e) => setAhuBrand(e.target.value), ['Arçelik', 'Blue Star Limited', 'Carrier', 'Daikin', 'Hitachi', 'Johnson Control', 'Lennox', 'Swegon Group', 'Systemair', 'Teba', 'Trane', 'Trox', 'Üntes'])}
-            {renderDropdown('Vantilator Control', fanControl, (e) => setFanControl(e.target.value), ['Dol', 'Ec', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+            {renderDropdown('Vantilator Control', fanControl, (e) => setFanControl(e.target.value), ['Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
             {renderDropdown('Vantilator Pieces', fanPieces, (e) => setFanPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
             {renderDropdown('Vantilator Power', fanPower, (e) => setFanPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
             {renderDropdown('Vantilator Voltage', fanVoltage, (e) => setFanVoltage(e.target.value), ['230', '380'])}
-            {renderDropdown('Aspirator Control', aspControl, (e) => setAspControl(e.target.value), ['Dol', 'Ec', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+            {renderDropdown('Aspirator Control', aspControl, (e) => setAspControl(e.target.value), ['none', 'Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
             {renderDropdown('Aspirator Pieces', aspPieces, (e) => setAspPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
             {renderDropdown('Aspirator Power', aspPower, (e) => setAspPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
             {renderDropdown('Aspirator Voltage', aspVoltage, (e) => setAspVoltage(e.target.value), ['230', '380'])}
-
+            {renderDropdown('Run Around Pump Control', pumpControl, (e) => setPumpControl(e.target.value), ['none', 'Dol', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+            {renderDropdown('Run Around Pump Pieces', pumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
+            {renderDropdown('Run Around Pump Power', pumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
+            {renderDropdown('Run Around Pump Voltage', pumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'])}
+            {renderDropdown('Heat Recovery Control', heatRecoveryControl, (e) => setHeatRecoveryControl(e.target.value), ['none', 'Heat Wheel with MCC', 'Heat Wheel with Packaged', 'Plate Recuperator'])}
+            {renderDropdown('Heat Recovery Power', heatRecoveryPower, (e) => setHeatRecoveryPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11'])}
+            {renderDropdown('Heat Recovery Voltage', heatRecoveryVoltage, (e) => setHeatRecoveryVoltage(e.target.value), ['230', '380'])}
+            {renderDropdown('Humidification Function', humidificationFunction, (e) => setHumidificationFunction(e.target.value), ['none', 'Evaporative Humidifier', 'Staged Humidifier', 'Steam Humidifier'])}
+            {renderDropdown('Humidification Pieces', humidificationPieces, (e) => setHumidificationPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
+            {renderDropdown('Humidification Power', humidificationPower, (e) => setHumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
+            {renderDropdown('Humidification Voltage', humidificationVoltage, (e) => setHumidificationVoltage(e.target.value), ['230', '380'])}
             <PrimaryButton sx={{ width: '100%' }}>Save Ahu</PrimaryButton>
             <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>
               Back to Project Overview

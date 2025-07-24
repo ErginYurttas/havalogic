@@ -22,6 +22,7 @@ import React from 'react';
 import { LoginForm } from '../components/LoginForm';
 import { LoginModalWrapper } from '../components/LoginModalWrapper';
 
+
 interface FormData {
   projectName: string;
   buildingType: string;
@@ -275,10 +276,26 @@ export default function Home() {
               }}
             >
               <MenuItem value="" disabled>Select Building Type</MenuItem>
-              <MenuItem value="Hospital">Hospital</MenuItem>
-              <MenuItem value="Mall">Mall</MenuItem>
-              <MenuItem value="Office">Office</MenuItem>
-              <MenuItem value="Other">Other</MenuItem>
+              <MenuItem value="Airport">Airport</MenuItem>
+<MenuItem value="Bank">Bank</MenuItem>
+<MenuItem value="Data Center">Data Center</MenuItem>
+<MenuItem value="Factory">Factory</MenuItem>
+<MenuItem value="Government Building">Government Building</MenuItem>
+<MenuItem value="Hospital">Hospital</MenuItem>
+<MenuItem value="Hotel">Hotel</MenuItem>
+<MenuItem value="Laboratory">Laboratory</MenuItem>
+<MenuItem value="Library">Library</MenuItem>
+<MenuItem value="Mall">Mall</MenuItem>
+<MenuItem value="Museum">Museum</MenuItem>
+<MenuItem value="Office">Office</MenuItem>
+<MenuItem value="Residential">Residential</MenuItem>
+<MenuItem value="School">School</MenuItem>
+<MenuItem value="Shepyard">Shepyard</MenuItem>
+<MenuItem value="Skyscraper">Skyscraper</MenuItem>
+<MenuItem value="Sport Complex">Sport Complex</MenuItem>
+<MenuItem value="Warehouse">Warehouse</MenuItem>
+<MenuItem value="Other">Other</MenuItem>
+
             </Select>
             <Select
               name="system"
