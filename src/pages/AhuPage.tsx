@@ -5,8 +5,13 @@ import {
   Typography,
   TextField,
   Stack,
-  Button
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
@@ -36,6 +41,30 @@ const PrimaryButton = styled(ModernButton)({
   }
 });
 
+// Yeni Select stilleri
+const selectStyles = {
+  color: '#ECEFF1',
+  '.MuiOutlinedInput-notchedOutline': {
+    borderColor: '#B0BEC5'
+  },
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+    borderColor: '#90A4AE'
+  },
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    borderColor: '#CFD8DC'
+  },
+  svg: {
+    color: '#90A4AE'
+  }
+};
+
+const labelStyles = {
+  color: '#90A4AE',
+  '&.Mui-focused': {
+    color: '#B0BEC5'
+  }
+};
+
 export default function AhuPage() {
   const navigate = useNavigate();
   const loggedInUser = localStorage.getItem('loggedInUser');
@@ -44,6 +73,17 @@ export default function AhuPage() {
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
 
+  const [ahuControl, setAhuControl] = useState('');
+  const [ahuBrand, setAhuBrand] = useState('');
+  const [fanControl, setFanControl] = useState('');
+  const [fanPieces, setFanPieces] = useState('');
+  const [fanPower, setFanPower] = useState('');
+  const [fanVoltage, setFanVoltage] = useState('');
+  const [aspControl, setAspControl] = useState('');
+  const [aspPieces, setAspPieces] = useState('');
+  const [aspPower, setAspPower] = useState('');
+  const [aspVoltage, setAspVoltage] = useState('');
+
   const handleBack = () => {
     navigate('/projects');
   };
@@ -51,6 +91,24 @@ export default function AhuPage() {
   const handleLogout = () => {
     navigate('/');
   };
+
+  const renderDropdown = (
+    label: string,
+    value: string,
+    onChange: (e: SelectChangeEvent) => void,
+    options: string[]
+  ) => (
+    <FormControl fullWidth>
+      <InputLabel sx={labelStyles}>{label}</InputLabel>
+      <Select value={value} label={label} onChange={onChange} sx={selectStyles}>
+        {options.map((option, index) => (
+          <MenuItem key={index} value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
 
   return (
     <Box
@@ -106,7 +164,9 @@ export default function AhuPage() {
             borderRadius: '12px',
             p: 4,
             width: '400px',
-            maxWidth: '100%'
+            maxWidth: '100%',
+            maxHeight: '85vh',
+            overflowY: 'auto'
           }}
         >
           <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
@@ -144,6 +204,18 @@ export default function AhuPage() {
                 style: { color: 'white' }
               }}
             />
+
+            {/* Dropdownlar */}
+            {renderDropdown('AHU Control Type', ahuControl, (e) => setAhuControl(e.target.value), ['MCC', 'Own Panel', 'Smart'])}
+            {renderDropdown('AHU Brand', ahuBrand, (e) => setAhuBrand(e.target.value), ['Arçelik', 'Blue Star Limited', 'Carrier', 'Daikin', 'Hitachi', 'Johnson Control', 'Lennox', 'Swegon Group', 'Systemair', 'Teba', 'Trane', 'Trox', 'Üntes'])}
+            {renderDropdown('Vantilator Control', fanControl, (e) => setFanControl(e.target.value), ['Dol', 'Ec', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+            {renderDropdown('Vantilator Pieces', fanPieces, (e) => setFanPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
+            {renderDropdown('Vantilator Power', fanPower, (e) => setFanPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
+            {renderDropdown('Vantilator Voltage', fanVoltage, (e) => setFanVoltage(e.target.value), ['230', '380'])}
+            {renderDropdown('Aspirator Control', aspControl, (e) => setAspControl(e.target.value), ['Dol', 'Ec', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+            {renderDropdown('Aspirator Pieces', aspPieces, (e) => setAspPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
+            {renderDropdown('Aspirator Power', aspPower, (e) => setAspPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
+            {renderDropdown('Aspirator Voltage', aspVoltage, (e) => setAspVoltage(e.target.value), ['230', '380'])}
 
             <PrimaryButton sx={{ width: '100%' }}>Save Ahu</PrimaryButton>
             <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>
