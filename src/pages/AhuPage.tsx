@@ -53,6 +53,13 @@ const selectStyles = {
   '&:hover .MuiOutlinedInput-notchedOutline': {
     borderColor: '#CFD8DC'
   },
+  '&.Mui-disabled': {
+    color: '#888',
+    backgroundColor: '#1e1e1e'
+  },
+  '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
+    borderColor: '#555'
+  },
   svg: {
     color: '#90A4AE'
   }
@@ -282,7 +289,7 @@ const [totalIntegrationPoints, setTotalIntegrationPoints] = useState('');
             {renderDropdown('Vantilator Pieces', fanPieces, (e) => setFanPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
             {renderDropdown('Vantilator Power', fanPower, (e) => setFanPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
             {renderDropdown('Vantilator Voltage', fanVoltage, (e) => setFanVoltage(e.target.value), ['230', '380'])}
-            {renderDropdown('Aspirator Control', aspControl, (e) => setAspControl(e.target.value), ['none', 'Dol', 'Ec', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+            {renderDropdown('Aspirator Control', aspControl, (e) => setAspControl(e.target.value), ['none', 'Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
             {renderDropdown('Aspirator Pieces', aspPieces, (e) => setAspPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], aspControl === 'none')}
             {renderDropdown('Aspirator Power', aspPower, (e) => setAspPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], aspControl === 'none')}
             {renderDropdown('Aspirator Voltage', aspVoltage, (e) => setAspVoltage(e.target.value), ['230', '380'], aspControl === 'none')}
@@ -352,7 +359,15 @@ const [totalIntegrationPoints, setTotalIntegrationPoints] = useState('');
   onChange={(e) => setTotalIntegrationPoints(e.target.value)}
   disabled={systemIntegration === 'none'}
   InputProps={{
-    style: { color: 'white' }
+    style: {
+      color: systemIntegration === 'none' ? '#888' : 'white',
+      backgroundColor: systemIntegration === 'none' ? '#1e1e1e' : 'transparent'
+    }
+  }}
+  sx={{
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: systemIntegration === 'none' ? '#555' : '#B0BEC5'
+    }
   }}
 />
 
