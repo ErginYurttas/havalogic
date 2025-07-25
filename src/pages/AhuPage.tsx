@@ -110,6 +110,30 @@ export default function AhuPage() {
   const [coolingPieces, setCoolingPieces] = useState('');
   const [coolingPower, setCoolingPower] = useState('');
   const [coolingVoltage, setCoolingVoltage] = useState('');
+  const [freshDamperActuator, setFreshDamperActuator] = useState('');
+  const [supplyDamperActuator, setSupplyDamperActuator] = useState('');
+  const [returnDamperActuator, setReturnDamperActuator] = useState('');
+  const [exhaustDamperActuator, setExhaustDamperActuator] = useState('');
+  const [mixedDamperActuator, setMixedDamperActuator] = useState('');
+  const [recirculationDamperActuator, setRecirculationDamperActuator] = useState('');
+  const [supplyAirSensor, setSupplyAirSensor] = useState('');
+  const [freshAirSensor, setFreshAirSensor] = useState('');
+  const [returnAirSensor, setReturnAirSensor] = useState('');
+  const [exhaustAirSensor, setExhaustAirSensor] = useState('');
+  const [heatExchangerAirSensor, setHeatExchangerAirSensor] = useState('');
+  const [mixedAirSensor, setMixedAirSensor] = useState('');
+  const [dehumidificationSensor, setDehumidificationSensor] = useState('');
+  const [maintenanceSafety, setMaintenanceSafety] = useState('');
+  const [emergencySafety, setEmergencySafety] = useState('');
+  const [doorSafety, setDoorSafety] = useState('');
+  const [fireSafety, setFireSafety] = useState('');
+  const [frostSafety, setFrostSafety] = useState('');
+  const [supplyFilter, setSupplyFilter] = useState('');
+  const [freshFilter, setFreshFilter] = useState('');
+  const [returnFilter, setReturnFilter] = useState('');
+  const [recuperatorFilter, setRecuperatorFilter] = useState('');
+
+
 
 
   const handleBack = () => {
@@ -271,6 +295,28 @@ export default function AhuPage() {
             {renderDropdown('Cooling Pieces', coolingPieces, (e) => setCoolingPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
             {renderDropdown('Cooling Power', coolingPower, (e) => setCoolingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
             {renderDropdown('Cooling Voltage', coolingVoltage, (e) => setCoolingVoltage(e.target.value), ['24', '230', '380'])}
+            {renderDropdown('Fresh Damper Actuator', freshDamperActuator, (e) => setFreshDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
+            {renderDropdown('Supply Damper Actuator', supplyDamperActuator, (e) => setSupplyDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
+            {renderDropdown('Return Damper Actuator', returnDamperActuator, (e) => setReturnDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
+            {renderDropdown('Exhaust Damper Actuator', exhaustDamperActuator, (e) => setExhaustDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
+            {renderDropdown('Mixed Damper Actuator', mixedDamperActuator, (e) => setMixedDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
+            {renderDropdown('Re Circilation Damper Actuator', recirculationDamperActuator, (e) => setRecirculationDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
+            {renderDropdown('Supply Air', supplyAirSensor, (e) => setSupplyAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
+            {renderDropdown('Fresh Air', freshAirSensor, (e) => setFreshAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
+            {renderDropdown('Return Air', returnAirSensor, (e) => setReturnAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Co2', 'Temperature, Humidity and Co2'])}
+            {renderDropdown('Exhaust Air', exhaustAirSensor, (e) => setExhaustAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
+            {renderDropdown('Heat Exchanger Air', heatExchangerAirSensor, (e) => setHeatExchangerAirSensor(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
+            {renderDropdown('Mixed Air', mixedAirSensor, (e) => setMixedAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
+            {renderDropdown('Dehumidification', dehumidificationSensor, (e) => setDehumidificationSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
+            {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
+            {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
+            {renderDropdown('Door Safety Contacts', doorSafety, (e) => setDoorSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
+            {renderDropdown('Fire Safety Contacts', fireSafety, (e) => setFireSafety(e.target.value), ['none', 'only Viewing', 'Viewing and Control'])}
+            {renderDropdown('Frost Safety Contacts', frostSafety, (e) => setFrostSafety(e.target.value), ['none', 'Automatic Reset', 'Manual Reset'])}
+            {renderDropdown('Supply Filter', supplyFilter, (e) => setSupplyFilter(e.target.value), ['none', 'Analog', 'Digital'])}
+            {renderDropdown('Fresh Filter', freshFilter, (e) => setFreshFilter(e.target.value), ['none', 'Analog', 'Digital'])}
+            {renderDropdown('Return Filter', returnFilter, (e) => setReturnFilter(e.target.value), ['none', 'Analog', 'Digital'])}
+            {renderDropdown('Recuperator Filter', recuperatorFilter, (e) => setRecuperatorFilter(e.target.value), ['none', 'Analog', 'Digital'])}
 
 
 
