@@ -87,6 +87,7 @@ export default function AhuPage() {
   const [pumpPieces, setPumpPieces] = useState('');
   const [pumpPower, setPumpPower] = useState('');
   const [pumpVoltage, setPumpVoltage] = useState('');
+  const [runAroundTemperature, setRunAroundTemperature] = useState('');
   const [heatRecoveryControl, setHeatRecoveryControl] = useState('');
   const [heatRecoveryPower, setHeatRecoveryPower] = useState('');
   const [heatRecoveryVoltage, setHeatRecoveryVoltage] = useState('');
@@ -102,14 +103,17 @@ export default function AhuPage() {
   const [preheatingPieces, setPreheatingPieces] = useState('');
   const [preheatingPower, setPreheatingPower] = useState('');
   const [preheatingVoltage, setPreheatingVoltage] = useState('');
+  const [preheatingTemperature, setPreheatingTemperature] = useState('');
   const [heatingFunction, setHeatingFunction] = useState('');
   const [heatingPieces, setHeatingPieces] = useState('');
   const [heatingPower, setHeatingPower] = useState('');
   const [heatingVoltage, setHeatingVoltage] = useState('');
+  const [heatingTemperature, setHeatingTemperature] = useState('');
   const [coolingFunction, setCoolingFunction] = useState('');
   const [coolingPieces, setCoolingPieces] = useState('');
   const [coolingPower, setCoolingPower] = useState('');
   const [coolingVoltage, setCoolingVoltage] = useState('');
+  const [coolingTemperature, setCoolingTemperature] = useState('');
   const [freshDamperActuator, setFreshDamperActuator] = useState('');
   const [supplyDamperActuator, setSupplyDamperActuator] = useState('');
   const [returnDamperActuator, setReturnDamperActuator] = useState('');
@@ -132,6 +136,20 @@ export default function AhuPage() {
   const [freshFilter, setFreshFilter] = useState('');
   const [returnFilter, setReturnFilter] = useState('');
   const [recuperatorFilter, setRecuperatorFilter] = useState('');
+  const [supplyFlow, setSupplyFlow] = useState('');
+  const [returnFlow, setReturnFlow] = useState('');
+  const [systemIntegration, setSystemIntegration] = useState('');
+const [protocolIntegration, setProtocolIntegration] = useState('');
+const [totalIntegrationPoints, setTotalIntegrationPoints] = useState('');
+
+
+
+  
+
+
+
+
+
 
 
 
@@ -272,6 +290,7 @@ export default function AhuPage() {
             {renderDropdown('Run Around Pump Pieces', pumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
             {renderDropdown('Run Around Pump Power', pumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
             {renderDropdown('Run Around Pump Voltage', pumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'])}
+            {renderDropdown('Run Around Temperature', runAroundTemperature, (e) => setRunAroundTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
             {renderDropdown('Heat Recovery Control', heatRecoveryControl, (e) => setHeatRecoveryControl(e.target.value), ['none', 'Heat Wheel with MCC', 'Heat Wheel with Packaged', 'Plate Recuperator'])}
             {renderDropdown('Heat Recovery Power', heatRecoveryPower, (e) => setHeatRecoveryPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11'])}
             {renderDropdown('Heat Recovery Voltage', heatRecoveryVoltage, (e) => setHeatRecoveryVoltage(e.target.value), ['230', '380'])}
@@ -287,14 +306,17 @@ export default function AhuPage() {
             {renderDropdown('Preheating Pieces', preheatingPieces, (e) => setPreheatingPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
             {renderDropdown('Preheating Power', preheatingPower, (e) => setPreheatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
             {renderDropdown('Preheating Voltage', preheatingVoltage, (e) => setPreheatingVoltage(e.target.value), ['24', '230', '380'])}
+            {renderDropdown('Preheating Temperature', preheatingTemperature, (e) => setPreheatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
             {renderDropdown('Heating Function', heatingFunction, (e) => setHeatingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'Proportional Valve Actuator', 'Staged Electrical Heater', 'Proportional Electrical Heater'])}
             {renderDropdown('Heating Pieces', heatingPieces, (e) => setHeatingPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
             {renderDropdown('Heating Power', heatingPower, (e) => setHeatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
             {renderDropdown('Heating Voltage', heatingVoltage, (e) => setHeatingVoltage(e.target.value), ['24', '230', '380'])}
+            {renderDropdown('Heating Temperature', heatingTemperature, (e) => setHeatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
             {renderDropdown('Cooling Function', coolingFunction, (e) => setCoolingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'Proportional Valve Actuator', 'Staged DX Unit', 'Proportional DX Unit'])}
             {renderDropdown('Cooling Pieces', coolingPieces, (e) => setCoolingPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
             {renderDropdown('Cooling Power', coolingPower, (e) => setCoolingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
             {renderDropdown('Cooling Voltage', coolingVoltage, (e) => setCoolingVoltage(e.target.value), ['24', '230', '380'])}
+            {renderDropdown('Cooling Temperature', coolingTemperature, (e) => setCoolingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
             {renderDropdown('Fresh Damper Actuator', freshDamperActuator, (e) => setFreshDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
             {renderDropdown('Supply Damper Actuator', supplyDamperActuator, (e) => setSupplyDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
             {renderDropdown('Return Damper Actuator', returnDamperActuator, (e) => setReturnDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
@@ -317,6 +339,23 @@ export default function AhuPage() {
             {renderDropdown('Fresh Filter', freshFilter, (e) => setFreshFilter(e.target.value), ['none', 'Analog', 'Digital'])}
             {renderDropdown('Return Filter', returnFilter, (e) => setReturnFilter(e.target.value), ['none', 'Analog', 'Digital'])}
             {renderDropdown('Recuperator Filter', recuperatorFilter, (e) => setRecuperatorFilter(e.target.value), ['none', 'Analog', 'Digital'])}
+            {renderDropdown('Supply Flow', supplyFlow, (e) => setSupplyFlow(e.target.value), ['none', 'Pressure', 'Volume'])}
+            {renderDropdown('Return Flow', returnFlow, (e) => setReturnFlow(e.target.value), ['none', 'Pressure', 'Volume'])}     
+            {renderDropdown('System Integration', systemIntegration, (e) => setSystemIntegration(e.target.value), ['none', 'Package', 'VFD'])}
+            {renderDropdown('Protocol Integration', protocolIntegration, (e) => setProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'])}
+
+<TextField
+  fullWidth
+  variant="outlined"
+  placeholder="Total Integration Points"
+  value={totalIntegrationPoints}
+  onChange={(e) => setTotalIntegrationPoints(e.target.value)}
+  InputProps={{
+    style: { color: 'white' }
+  }}
+/>
+
+
 
 
 
