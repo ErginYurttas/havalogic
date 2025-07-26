@@ -148,17 +148,7 @@ export default function AhuPage() {
   const [systemIntegration, setSystemIntegration] = useState('');
 const [protocolIntegration, setProtocolIntegration] = useState('');
 const [totalIntegrationPoints, setTotalIntegrationPoints] = useState('');
-
-
-
-  
-
-
-
-
-
-
-
+const [showTable, setShowTable] = useState(false);
 
 
   const handleBack = () => {
@@ -188,105 +178,28 @@ const [totalIntegrationPoints, setTotalIntegrationPoints] = useState('');
 
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        background: 'radial-gradient(circle at top right, #1A237E, #000000)',
-        color: '#FFFFFF'
-      }}
-    >
+    <Box sx={{ minHeight: '100vh', background: 'radial-gradient(circle at top right, #1A237E, #000000)', color: '#FFFFFF', display: 'flex', flexDirection: 'column' }}>
       {/* Navbar */}
-      <Box
-        sx={{
-          py: 2,
-          px: 4,
-          display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          backgroundColor: 'white',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.08)'
-        }}
-      >
+      <Box sx={{ py: 2, px: 4, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', backgroundColor: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
         <Stack direction="row" spacing={2} alignItems="center">
-          <Typography
-            variant="body1"
-            sx={{ mr: 2, fontWeight: 500, color: '#1976d2' }}
-          >
-            {loggedInUser || 'User'}
-          </Typography>
-          <PrimaryButton
-            startIcon={<ExitToAppIcon sx={{ fontSize: '1rem' }} />}
-            onClick={handleLogout}
-            sx={{ minWidth: '100px' }}
-          >
-            Logout
-          </PrimaryButton>
+          <Typography variant="body1" sx={{ mr: 2, fontWeight: 500, color: '#1976d2' }}>{loggedInUser || 'User'}</Typography>
+          <PrimaryButton startIcon={<ExitToAppIcon sx={{ fontSize: '1rem' }} />} onClick={handleLogout} sx={{ minWidth: '100px' }}>Logout</PrimaryButton>
         </Stack>
       </Box>
 
-      {/* Content */}
-      <Container
-        maxWidth="sm"
-        sx={{
-          py: 6,
-          px: 2,
-          maxWidth: '600px',
-          ml: 4,
-          mr: 'auto'
-        }}
-      >
-        <Box
-          sx={{
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            borderRadius: '12px',
-            p: 4,
-            width: '400px',
-            maxWidth: '100%',
-            maxHeight: '85vh',
-            overflowY: 'auto'
-          }}
-        >
-          <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
-            AHU System Input
-          </Typography>
-
-          <Stack spacing={2}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="AHU Project Code"
-              value={projectCode}
-              onChange={(e) => setProjectCode(e.target.value)}
-              InputProps={{
-                style: { color: 'white' }
-              }}
-            />
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="AHU Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              InputProps={{
-                style: { color: 'white' }
-              }}
-            />
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="AHU Located"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              InputProps={{
-                style: { color: 'white' }
-              }}
-            />
-
-            {/* Dropdownlar */}
-            {renderDropdown('AHU Control Type', ahuControl, (e) => setAhuControl(e.target.value), ['MCC', 'Own Panel', 'Smart'])}
-            {renderDropdown('AHU Brand', ahuBrand, (e) => setAhuBrand(e.target.value), ['Arçelik', 'Blue Star Limited', 'Carrier', 'Daikin', 'Hitachi', 'Johnson Control', 'Lennox', 'Swegon Group', 'Systemair', 'Teba', 'Trane', 'Trox', 'Üntes'])}
-            {renderDropdown('Vantilator Control', fanControl, (e) => setFanControl(e.target.value), ['Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
-            {renderDropdown('Vantilator Pieces', fanPieces, (e) => setFanPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
+      {/* Main Layout */}
+      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        {/* Form */}
+        <Container maxWidth="sm" sx={{ py: 6, px: 2, maxWidth: '600px', ml: 4, mr: 2 }}>
+          <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+            <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>AHU System Input</Typography>
+            <Stack spacing={2}>
+              <TextField fullWidth variant="outlined" placeholder="AHU Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="AHU Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="AHU Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              {renderDropdown('AHU Control Type', ahuControl, (e) => setAhuControl(e.target.value), ['MCC', 'Own Panel', 'Smart'])}
+              {renderDropdown('Vantilator Control', fanControl, (e) => setFanControl(e.target.value), ['Dol', 'EC', 'VFD'])}
+{renderDropdown('Vantilator Pieces', fanPieces, (e) => setFanPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
             {renderDropdown('Vantilator Power', fanPower, (e) => setFanPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
             {renderDropdown('Vantilator Voltage', fanVoltage, (e) => setFanVoltage(e.target.value), ['230', '380'])}
             {renderDropdown('Aspirator Control', aspControl, (e) => setAspControl(e.target.value), ['none', 'Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
@@ -350,7 +263,6 @@ const [totalIntegrationPoints, setTotalIntegrationPoints] = useState('');
             {renderDropdown('Return Flow', returnFlow, (e) => setReturnFlow(e.target.value), ['none', 'Pressure', 'Volume'])}     
             {renderDropdown('System Integration', systemIntegration, (e) => setSystemIntegration(e.target.value), ['none', 'Package', 'VFD'])}
             {renderDropdown('Protocol Integration', protocolIntegration, (e) => setProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], systemIntegration === 'none')}
-
 <TextField
   fullWidth
   variant="outlined"
@@ -370,18 +282,47 @@ const [totalIntegrationPoints, setTotalIntegrationPoints] = useState('');
     }
   }}
 />
+              <PrimaryButton sx={{ width: '100%' }} onClick={() => setShowTable(true)}>Save Ahu</PrimaryButton>
+              <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
+            </Stack>
+          </Box>
+        </Container>
 
-
-
-
-
-            <PrimaryButton sx={{ width: '100%' }}>Save Ahu</PrimaryButton>
-            <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>
-              Back to Project Overview
-            </PrimaryButton>
-          </Stack>
+        {/* Table */}
+        <Box sx={{ flex: 1, p: 4, backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '12px', mr: 4, mt: 6, maxHeight: '85vh', overflowY: 'auto', color: 'white' }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>AHU Output Table</Typography>
+          {showTable && ahuControl === 'MCC' && fanControl === 'Dol' && (
+            <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white', border: '1px solid #ccc', fontSize: '0.875rem' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#263238' }}>
+                  {[ 'Project Code', 'Description', 'Located', 'Point Name', 'AI', 'AO', 'DI', 'DO', 'Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP', 'Mbus' ].map((header, i) => (
+                    <th key={i} style={{ border: '1px solid #ccc', padding: '8px', fontWeight: '600' }}>{header}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {['Vantilator Fan Status', 'Vantilator Fan Fault', 'Vantilator Fan Auto/Manual', 'Vantilator Fan Command'].map((point, index) => (
+                  <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#37474F' : '#455A64' }}>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{projectCode}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{description}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{location}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{point}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>0</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>0</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{index === 3 ? 0 : 1}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{index === 3 ? 1 : 0}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>0</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>0</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>0</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>0</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>0</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </Box>
-      </Container>
+      </Box>
     </Box>
   );
 }
