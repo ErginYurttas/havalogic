@@ -82,8 +82,8 @@ export default function AhuPage() {
 
   const [ahuControl, setAhuControl] = useState('');
   const [ahuBrand, setAhuBrand] = useState('');
-  const [fanControl, setFanControl] = useState('');
-  const [vantilatorFanPieces, setVantilatorFanPieces] = useState('');
+  const [vantControl, setVantControl] = useState('');
+  const [vantPieces, setVantPieces] = useState('');
   const [fanPower, setFanPower] = useState('');
   const [fanVoltage, setFanVoltage] = useState('');
   const [aspControl, setAspControl] = useState('');
@@ -179,15 +179,15 @@ export default function AhuPage() {
 
   const handleSaveAhu = () => {
     if (ahuControl !== 'MCC') {
-      setTableRows([]);
-      setShowTable(false);
+      
+      setShowTable(true);
       return;
     }
 
-    const pieces = Number(vantilatorFanPieces) || 1;
-    let rows: any[] = [];
+    const vantpieces = Number(vantPieces) || 1;
+    let vantrows: any[] = [];
 
-    if (fanControl === 'Dol' || fanControl === 'Star-Delta') {
+    if (vantControl === 'Dol' || vantControl === 'Star-Delta') {
   const dolRows = [
     { point: 'Vantilator Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Vantilator Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
@@ -195,15 +195,15 @@ export default function AhuPage() {
     { point: 'Vantilator Fan Command', ai: 0, ao: 0, di: 0, do: 1 }
   ];
 
-  for (let i = 1; i <= pieces; i++) {
-    const suffix = pieces > 1 ? ` ${i}` : '';
+  for (let i = 1; i <= vantpieces; i++) {
+    const suffix = vantpieces > 1 ? ` ${i}` : '';
     dolRows.forEach((row) => {
-      rows.push({ ...row, point: `${row.point}${suffix}` });
+      vantrows.push({ ...row, point: `${row.point}${suffix}` });
     });
   }
 }
 
-    if (fanControl === 'VFD') {
+    if (vantControl === 'VFD') {
   const vfdRows = [
     { point: 'Fan Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Fan Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
@@ -213,15 +213,15 @@ export default function AhuPage() {
     { point: 'Fan Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
   ];
 
-  for (let i = 1; i <= pieces; i++) {
-    const suffix = pieces > 1 ? ` ${i}` : '';
+  for (let i = 1; i <= vantpieces; i++) {
+    const suffix = vantpieces > 1 ? ` ${i}` : '';
     vfdRows.forEach((row) => {
-      rows.push({ ...row, point: `${row.point}${suffix}` });
+      vantrows.push({ ...row, point: `${row.point}${suffix}` });
     });
   }
 }
 
-    if (fanControl === 'VFD with By Pass Circuit' || fanControl === 'VFD with By Pass Circuit + Star-Delta') {
+    if (vantControl === 'VFD with By Pass Circuit' || vantControl === 'VFD with By Pass Circuit + Star-Delta') {
       const byPassRows = [
           { point: 'Fan Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
           { point: 'Fan Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
@@ -234,13 +234,13 @@ export default function AhuPage() {
           { point: 'Fan Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 }
         ];
 
-    for (let i = 1; i <= pieces; i++) {
+    for (let i = 1; i <= vantpieces; i++) {
       byPassRows.forEach(item => {
-        rows.push({
+        vantrows.push({
           projectCode,
           description,
           location,
-          point: pieces > 1 ? `${item.point} ${i}` : item.point,
+          point: vantpieces > 1 ? `${item.point} ${i}` : item.point,
           ai: item.ai,
           ao: item.ao,
           di: item.di,
@@ -255,7 +255,7 @@ export default function AhuPage() {
     }
   }
 
-if (fanControl === 'Soft Starter') { 
+if (vantControl === 'Soft Starter') { 
   const softStarterRows = [
     { point: 'Vantilator Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Vantilator Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
@@ -263,15 +263,15 @@ if (fanControl === 'Soft Starter') {
     { point: 'Vantilator Fan Command', ai: 0, ao: 0, di: 0, do: 1 }
   ];
 
-  for (let i = 1; i <= pieces; i++) {
-    const suffix = pieces > 1 ? ` ${i}` : '';
+  for (let i = 1; i <= vantpieces; i++) {
+    const suffix = vantpieces > 1 ? ` ${i}` : '';
     softStarterRows.forEach((row) => {
-      rows.push({ ...row, point: `${row.point}${suffix}` });
+      vantrows.push({ ...row, point: `${row.point}${suffix}` });
     });
   }
 }
 
-if (fanControl === 'Soft Starter with By Pass Circuit'|| fanControl === 'Soft Starter with By Pass Circuit + Star-Delta') {
+if (vantControl === 'Soft Starter with By Pass Circuit'|| vantControl === 'Soft Starter with By Pass Circuit + Star-Delta') {
   const softBypassRows = [
     { point: 'Vantilator Fan Soft Starter Status', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Vantilator Fan Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
@@ -282,10 +282,10 @@ if (fanControl === 'Soft Starter with By Pass Circuit'|| fanControl === 'Soft St
     { point: 'Vantilator Fan Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
   ];
 
-  for (let i = 1; i <= pieces; i++) {
-    const suffix = pieces > 1 ? ` ${i}` : '';
+  for (let i = 1; i <= vantpieces; i++) {
+    const suffix = vantpieces > 1 ? ` ${i}` : '';
     softBypassRows.forEach((row) => {
-      rows.push({
+      vantrows.push({
         projectCode,
         description,
         location,
@@ -304,7 +304,7 @@ if (fanControl === 'Soft Starter with By Pass Circuit'|| fanControl === 'Soft St
   }
 }
 
-if (fanControl === 'EC') {
+if (vantControl === 'EC') {
   const ecRows = [
     { point: 'Vantilator EC Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Vantilator EC Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
@@ -313,10 +313,10 @@ if (fanControl === 'EC') {
     { point: 'Vantilator EC Fan Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
   ];
 
-  for (let i = 1; i <= pieces; i++) {
-    const suffix = pieces > 1 ? ` ${i}` : '';
+  for (let i = 1; i <= vantpieces; i++) {
+    const suffix = vantpieces > 1 ? ` ${i}` : '';
     ecRows.forEach((row) => {
-      rows.push({
+      vantrows.push({
         projectCode,
         description,
         location,
@@ -335,8 +335,160 @@ if (fanControl === 'EC') {
   }
 }
 
+const asppieces = Number(aspPieces) || 1;
+let asprows: any[] = [];
+
+if (aspControl === 'Dol' || aspControl === 'Star-Delta') {
+  const dolRows = [
+    { point: 'Aspirator Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Command', ai: 0, ao: 0, di: 0, do: 1 }
+  ];
+
+  for (let i = 1; i <= asppieces; i++) {
+    const suffix = asppieces > 1 ? ` ${i}` : '';
+    dolRows.forEach((row) => {
+      asprows.push({ ...row, point: `${row.point}${suffix}` });
+    });
+  }
+}
+
+if (aspControl === 'VFD') {
+  const vfdRows = [
+    { point: 'Aspirator Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+    { point: 'Aspirator Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
+    { point: 'Aspirator Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
+  ];
+
+  for (let i = 1; i <= asppieces; i++) {
+    const suffix = asppieces > 1 ? ` ${i}` : '';
+    vfdRows.forEach((row) => {
+      asprows.push({ ...row, point: `${row.point}${suffix}` });
+    });
+  }
+}
+
+if (aspControl === 'VFD with By Pass Circuit' || aspControl === 'VFD with By Pass Circuit + Star-Delta') {
+  const byPassRows = [
+    { point: 'Aspirator Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator By/Pass Switch', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+    { point: 'Aspirator Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
+    { point: 'Aspirator Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 }
+  ];
+
+  for (let i = 1; i <= asppieces; i++) {
+    byPassRows.forEach(item => {
+      asprows.push({
+        projectCode,
+        description,
+        location,
+        point: asppieces > 1 ? `${item.point} ${i}` : item.point,
+        ai: item.ai,
+        ao: item.ao,
+        di: item.di,
+        do: item.do,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
+    });
+  }
+}
+
+if (aspControl === 'Soft Starter') {
+  const softStarterRows = [
+    { point: 'Aspirator Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Command', ai: 0, ao: 0, di: 0, do: 1 }
+  ];
+
+  for (let i = 1; i <= asppieces; i++) {
+    const suffix = asppieces > 1 ? ` ${i}` : '';
+    softStarterRows.forEach((row) => {
+      asprows.push({ ...row, point: `${row.point}${suffix}` });
+    });
+  }
+}
+
+if (aspControl === 'Soft Starter with By Pass Circuit' || aspControl === 'Soft Starter with By Pass Circuit + Star-Delta') {
+  const softBypassRows = [
+    { point: 'Aspirator Fan Soft Starter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Soft Starter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Soft Starter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan By Pass Switch Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
+  ];
+
+  for (let i = 1; i <= asppieces; i++) {
+    const suffix = asppieces > 1 ? ` ${i}` : '';
+    softBypassRows.forEach((row) => {
+      asprows.push({
+        projectCode,
+        description,
+        location,
+        point: `${row.point}${suffix}`,
+        ai: row.ai,
+        ao: row.ao,
+        di: row.di,
+        do: row.do,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
+    });
+  }
+}
+
+if (aspControl === 'EC') {
+  const ecRows = [
+    { point: 'Aspirator EC Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator EC Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator EC Fan Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
+    { point: 'Aspirator EC Fan Feedback', ai: 1, ao: 0, di: 0, do: 0 },
+    { point: 'Aspirator EC Fan Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
+  ];
+
+  for (let i = 1; i <= asppieces; i++) {
+    const suffix = asppieces > 1 ? ` ${i}` : '';
+    ecRows.forEach((row) => {
+      asprows.push({
+        projectCode,
+        description,
+        location,
+        point: `${row.point}${suffix}`,
+        ai: row.ai,
+        ao: row.ao,
+        di: row.di,
+        do: row.do,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
+    });
+  }
+  
+}
+
     // Protokol kolonlarını ve diğer bilgileri her satıra ekle
-    rows = rows.map(row => ({
+    asprows = asprows.map(row => ({
       projectCode,
       description,
       location,
@@ -348,8 +500,11 @@ if (fanControl === 'EC') {
       mbus: 0
     }));
 
-    setTableRows(rows);
+   
     setShowTable(true);
+
+    setTableRows([...vantrows, ...asprows]);
+setShowTable(true);
   };
 
 
@@ -374,11 +529,11 @@ if (fanControl === 'EC') {
               <TextField fullWidth variant="outlined" placeholder="AHU Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               <TextField fullWidth variant="outlined" placeholder="AHU Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               {renderDropdown('AHU Control Type', ahuControl, (e) => setAhuControl(e.target.value), ['MCC', 'Own Panel', 'Smart'])}
-              {renderDropdown('Vantilator Control', fanControl, (e) => setFanControl(e.target.value), ['Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
-              {renderDropdown('Vantilator Pieces', vantilatorFanPieces, (e) => setVantilatorFanPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
+              {renderDropdown('Vantilator Control', vantControl, (e) => setVantControl(e.target.value), ['Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+              {renderDropdown('Vantilator Pieces', vantPieces, (e) => setVantPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
               {renderDropdown('Vantilator Power', fanPower, (e) => setFanPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
               {renderDropdown('Vantilator Voltage', fanVoltage, (e) => setFanVoltage(e.target.value), ['230', '380'])}
-              {renderDropdown('Aspirator Control', aspControl, (e) => setAspControl(e.target.value), ['Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta','Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+              {renderDropdown('Aspirator Control', aspControl, (e) => setAspControl(e.target.value), ['none', 'Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta','Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
               {renderDropdown('Aspirator Pieces', aspPieces, (e) => setAspPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], aspControl === 'none')}
               {renderDropdown('Aspirator Power', aspPower, (e) => setAspPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], aspControl === 'none')}
               {renderDropdown('Aspirator Voltage', aspVoltage, (e) => setAspVoltage(e.target.value), ['230', '380'], aspControl === 'none')}
