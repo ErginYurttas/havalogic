@@ -161,72 +161,196 @@ export default function AhuPage() {
   };
 
   const renderDropdown = (
-  label: string,
-  value: string,
-  onChange: (e: SelectChangeEvent) => void,
-  options: string[],
-  disabled: boolean = false // yeni eklendi
-) => (
-  <FormControl fullWidth disabled={disabled}>
-    <InputLabel sx={labelStyles}>{label}</InputLabel>
-    <Select value={value} label={label} onChange={onChange} sx={selectStyles}>
-      {options.map((option, index) => (
-        <MenuItem key={index} value={option}>{option}</MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-);
+    label: string,
+    value: string,
+    onChange: (e: SelectChangeEvent) => void,
+    options: string[],
+    disabled: boolean = false // yeni eklendi
+  ) => (
+    <FormControl fullWidth disabled={disabled}>
+      <InputLabel sx={labelStyles}>{label}</InputLabel>
+      <Select value={value} label={label} onChange={onChange} sx={selectStyles}>
+        {options.map((option, index) => (
+          <MenuItem key={index} value={option}>{option}</MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
 
-const handleSaveAhu = () => {
-  if (ahuControl !== 'MCC') {
-    setTableRows([]);
-    setShowTable(false);
-    return;
+  const handleSaveAhu = () => {
+    if (ahuControl !== 'MCC') {
+      setTableRows([]);
+      setShowTable(false);
+      return;
+    }
+
+    const pieces = Number(vantilatorFanPieces) || 1;
+    let rows: any[] = [];
+
+    if (fanControl === 'Dol' || fanControl === 'Star-Delta') {
+  const dolRows = [
+    { point: 'Vantilator Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Command', ai: 0, ao: 0, di: 0, do: 1 }
+  ];
+
+  for (let i = 1; i <= pieces; i++) {
+    const suffix = pieces > 1 ? ` ${i}` : '';
+    dolRows.forEach((row) => {
+      rows.push({ ...row, point: `${row.point}${suffix}` });
+    });
   }
+}
 
-  const pieces = Number(vantilatorFanPieces) || 1;
-  let rows: any[] = [];
+    if (fanControl === 'VFD') {
+  const vfdRows = [
+    { point: 'Fan Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Fan Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Fan Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Fan Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+    { point: 'Fan Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
+    { point: 'Fan Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
+  ];
 
-  if (fanControl === 'Dol' || fanControl === 'Star-Delta') {
+  for (let i = 1; i <= pieces; i++) {
+    const suffix = pieces > 1 ? ` ${i}` : '';
+    vfdRows.forEach((row) => {
+      rows.push({ ...row, point: `${row.point}${suffix}` });
+    });
+  }
+}
+
+    if (fanControl === 'VFD with By Pass Circuit' || fanControl === 'VFD with By Pass Circuit + Star-Delta') {
+      const byPassRows = [
+          { point: 'Fan Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+          { point: 'Fan Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
+          { point: 'Fan Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+          { point: 'Fan Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
+          { point: 'Fan Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+          { point: 'Fan By/Pass Switch', ai: 0, ao: 0, di: 1, do: 0 },
+          { point: 'Fan Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+          { point: 'Fan Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
+          { point: 'Fan Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 }
+        ];
+
     for (let i = 1; i <= pieces; i++) {
-      rows.push(
-        { point: `Vantilator Fan Status ${i}`, ai: 0, ao: 0, di: 1, do: 0 },
-        { point: `Vantilator Fan Fault ${i}`, ai: 0, ao: 0, di: 1, do: 0 },
-        { point: `Vantilator Fan Auto/Manual ${i}`, ai: 0, ao: 0, di: 1, do: 0 },
-        { point: `Vantilator Fan Command ${i}`, ai: 0, ao: 0, di: 0, do: 1 }
-      );
+      byPassRows.forEach(item => {
+        rows.push({
+          projectCode,
+          description,
+          location,
+          point: pieces > 1 ? `${item.point} ${i}` : item.point,
+          ai: item.ai,
+          ao: item.ao,
+          di: item.di,
+          do: item.do,
+          modbusRtu: 0,
+          modbusTcp: 0,
+          bacnetMstp: 0,
+          bacnetIp: 0,
+          mbus: 0
+        });
+      });
     }
   }
 
-  if (fanControl === 'VFD') {
-    for (let i = 1; i <= pieces; i++) {
-      rows.push(
-        { point: `Fan Frequency Inverter Status ${i}`, ai: 0, ao: 0, di: 1, do: 0 },
-        { point: `Fan Frequency Inverter Fault ${i}`, ai: 0, ao: 0, di: 1, do: 0 },
-        { point: `Fan Frequency Inverter Auto/Manual ${i}`, ai: 0, ao: 0, di: 1, do: 0 },
-        { point: `Fan Frequency Inverter Command ${i}`, ai: 0, ao: 0, di: 0, do: 1 },
-        { point: `Fan Frequency Inverter Proportional Control ${i}`, ai: 1, ao: 0, di: 0, do: 0 },
-        { point: `Fan Frequency Inverter Feedback ${i}`, ai: 0, ao: 1, di: 0, do: 0 }
-      );
-    }
+if (fanControl === 'Soft Starter') { 
+  const softStarterRows = [
+    { point: 'Vantilator Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Command', ai: 0, ao: 0, di: 0, do: 1 }
+  ];
+
+  for (let i = 1; i <= pieces; i++) {
+    const suffix = pieces > 1 ? ` ${i}` : '';
+    softStarterRows.forEach((row) => {
+      rows.push({ ...row, point: `${row.point}${suffix}` });
+    });
   }
+}
 
-  // Protokol kolonlarını ve diğer bilgileri her satıra ekle
-  rows = rows.map(row => ({
-    projectCode,
-    description,
-    location,
-    ...row,
-    modbusRtu: 0,
-    modbusTcp: 0,
-    bacnetMstp: 0,
-    bacnetIp: 0,
-    mbus: 0
-  }));
+if (fanControl === 'Soft Starter with By Pass Circuit'|| fanControl === 'Soft Starter with By Pass Circuit + Star-Delta') {
+  const softBypassRows = [
+    { point: 'Vantilator Fan Soft Starter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Soft Starter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Soft Starter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan By Pass Switch Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
+  ];
 
-  setTableRows(rows);
-  setShowTable(true);
-};
+  for (let i = 1; i <= pieces; i++) {
+    const suffix = pieces > 1 ? ` ${i}` : '';
+    softBypassRows.forEach((row) => {
+      rows.push({
+        projectCode,
+        description,
+        location,
+        point: `${row.point}${suffix}`,
+        ai: row.ai,
+        ao: row.ao,
+        di: row.di,
+        do: row.do,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
+    });
+  }
+}
+
+if (fanControl === 'EC') {
+  const ecRows = [
+    { point: 'Vantilator EC Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator EC Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator EC Fan Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
+    { point: 'Vantilator EC Fan Feedback', ai: 1, ao: 0, di: 0, do: 0 },
+    { point: 'Vantilator EC Fan Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
+  ];
+
+  for (let i = 1; i <= pieces; i++) {
+    const suffix = pieces > 1 ? ` ${i}` : '';
+    ecRows.forEach((row) => {
+      rows.push({
+        projectCode,
+        description,
+        location,
+        point: `${row.point}${suffix}`,
+        ai: row.ai,
+        ao: row.ao,
+        di: row.di,
+        do: row.do,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
+    });
+  }
+}
+
+    // Protokol kolonlarını ve diğer bilgileri her satıra ekle
+    rows = rows.map(row => ({
+      projectCode,
+      description,
+      location,
+      ...row,
+      modbusRtu: 0,
+      modbusTcp: 0,
+      bacnetMstp: 0,
+      bacnetIp: 0,
+      mbus: 0
+    }));
+
+    setTableRows(rows);
+    setShowTable(true);
+  };
 
 
   return (
@@ -250,11 +374,11 @@ const handleSaveAhu = () => {
               <TextField fullWidth variant="outlined" placeholder="AHU Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               <TextField fullWidth variant="outlined" placeholder="AHU Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               {renderDropdown('AHU Control Type', ahuControl, (e) => setAhuControl(e.target.value), ['MCC', 'Own Panel', 'Smart'])}
-              {renderDropdown('Vantilator Control', fanControl, (e) => setFanControl(e.target.value), ['none', 'Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
-             {renderDropdown('Vantilator Pieces', vantilatorFanPieces, (e) => setVantilatorFanPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
+              {renderDropdown('Vantilator Control', fanControl, (e) => setFanControl(e.target.value), ['Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+              {renderDropdown('Vantilator Pieces', vantilatorFanPieces, (e) => setVantilatorFanPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
               {renderDropdown('Vantilator Power', fanPower, (e) => setFanPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
               {renderDropdown('Vantilator Voltage', fanVoltage, (e) => setFanVoltage(e.target.value), ['230', '380'])}
-              {renderDropdown('Aspirator Control', aspControl, (e) => setAspControl(e.target.value), ['Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+              {renderDropdown('Aspirator Control', aspControl, (e) => setAspControl(e.target.value), ['Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta','Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
               {renderDropdown('Aspirator Pieces', aspPieces, (e) => setAspPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], aspControl === 'none')}
               {renderDropdown('Aspirator Power', aspPower, (e) => setAspPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], aspControl === 'none')}
               {renderDropdown('Aspirator Voltage', aspVoltage, (e) => setAspVoltage(e.target.value), ['230', '380'], aspControl === 'none')}
@@ -312,74 +436,68 @@ const handleSaveAhu = () => {
               {renderDropdown('Return Filter', returnFilter, (e) => setReturnFilter(e.target.value), ['none', 'Analog', 'Digital'])}
               {renderDropdown('Recuperator Filter', recuperatorFilter, (e) => setRecuperatorFilter(e.target.value), ['none', 'Analog', 'Digital'])}
               {renderDropdown('Supply Flow', supplyFlow, (e) => setSupplyFlow(e.target.value), ['none', 'Pressure', 'Volume'])}
-              {renderDropdown('Return Flow', returnFlow, (e) => setReturnFlow(e.target.value), ['none', 'Pressure', 'Volume'])}     
+              {renderDropdown('Return Flow', returnFlow, (e) => setReturnFlow(e.target.value), ['none', 'Pressure', 'Volume'])}
               {renderDropdown('System Integration', systemIntegration, (e) => setSystemIntegration(e.target.value), ['none', 'Package', 'VFD'])}
               {renderDropdown('Protocol Integration', protocolIntegration, (e) => setProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], systemIntegration === 'none')}
-<TextField
-  fullWidth
-  variant="outlined"
-  placeholder="Total Integration Points"
-  value={totalIntegrationPoints}
-  onChange={(e) => setTotalIntegrationPoints(e.target.value)}
-  disabled={systemIntegration === 'none'}
-  InputProps={{
-    style: {
-      color: systemIntegration === 'none' ? '#888' : 'white',
-      backgroundColor: systemIntegration === 'none' ? '#1e1e1e' : 'transparent'
-    }
-  }}
-  sx={{
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: systemIntegration === 'none' ? '#555' : '#B0BEC5'
-    }
-  }}
-/>
-             <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveAhu}>Save Ahu</PrimaryButton>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Total Integration Points"
+                value={totalIntegrationPoints}
+                onChange={(e) => setTotalIntegrationPoints(e.target.value)}
+                disabled={systemIntegration === 'none'}
+                InputProps={{
+                  style: {
+                    color: systemIntegration === 'none' ? '#888' : 'white',
+                    backgroundColor: systemIntegration === 'none' ? '#1e1e1e' : 'transparent'
+                  }
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: systemIntegration === 'none' ? '#555' : '#B0BEC5'
+                  }
+                }}
+              />
+              <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveAhu}>Save Ahu</PrimaryButton>
               <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
             </Stack>
           </Box>
         </Container>
 
         {/* Tablo */}
-<Box sx={{ flex: 1, p: 4, backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '12px', mr: 4, mt: 6, maxHeight: '85vh', overflowY: 'auto', color: 'white' }}>
-  <Typography variant="h6" sx={{ mb: 2 }}>AHU Output Table</Typography>
+        <Box sx={{ flex: 1, p: 4, backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '12px', mr: 1, ml: 0, mt: 6, maxHeight: '85vh', overflowY: 'auto', color: 'white' }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>AHU Output Table</Typography>
 
-  {showTable && tableRows.length > 0 && (
-    <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white', border: '1px solid #ccc', fontSize: '0.875rem' }}>
-      <thead>
-        <tr style={{ backgroundColor: '#263238' }}>
-          {[ 'Project Code', 'Description', 'Located', 'Point Name', 'AI', 'AO', 'DI', 'DO', 'Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP', 'Mbus' ].map((header, i) => (
-            <th key={i} style={{ border: '1px solid #ccc', padding: '8px', fontWeight: '600' }}>{header}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {tableRows.map((row, index) => (
-          <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#37474F' : '#455A64' }}>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.projectCode}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.description}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.location}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.point}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.ai}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.ao}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.di}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.do}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.modbusRtu}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.modbusTcp}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.bacnetMstp}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.bacnetIp}</td>
-            <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.mbus}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )}
-
-
-
-          
-
-          
+          {showTable && tableRows.length > 0 && (
+            <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white', border: '1px solid #ccc', fontSize: '0.875rem' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#263238' }}>
+                  {['Project Code', 'Description', 'Located', 'Point Name', 'AI', 'AO', 'DI', 'DO', 'Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP', 'Mbus'].map((header, i) => (
+                    <th key={i} style={{ border: '1px solid #ccc', padding: '8px', fontWeight: '600' }}>{header}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {tableRows.map((row, index) => (
+                  <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#37474F' : '#455A64' }}>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.projectCode}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.description}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.location}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.point}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.ai}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.ao}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.di}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.do}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.modbusRtu}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.modbusTcp}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.bacnetMstp}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.bacnetIp}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.mbus}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </Box>
       </Box>
     </Box>

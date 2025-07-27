@@ -125,7 +125,7 @@ export default function Project() {
           borderRadius: '12px',
           p: 4,
           mb: 6,
-          width: '400px',
+          width: '300px',
           maxWidth: '100%'
         }}>
           <Typography variant="h5" sx={{
@@ -164,7 +164,7 @@ export default function Project() {
                   width: 180,
                   height: 140,
                   borderRadius: '8px',
-                  objectFit: 'cover',
+                  objectFit: 'contain',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
                 }}
               />
