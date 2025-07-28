@@ -90,6 +90,11 @@ export default function AhuPage() {
   const [aspPieces, setAspPieces] = useState('');
   const [aspPower, setAspPower] = useState('');
   const [aspVoltage, setAspVoltage] = useState('');
+  const [maintenanceSafety, setMaintenanceSafety] = useState('');
+  const [emergencySafety, setEmergencySafety] = useState('');
+  const [doorSafety, setDoorSafety] = useState('');
+  const [fireSafety, setFireSafety] = useState('');
+  const [frostSafety, setFrostSafety] = useState('');
   const [pumpControl, setPumpControl] = useState('');
   const [pumpPieces, setPumpPieces] = useState('');
   const [pumpPower, setPumpPower] = useState('');
@@ -134,11 +139,7 @@ export default function AhuPage() {
   const [heatExchangerAirSensor, setHeatExchangerAirSensor] = useState('');
   const [mixedAirSensor, setMixedAirSensor] = useState('');
   const [dehumidificationSensor, setDehumidificationSensor] = useState('');
-  const [maintenanceSafety, setMaintenanceSafety] = useState('');
-  const [emergencySafety, setEmergencySafety] = useState('');
-  const [doorSafety, setDoorSafety] = useState('');
-  const [fireSafety, setFireSafety] = useState('');
-  const [frostSafety, setFrostSafety] = useState('');
+ 
   const [supplyFilter, setSupplyFilter] = useState('');
   const [freshFilter, setFreshFilter] = useState('');
   const [returnFilter, setReturnFilter] = useState('');
@@ -198,7 +199,21 @@ export default function AhuPage() {
   for (let i = 1; i <= vantpieces; i++) {
     const suffix = vantpieces > 1 ? ` ${i}` : '';
     dolRows.forEach((row) => {
-      vantrows.push({ ...row, point: `${row.point}${suffix}` });
+      vantrows.push({
+  projectCode,
+  description,
+  location,
+  point: `${row.point}${suffix}`,
+  ai: row.ai,
+  ao: row.ao,
+  di: row.di,
+  do: row.do,
+  modbusRtu: 0,
+  modbusTcp: 0,
+  bacnetMstp: 0,
+  bacnetIp: 0,
+  mbus: 0
+});
     });
   }
 }
@@ -216,7 +231,21 @@ export default function AhuPage() {
   for (let i = 1; i <= vantpieces; i++) {
     const suffix = vantpieces > 1 ? ` ${i}` : '';
     vfdRows.forEach((row) => {
-      vantrows.push({ ...row, point: `${row.point}${suffix}` });
+      vantrows.push({
+  projectCode,
+  description,
+  location,
+  point: `${row.point}${suffix}`,
+  ai: row.ai,
+  ao: row.ao,
+  di: row.di,
+  do: row.do,
+  modbusRtu: 0,
+  modbusTcp: 0,
+  bacnetMstp: 0,
+  bacnetIp: 0,
+  mbus: 0
+});
     });
   }
 }
@@ -266,7 +295,21 @@ if (vantControl === 'Soft Starter') {
   for (let i = 1; i <= vantpieces; i++) {
     const suffix = vantpieces > 1 ? ` ${i}` : '';
     softStarterRows.forEach((row) => {
-      vantrows.push({ ...row, point: `${row.point}${suffix}` });
+      vantrows.push({
+  projectCode,
+  description,
+  location,
+  point: `${row.point}${suffix}`,
+  ai: row.ai,
+  ao: row.ao,
+  di: row.di,
+  do: row.do,
+  modbusRtu: 0,
+  modbusTcp: 0,
+  bacnetMstp: 0,
+  bacnetIp: 0,
+  mbus: 0
+});
     });
   }
 }
@@ -335,6 +378,44 @@ if (vantControl === 'EC') {
   }
 }
 
+if (maintenanceSafety === 'for Each Fan') {
+  for (let i = 1; i <= vantpieces; i++) {
+    vantrows.push({
+      projectCode,
+      description,
+      location,
+      point: vantpieces > 1 ? `Vantilator Maintenance Status ${i}` : 'Vantilator Maintenance Status',
+      ai: 0,
+      ao: 0,
+      di: 1,
+      do: 0,
+      modbusRtu: 0,
+      modbusTcp: 0,
+      bacnetMstp: 0,
+      bacnetIp: 0,
+      mbus: 0
+    });
+  }
+}
+
+if (maintenanceSafety === 'for For All Fans') {
+  vantrows.push({
+    projectCode,
+    description,
+    location,
+    point: 'Vantilator General Maintenance Status',
+    ai: 0,
+    ao: 0,
+    di: 1,
+    do: 0,
+    modbusRtu: 0,
+    modbusTcp: 0,
+    bacnetMstp: 0,
+    bacnetIp: 0,
+    mbus: 0
+  });
+}
+
 const asppieces = Number(aspPieces) || 1;
 let asprows: any[] = [];
 
@@ -349,7 +430,21 @@ if (aspControl === 'Dol' || aspControl === 'Star-Delta') {
   for (let i = 1; i <= asppieces; i++) {
     const suffix = asppieces > 1 ? ` ${i}` : '';
     dolRows.forEach((row) => {
-      asprows.push({ ...row, point: `${row.point}${suffix}` });
+      asprows.push({
+  projectCode,
+  description,
+  location,
+  point: `${row.point}${suffix}`,
+  ai: row.ai,
+  ao: row.ao,
+  di: row.di,
+  do: row.do,
+  modbusRtu: 0,
+  modbusTcp: 0,
+  bacnetMstp: 0,
+  bacnetIp: 0,
+  mbus: 0
+});
     });
   }
 }
@@ -367,7 +462,21 @@ if (aspControl === 'VFD') {
   for (let i = 1; i <= asppieces; i++) {
     const suffix = asppieces > 1 ? ` ${i}` : '';
     vfdRows.forEach((row) => {
-      asprows.push({ ...row, point: `${row.point}${suffix}` });
+      asprows.push({
+  projectCode,
+  description,
+  location,
+  point: `${row.point}${suffix}`,
+  ai: row.ai,
+  ao: row.ao,
+  di: row.di,
+  do: row.do,
+  modbusRtu: 0,
+  modbusTcp: 0,
+  bacnetMstp: 0,
+  bacnetIp: 0,
+  mbus: 0
+});
     });
   }
 }
@@ -417,7 +526,21 @@ if (aspControl === 'Soft Starter') {
   for (let i = 1; i <= asppieces; i++) {
     const suffix = asppieces > 1 ? ` ${i}` : '';
     softStarterRows.forEach((row) => {
-      asprows.push({ ...row, point: `${row.point}${suffix}` });
+      asprows.push({
+  projectCode,
+  description,
+  location,
+  point: `${row.point}${suffix}`,
+  ai: row.ai,
+  ao: row.ao,
+  di: row.di,
+  do: row.do,
+  modbusRtu: 0,
+  modbusTcp: 0,
+  bacnetMstp: 0,
+  bacnetIp: 0,
+  mbus: 0
+});
     });
   }
 }
@@ -455,6 +578,8 @@ if (aspControl === 'Soft Starter with By Pass Circuit' || aspControl === 'Soft S
   }
 }
 
+
+
 if (aspControl === 'EC') {
   const ecRows = [
     { point: 'Aspirator EC Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
@@ -484,6 +609,45 @@ if (aspControl === 'EC') {
       });
     });
   }
+  if (maintenanceSafety === 'for Each Fan') {
+  for (let i = 1; i <= asppieces; i++) {
+    const suffix = asppieces > 1 ? ` ${i}` : '';
+    asprows.push({
+      projectCode,
+      description,
+      location,
+      point: `Aspirator Maintenance Status${suffix}`,
+      ai: 0,
+      ao: 0,
+      di: 1,
+      do: 0,
+      modbusRtu: 0,
+      modbusTcp: 0,
+      bacnetMstp: 0,
+      bacnetIp: 0,
+      mbus: 0
+    });
+  }
+}
+
+if (maintenanceSafety === 'for For All Fans') {
+  const suffix = asppieces > 1 ? '' : '';
+  asprows.push({
+    projectCode,
+    description,
+    location,
+    point: `Aspirator General Maintenance Status${suffix}`,
+    ai: 0,
+    ao: 0,
+    di: 1,
+    do: 0,
+    modbusRtu: 0,
+    modbusTcp: 0,
+    bacnetMstp: 0,
+    bacnetIp: 0,
+    mbus: 0
+  });
+}
   
 }
 
@@ -503,7 +667,48 @@ if (aspControl === 'EC') {
    
     setShowTable(true);
 
-    setTableRows([...vantrows, ...asprows]);
+const maintenanceRows: any[] = [];
+
+if (maintenanceSafety === 'for Each Fan') {
+  for (let i = 1; i <= vantpieces; i++) {
+    maintenanceRows.push({
+      point: `Vantilator Maintenance Status${vantpieces > 1 ? ` ${i}` : ''}`,
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    });
+  }
+
+  for (let i = 1; i <= asppieces; i++) {
+    maintenanceRows.push({
+      point: `Aspirator Maintenance Status${asppieces > 1 ? ` ${i}` : ''}`,
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    });
+  }
+}
+
+if (maintenanceSafety === 'for For All Fans') {
+  maintenanceRows.push({
+    point: 'Vantilator General Maintenance Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+
+  maintenanceRows.push({
+    point: 'Aspirator General Maintenance Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+// tabloya hepsini birleştir
+setTableRows([...vantrows, ...asprows, ...maintenanceRows]);
+
+
 setShowTable(true);
   };
 
@@ -537,7 +742,12 @@ setShowTable(true);
               {renderDropdown('Aspirator Pieces', aspPieces, (e) => setAspPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], aspControl === 'none')}
               {renderDropdown('Aspirator Power', aspPower, (e) => setAspPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], aspControl === 'none')}
               {renderDropdown('Aspirator Voltage', aspVoltage, (e) => setAspVoltage(e.target.value), ['230', '380'], aspControl === 'none')}
-              {renderDropdown('Run Around Pump Control', pumpControl, (e) => setPumpControl(e.target.value), ['none', 'Dol', 'Ec', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+              {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
+              {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
+              {renderDropdown('Door Safety Contacts', doorSafety, (e) => setDoorSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
+              {renderDropdown('Fire Safety Contacts', fireSafety, (e) => setFireSafety(e.target.value), ['none', 'only Viewing', 'Viewing and Control'])}
+              {renderDropdown('Frost Safety Contacts', frostSafety, (e) => setFrostSafety(e.target.value), ['none', 'Automatic Reset', 'Manual Reset'])}
+              {renderDropdown('Run Around Pump Control', pumpControl, (e) => setPumpControl(e.target.value), ['none', 'Dol', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
               {renderDropdown('Run Around Pump Pieces', pumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], pumpControl === 'none')}
               {renderDropdown('Run Around Pump Power', pumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], pumpControl === 'none')}
               {renderDropdown('Run Around Pump Voltage', pumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], pumpControl === 'none')}
@@ -581,11 +791,7 @@ setShowTable(true);
               {renderDropdown('Heat Exchanger Air', heatExchangerAirSensor, (e) => setHeatExchangerAirSensor(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
               {renderDropdown('Mixed Air', mixedAirSensor, (e) => setMixedAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
               {renderDropdown('Dehumidification', dehumidificationSensor, (e) => setDehumidificationSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
-              {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
-              {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
-              {renderDropdown('Door Safety Contacts', doorSafety, (e) => setDoorSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
-              {renderDropdown('Fire Safety Contacts', fireSafety, (e) => setFireSafety(e.target.value), ['none', 'only Viewing', 'Viewing and Control'])}
-              {renderDropdown('Frost Safety Contacts', frostSafety, (e) => setFrostSafety(e.target.value), ['none', 'Automatic Reset', 'Manual Reset'])}
+              
               {renderDropdown('Supply Filter', supplyFilter, (e) => setSupplyFilter(e.target.value), ['none', 'Analog', 'Digital'])}
               {renderDropdown('Fresh Filter', freshFilter, (e) => setFreshFilter(e.target.value), ['none', 'Analog', 'Digital'])}
               {renderDropdown('Return Filter', returnFilter, (e) => setReturnFilter(e.target.value), ['none', 'Analog', 'Digital'])}
