@@ -463,20 +463,20 @@ if (aspControl === 'VFD') {
     const suffix = asppieces > 1 ? ` ${i}` : '';
     vfdRows.forEach((row) => {
       asprows.push({
-  projectCode,
-  description,
-  location,
-  point: `${row.point}${suffix}`,
-  ai: row.ai,
-  ao: row.ao,
-  di: row.di,
-  do: row.do,
-  modbusRtu: 0,
-  modbusTcp: 0,
-  bacnetMstp: 0,
-  bacnetIp: 0,
-  mbus: 0
-});
+        projectCode,
+        description,
+        location,
+        point: `${row.point}${suffix}`,
+        ai: row.ai,
+        ao: row.ao,
+        di: row.di,
+        do: row.do,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
     });
   }
 }
