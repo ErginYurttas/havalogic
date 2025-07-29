@@ -181,7 +181,7 @@ export default function AhuPage() {
   const handleSaveAhu = () => {
     if (ahuControl !== 'MCC') {
       
-      setShowTable(true);
+
       return;
     }
 
@@ -220,12 +220,12 @@ export default function AhuPage() {
 
     if (vantControl === 'VFD') {
   const vfdRows = [
-    { point: 'Fan Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Fan Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Fan Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Fan Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
-    { point: 'Fan Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
-    { point: 'Fan Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
+    { point: 'Vantilator Fan Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+    { point: 'Vantilator Fan Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
+    { point: 'Vantilator Fan Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
   ];
 
   for (let i = 1; i <= vantpieces; i++) {
@@ -252,15 +252,15 @@ export default function AhuPage() {
 
     if (vantControl === 'VFD with By Pass Circuit' || vantControl === 'VFD with By Pass Circuit + Star-Delta') {
       const byPassRows = [
-          { point: 'Fan Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
-          { point: 'Fan Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
-          { point: 'Fan Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
-          { point: 'Fan Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
-          { point: 'Fan Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-          { point: 'Fan By/Pass Switch', ai: 0, ao: 0, di: 1, do: 0 },
-          { point: 'Fan Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
-          { point: 'Fan Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
-          { point: 'Fan Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 }
+          { point: 'Vantilator Fan Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+          { point: 'Vantilator Fan Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
+          { point: 'Vantilator Fan Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+          { point: 'Vantilator Fan Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
+          { point: 'Vantilator Fan Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+          { point: 'Vantilator Fan By/Pass Switch', ai: 0, ao: 0, di: 1, do: 0 },
+          { point: 'Vantilator Fan Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+          { point: 'Vantilator Fan Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
+          { point: 'Vantilator Fan Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 }
         ];
 
     for (let i = 1; i <= vantpieces; i++) {
@@ -286,10 +286,10 @@ export default function AhuPage() {
 
 if (vantControl === 'Soft Starter') { 
   const softStarterRows = [
-    { point: 'Vantilator Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Vantilator Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Vantilator Fan Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Vantilator Fan Command', ai: 0, ao: 0, di: 0, do: 1 }
+    { point: 'Vantilator Fan Soft Starter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Soft Starter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Soft Starter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Vantilator Fan Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
   ];
 
   for (let i = 1; i <= vantpieces; i++) {
@@ -378,43 +378,7 @@ if (vantControl === 'EC') {
   }
 }
 
-if (maintenanceSafety === 'for Each Fan') {
-  for (let i = 1; i <= vantpieces; i++) {
-    vantrows.push({
-      projectCode,
-      description,
-      location,
-      point: vantpieces > 1 ? `Vantilator Maintenance Status ${i}` : 'Vantilator Maintenance Status',
-      ai: 0,
-      ao: 0,
-      di: 1,
-      do: 0,
-      modbusRtu: 0,
-      modbusTcp: 0,
-      bacnetMstp: 0,
-      bacnetIp: 0,
-      mbus: 0
-    });
-  }
-}
 
-if (maintenanceSafety === 'for For All Fans') {
-  vantrows.push({
-    projectCode,
-    description,
-    location,
-    point: 'Vantilator General Maintenance Status',
-    ai: 0,
-    ao: 0,
-    di: 1,
-    do: 0,
-    modbusRtu: 0,
-    modbusTcp: 0,
-    bacnetMstp: 0,
-    bacnetIp: 0,
-    mbus: 0
-  });
-}
 
 const asppieces = Number(aspPieces) || 1;
 let asprows: any[] = [];
@@ -451,12 +415,12 @@ if (aspControl === 'Dol' || aspControl === 'Star-Delta') {
 
 if (aspControl === 'VFD') {
   const vfdRows = [
-    { point: 'Aspirator Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
-    { point: 'Aspirator Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
-    { point: 'Aspirator Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
+    { point: 'Aspirator Fan Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+    { point: 'Aspirator Fan Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
+    { point: 'Aspirator Fan Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
   ];
 
   for (let i = 1; i <= asppieces; i++) {
@@ -483,15 +447,15 @@ if (aspControl === 'VFD') {
 
 if (aspControl === 'VFD with By Pass Circuit' || aspControl === 'VFD with By Pass Circuit + Star-Delta') {
   const byPassRows = [
-    { point: 'Aspirator Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator By/Pass Switch', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
-    { point: 'Aspirator Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
-    { point: 'Aspirator Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 }
+    { point: 'Aspirator Fan Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan By/Pass Switch', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+    { point: 'Aspirator Fan Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
+    { point: 'Aspirator Fan Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 }
   ];
 
   for (let i = 1; i <= asppieces; i++) {
@@ -517,10 +481,10 @@ if (aspControl === 'VFD with By Pass Circuit' || aspControl === 'VFD with By Pas
 
 if (aspControl === 'Soft Starter') {
   const softStarterRows = [
-    { point: 'Aspirator Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Fan Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Fan Command', ai: 0, ao: 0, di: 0, do: 1 }
+    { point: 'Aspirator Soft Starter Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Soft Starter Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Soft Starter Fan Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Soft Starter Fan Command', ai: 0, ao: 0, di: 0, do: 1 }
   ];
 
   for (let i = 1; i <= asppieces; i++) {
@@ -609,45 +573,7 @@ if (aspControl === 'EC') {
       });
     });
   }
-  if (maintenanceSafety === 'for Each Fan') {
-  for (let i = 1; i <= asppieces; i++) {
-    const suffix = asppieces > 1 ? ` ${i}` : '';
-    asprows.push({
-      projectCode,
-      description,
-      location,
-      point: `Aspirator Maintenance Status${suffix}`,
-      ai: 0,
-      ao: 0,
-      di: 1,
-      do: 0,
-      modbusRtu: 0,
-      modbusTcp: 0,
-      bacnetMstp: 0,
-      bacnetIp: 0,
-      mbus: 0
-    });
-  }
-}
-
-if (maintenanceSafety === 'for For All Fans') {
-  const suffix = asppieces > 1 ? '' : '';
-  asprows.push({
-    projectCode,
-    description,
-    location,
-    point: `Aspirator General Maintenance Status${suffix}`,
-    ai: 0,
-    ao: 0,
-    di: 1,
-    do: 0,
-    modbusRtu: 0,
-    modbusTcp: 0,
-    bacnetMstp: 0,
-    bacnetIp: 0,
-    mbus: 0
-  });
-}
+  
   
 }
 
@@ -664,24 +590,46 @@ if (maintenanceSafety === 'for For All Fans') {
       mbus: 0
     }));
 
-   
-    setShowTable(true);
 
 const maintenanceRows: any[] = [];
 
 if (maintenanceSafety === 'for Each Fan') {
-  for (let i = 1; i <= vantpieces; i++) {
+  if (vantControl !== 'none') {
+    for (let i = 1; i <= vantpieces; i++) {
+      maintenanceRows.push({
+        point: `Vantilator Fan Maintenance Status${vantpieces > 1 ? ` ${i}` : ''}`,
+        ai: 0, ao: 0, di: 1, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+  }
+
+  if (aspControl !== 'none') {
+    for (let i = 1; i <= asppieces; i++) {
+      maintenanceRows.push({
+        point: `Aspirator Fan Maintenance Status${asppieces > 1 ? ` ${i}` : ''}`,
+        ai: 0, ao: 0, di: 1, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+  }
+}
+
+if (maintenanceSafety === 'for All Fans') {
+  if (vantControl !== 'none') {
     maintenanceRows.push({
-      point: `Vantilator Maintenance Status${vantpieces > 1 ? ` ${i}` : ''}`,
+      point: 'Vantilator General Maintenance Status',
       ai: 0, ao: 0, di: 1, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     });
   }
 
-  for (let i = 1; i <= asppieces; i++) {
+  if (aspControl !== 'none') {
     maintenanceRows.push({
-      point: `Aspirator Maintenance Status${asppieces > 1 ? ` ${i}` : ''}`,
+      point: 'Aspirator General Maintenance Status',
       ai: 0, ao: 0, di: 1, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
@@ -689,26 +637,7 @@ if (maintenanceSafety === 'for Each Fan') {
   }
 }
 
-if (maintenanceSafety === 'for For All Fans') {
-  maintenanceRows.push({
-    point: 'Vantilator General Maintenance Status',
-    ai: 0, ao: 0, di: 1, do: 0,
-    projectCode, description, location,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-  });
-
-  maintenanceRows.push({
-    point: 'Aspirator General Maintenance Status',
-    ai: 0, ao: 0, di: 1, do: 0,
-    projectCode, description, location,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-  });
-}
-
-// tabloya hepsini birleştir
 setTableRows([...vantrows, ...asprows, ...maintenanceRows]);
-
-
 setShowTable(true);
   };
 
