@@ -637,7 +637,106 @@ if (maintenanceSafety === 'for All Fans') {
   }
 }
 
-setTableRows([...vantrows, ...asprows, ...maintenanceRows]);
+const emergencyRows: any[] = [];
+
+if (emergencySafety === 'for Each Fan') {
+  if (vantControl !== 'none') {
+    for (let i = 1; i <= vantpieces; i++) {
+      emergencyRows.push({
+        point: `Vantilator Fan Emergency Status${vantpieces > 1 ? ` ${i}` : ''}`,
+        ai: 0, ao: 0, di: 1, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+  }
+
+  if (aspControl !== 'none') {
+    for (let i = 1; i <= asppieces; i++) {
+      emergencyRows.push({
+        point: `Aspirator Fan Emergency Status${asppieces > 1 ? ` ${i}` : ''}`,
+        ai: 0, ao: 0, di: 1, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+  }
+}
+
+if (emergencySafety === 'for All Fans') {
+  if (vantControl !== 'none') {
+    emergencyRows.push({
+      point: 'Vantilator General Emergency Status',
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    });
+  }
+
+  if (aspControl !== 'none') {
+    emergencyRows.push({
+      point: 'Aspirator General Emergency Status',
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    });
+  }
+}
+
+const doorRows: any[] = [];
+
+if (doorSafety === 'for Each Fan') {
+  if (vantControl !== 'none') {
+    for (let i = 1; i <= vantpieces; i++) {
+      doorRows.push({
+        point: `Vantilator Fan Door Status${vantpieces > 1 ? ` ${i}` : ''}`,
+        ai: 0, ao: 0, di: 1, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+  }
+
+  if (aspControl !== 'none') {
+    for (let i = 1; i <= asppieces; i++) {
+      doorRows.push({
+        point: `Aspirator Fan Door Status${asppieces > 1 ? ` ${i}` : ''}`,
+        ai: 0, ao: 0, di: 1, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+  }
+}
+
+if (doorSafety === 'for All Fans') {
+  if (vantControl !== 'none') {
+    doorRows.push({
+      point: 'Vantilator General Door Status',
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    });
+  }
+
+  if (aspControl !== 'none') {
+    doorRows.push({
+      point: 'Aspirator General Door Status',
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    });
+  }
+}
+
+
+setTableRows([
+  ...vantrows,
+  ...asprows,
+  ...maintenanceRows,
+  ...emergencyRows,
+  ...doorRows
+]);
 setShowTable(true);
   };
 
