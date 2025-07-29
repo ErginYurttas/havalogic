@@ -161,6 +161,7 @@ export default function AhuPage() {
     navigate('/');
   };
 
+  
   const renderDropdown = (
     label: string,
     value: string,
@@ -177,6 +178,17 @@ export default function AhuPage() {
       </Select>
     </FormControl>
   );
+
+const handleAspControlChange = (e: SelectChangeEvent) => {
+  const value = e.target.value;
+  setAspControl(value);
+
+  if (value === 'none') {
+    setAspPieces('');
+    setAspPower('');
+    setAspVoltage('');
+  }
+};
 
   const handleSaveAhu = () => {
     if (ahuControl !== 'MCC') {
@@ -729,14 +741,57 @@ if (doorSafety === 'for All Fans') {
   }
 }
 
+const fireRows: any[] = [];
+
+if (fireSafety === 'only Viewing') {
+  fireRows.push({
+    point: 'Fire General Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (fireSafety === 'Viewing and Control') {
+  fireRows.push({
+    point: 'Vantilator Fan Fire Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+
+  if (aspControl !== 'none') {
+    fireRows.push({
+      point: 'Aspirator Fan Fire Status',
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    });
+  }
+}
+
+const frostRows: any[] = [];
+
+if (frostSafety === 'Automatic Reset' || frostSafety === 'Manual Reset') {
+  frostRows.push({
+    point: 'Frost Thermostat Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
 
 setTableRows([
   ...vantrows,
   ...asprows,
   ...maintenanceRows,
   ...emergencyRows,
-  ...doorRows
+  ...doorRows,
+  ...fireRows,
+  ...frostRows
 ]);
+
+
 setShowTable(true);
   };
 
@@ -766,7 +821,7 @@ setShowTable(true);
               {renderDropdown('Vantilator Pieces', vantPieces, (e) => setVantPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
               {renderDropdown('Vantilator Power', fanPower, (e) => setFanPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
               {renderDropdown('Vantilator Voltage', fanVoltage, (e) => setFanVoltage(e.target.value), ['230', '380'])}
-              {renderDropdown('Aspirator Control', aspControl, (e) => setAspControl(e.target.value), ['none', 'Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta','Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+              {renderDropdown('Aspirator Control', aspControl, handleAspControlChange, ['none', 'Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta','Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
               {renderDropdown('Aspirator Pieces', aspPieces, (e) => setAspPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], aspControl === 'none')}
               {renderDropdown('Aspirator Power', aspPower, (e) => setAspPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], aspControl === 'none')}
               {renderDropdown('Aspirator Voltage', aspVoltage, (e) => setAspVoltage(e.target.value), ['230', '380'], aspControl === 'none')}
