@@ -72,6 +72,14 @@ const labelStyles = {
   }
 };
 
+const valveOptions = [
+    'On/Off Valve Actuator',
+    'On/Off Valve Actuator with Feedback',
+    'Proportional Valve Actuator',
+    'Proportional Valve Actuator with Feedback'
+  ];
+
+
 export default function AhuPage() {
   const navigate = useNavigate();
   const loggedInUser = localStorage.getItem('loggedInUser');
@@ -182,6 +190,8 @@ export default function AhuPage() {
   );
 
 const handleAspControlChange = (e: SelectChangeEvent) => {
+
+  
   const value = e.target.value;
   setAspControl(value);
 
@@ -191,6 +201,19 @@ const handleAspControlChange = (e: SelectChangeEvent) => {
     setAspVoltage('');
   }
 };
+
+const handlePreheatingFunctionChange = (e: SelectChangeEvent) => {
+  const value = e.target.value;
+  setPreheatingFunction(value);
+
+  
+
+  if (valveOptions.includes(value)) {
+    setPreheatingPower('');
+    setPreheatingVoltage('');
+  }
+};
+
 
   const handleSaveAhu = () => {
     if (ahuControl !== 'MCC') {
@@ -772,6 +795,17 @@ if (fireSafety === 'Viewing and Control') {
   }
 }
 
+const frostRows: any[] = [];
+
+if (frostSafety === 'Automatic Reset' || frostSafety === 'Manual Reset') {
+  frostRows.push({
+    point: 'Frost Thermostat Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
 // Preheating Function Rows
 const preheatingRows: any[] = [];
 
@@ -894,18 +928,39 @@ if (preheatingFunction === 'Proportional Electrical Heater') {
   );
 }
 
+const preheatingTemperatureRows: any[] = [];
 
-
-const frostRows: any[] = [];
-
-if (frostSafety === 'Automatic Reset' || frostSafety === 'Manual Reset') {
-  frostRows.push({
-    point: 'Frost Thermostat Status',
-    ai: 0, ao: 0, di: 1, do: 0,
+if (preheatingTemperature === 'Inlet Temperature') {
+  preheatingTemperatureRows.push({
+    point: 'Preheating Coil Inlet Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
     projectCode, description, location,
     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
   });
+} else if (preheatingTemperature === 'Outlet Temperature') {
+  preheatingTemperatureRows.push({
+    point: 'Preheating Coil Outlet Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (preheatingTemperature === 'Inlet and Outlet Temperature') {
+  preheatingTemperatureRows.push(
+    {
+      point: 'Preheating Coil Inlet Temperature',
+      ai: 1, ao: 0, di: 0, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Preheating Coil Outlet Temperature',
+      ai: 1, ao: 0, di: 0, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
 }
+
 
 
 setTableRows([
@@ -916,7 +971,8 @@ setTableRows([
   ...doorRows,
   ...fireRows,
   ...frostRows,
-  ...preheatingRows
+  ...preheatingRows,
+  ...preheatingTemperatureRows,
 ]);
 
 
@@ -967,21 +1023,20 @@ setShowTable(true);
               {renderDropdown('Door Safety Contacts', doorSafety, (e) => setDoorSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
               {renderDropdown('Fire Safety Contacts', fireSafety, (e) => setFireSafety(e.target.value), ['none', 'only Viewing', 'Viewing and Control'])}
               {renderDropdown('Frost Safety Contacts', frostSafety, (e) => setFrostSafety(e.target.value), ['none', 'Automatic Reset', 'Manual Reset'])}
-              {renderDropdown('Preheating Function', preheatingFunction, (e) => setPreheatingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'])}
-             
-              {renderDropdown('Preheating Power', preheatingPower, (e) => setPreheatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], preheatingFunction === 'none')}
-              {renderDropdown('Preheating Voltage', preheatingVoltage, (e) => setPreheatingVoltage(e.target.value), ['24', '230', '380'], preheatingFunction === 'none')}
-              {renderDropdown('Preheating Temperature', preheatingTemperature, (e) => setPreheatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], preheatingFunction === 'none')}
+              {renderDropdown('Preheating Function', preheatingFunction, handlePreheatingFunctionChange, ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'])}
+              {renderDropdown('Preheating Power', preheatingPower, (e) => setPreheatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], preheatingFunction === 'none' || valveOptions.includes(preheatingFunction))}
+              {renderDropdown('Preheating Voltage', preheatingVoltage, (e) => setPreheatingVoltage(e.target.value), ['230', '380'], preheatingFunction === 'none' || valveOptions.includes(preheatingFunction))}
+              {renderDropdown('Preheating Coil Temperature', preheatingTemperature, (e) => setPreheatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], preheatingFunction === 'none')}
               {renderDropdown('Heating Function', heatingFunction, (e) => setHeatingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'Proportional Valve Actuator', 'Staged Electrical Heater', 'Proportional Electrical Heater'])}
               {renderDropdown('Heating Pieces', heatingPieces, (e) => setHeatingPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], heatingFunction === 'none')}
               {renderDropdown('Heating Power', heatingPower, (e) => setHeatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], heatingFunction === 'none')}
               {renderDropdown('Heating Voltage', heatingVoltage, (e) => setHeatingVoltage(e.target.value), ['24', '230', '380'], heatingFunction === 'none')}
-              {renderDropdown('Heating Temperature', heatingTemperature, (e) => setHeatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], heatingFunction === 'none')}
+              {renderDropdown('Heating Coil Temperature', heatingTemperature, (e) => setHeatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], heatingFunction === 'none')}
               {renderDropdown('Cooling Function', coolingFunction, (e) => setCoolingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'Proportional Valve Actuator', 'Staged DX Unit', 'Proportional DX Unit'])}
               {renderDropdown('Cooling Pieces', coolingPieces, (e) => setCoolingPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], coolingFunction === 'none')}
               {renderDropdown('Cooling Power', coolingPower, (e) => setCoolingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], coolingFunction === 'none')}
               {renderDropdown('Cooling Voltage', coolingVoltage, (e) => setCoolingVoltage(e.target.value), ['24', '230', '380'], coolingFunction === 'none')}
-              {renderDropdown('Cooling Temperature', coolingTemperature, (e) => setCoolingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], coolingFunction === 'none')}
+              {renderDropdown('Cooling Coil Temperature', coolingTemperature, (e) => setCoolingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], coolingFunction === 'none')}
 
               {renderDropdown('Run Around Pump Control', pumpControl, (e) => setPumpControl(e.target.value), ['none', 'Dol', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
               {renderDropdown('Run Around Pump Pieces', pumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], pumpControl === 'none')}
