@@ -167,11 +167,15 @@ export default function Home() {
       py: 2, 
       px: 4, 
       display: 'flex', 
-      justifyContent: 'flex-end', // 'space-between' yerine 'flex-end'
+      justifyContent: 'space-between', 
       alignItems: 'center',
       backgroundColor: 'white',
       boxShadow: '0 2px 10px rgba(0,0,0,0.08)' 
     }}>
+      <Typography variant="body1" sx={{ fontWeight: 'normal', fontSize: '1.1rem' }}>
+  <span style={{ color: '#1976d2' }}>hava</span>
+  <span style={{ color: '#B0BEC5' }}>logic</span>
+</Typography>
         <Stack direction="row" spacing={2} alignItems="center">
           <Typography 
           variant="body1" 

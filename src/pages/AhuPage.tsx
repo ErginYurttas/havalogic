@@ -799,12 +799,21 @@ setShowTable(true);
   return (
     <Box sx={{ minHeight: '100vh', background: 'radial-gradient(circle at top right, #1A237E, #000000)', color: '#FFFFFF', display: 'flex', flexDirection: 'column' }}>
       {/* Navbar */}
-      <Box sx={{ py: 2, px: 4, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', backgroundColor: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Typography variant="body1" sx={{ mr: 2, fontWeight: 500, color: '#1976d2' }}>{loggedInUser || 'User'}</Typography>
-          <PrimaryButton startIcon={<ExitToAppIcon sx={{ fontSize: '1rem' }} />} onClick={handleLogout} sx={{ minWidth: '100px' }}>Logout</PrimaryButton>
-        </Stack>
-      </Box>
+      <Box sx={{ py: 2, px: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.08)' }}>
+  
+  {/* Sol taraftaki havalogic logosu */}
+  <Typography variant="body1" sx={{ fontWeight: 'normal', fontSize: '1.1rem' }}>
+  <Box component="span" sx={{ color: '#1976d2' }}>hava</Box>
+  <Box component="span" sx={{ color: '#B0BEC5' }}>logic</Box>
+</Typography>
+
+  {/* Sağ taraftaki kullanıcı ve logout */}
+  <Stack direction="row" spacing={2} alignItems="center">
+    <Typography variant="body1" sx={{ mr: 2, fontWeight: 500, color: '#1976d2' }}>{loggedInUser || 'User'}</Typography>
+    <PrimaryButton startIcon={<ExitToAppIcon sx={{ fontSize: '1rem' }} />} onClick={handleLogout} sx={{ minWidth: '100px' }}>Logout</PrimaryButton>
+  </Stack>
+
+</Box>
 
       {/* Main Layout */}
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
@@ -910,7 +919,9 @@ setShowTable(true);
 
         {/* Tablo */}
         <Box sx={{ flex: 1, p: 4, backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '12px', mr: 1, ml: 0, mt: 6, maxHeight: '85vh', overflowY: 'auto', color: 'white' }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>AHU Output Table</Typography>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+  {projectCode ? `${projectCode} Output Table` : 'AHU Output Table'}
+</Typography>
 
           {showTable && tableRows.length > 0 && (
             <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white', border: '1px solid #ccc', fontSize: '0.875rem' }}>
