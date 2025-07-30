@@ -781,6 +781,8 @@ if (frostSafety === 'Automatic Reset' || frostSafety === 'Manual Reset') {
   });
 }
 
+
+
 setTableRows([
   ...vantrows,
   ...asprows,
@@ -855,7 +857,7 @@ setShowTable(true);
               {renderDropdown('Dehumidification Pieces', dehumidificationPieces, (e) => setDehumidificationPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], dehumidificationFunction === 'none')}
               {renderDropdown('Dehumidification Power', dehumidificationPower, (e) => setDehumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], dehumidificationFunction === 'none')}
               {renderDropdown('Dehumidification Voltage', dehumidificationVoltage, (e) => setDehumidificationVoltage(e.target.value), ['230', '380'], dehumidificationFunction === 'none')}
-              {renderDropdown('Preheating Function', preheatingFunction, (e) => setPreheatingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'Proportional Valve Actuator', 'Staged Electrical Heater', 'Proportional Electrical Heater'])}
+              {renderDropdown('Preheating Function', preheatingFunction, (e) => setPreheatingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback','Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback','Staged Electrical Heater', 'Proportional Electrical Heater'])}
               {renderDropdown('Preheating Pieces', preheatingPieces, (e) => setPreheatingPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], preheatingFunction === 'none')}
               {renderDropdown('Preheating Power', preheatingPower, (e) => setPreheatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], preheatingFunction === 'none')}
               {renderDropdown('Preheating Voltage', preheatingVoltage, (e) => setPreheatingVoltage(e.target.value), ['24', '230', '380'], preheatingFunction === 'none')}
@@ -924,30 +926,204 @@ setShowTable(true);
 </Typography>
 
           {showTable && tableRows.length > 0 && (
-            <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white', border: '1px solid #ccc', fontSize: '0.875rem' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#ffffff',
+    fontSize: '0.875rem',
+    fontFamily: `'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif'`,
+    borderRadius: '12px',
+    overflow: 'hidden',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+    border: '1px solid #e0e0e0',
+    color: '#333'
+  }}
+>
               <thead>
-                <tr style={{ backgroundColor: '#263238' }}>
+               <tr style={{ backgroundColor: '#1976d2', color: 'white' }}>
                   {['Project Code', 'Description', 'Located', 'Point Name', 'AI', 'AO', 'DI', 'DO', 'Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP', 'Mbus'].map((header, i) => (
-                    <th key={i} style={{ border: '1px solid #ccc', padding: '8px', fontWeight: '600' }}>{header}</th>
+                    <th
+  key={i}
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '10px',
+    fontWeight: 500,
+    fontSize: '0.85rem',
+    textAlign: 'left'
+  }}
+>
+  {header}
+</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {tableRows.map((row, index) => (
-                  <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#37474F' : '#455A64' }}>
-                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.projectCode}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.description}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.location}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.point}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.ai}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.ao}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.di}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.do}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.modbusRtu}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.modbusTcp}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.bacnetMstp}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.bacnetIp}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '6px' }}>{row.mbus}</td>
+
+                  <tr
+  key={index}
+  style={{
+    backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#f0f4f8',
+    transition: 'background 0.3s',
+    cursor: 'default'
+  }}
+>
+
+                   
+                    
+                    <td
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '8px',
+    fontSize: '0.82rem',
+    color: '#424242'
+  }}
+>
+  {row.projectCode}
+</td>
+
+
+                    <td
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '8px',
+    fontSize: '0.82rem',
+    color: '#424242'
+  }}
+>
+  {row.description}
+</td>
+
+
+                    <td
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '8px',
+    fontSize: '0.82rem',
+    color: '#424242'
+  }}
+>
+  {row.location}
+</td>
+
+
+                    <td
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '8px',
+    fontSize: '0.82rem',
+    color: '#424242'
+  }}
+>
+  {row.point}
+</td>
+
+
+                   <td
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '8px',
+    fontSize: '0.82rem',
+    color: '#424242'
+  }}
+>
+  {row.ai}
+</td>
+
+
+                  <td
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '8px',
+    fontSize: '0.82rem',
+    color: '#424242'
+  }}
+>
+  {row.ao}
+</td>
+
+
+                   <td
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '8px',
+    fontSize: '0.82rem',
+    color: '#424242'
+  }}
+>
+  {row.di}
+</td>
+
+
+                   <td
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '8px',
+    fontSize: '0.82rem',
+    color: '#424242'
+  }}
+>
+  {row.do}
+</td>
+
+
+                    <td
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '8px',
+    fontSize: '0.82rem',
+    color: '#424242'
+  }}
+>
+  {row.modbusRtu}
+</td>
+
+
+                    <td
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '8px',
+    fontSize: '0.82rem',
+    color: '#424242'
+  }}
+>
+  {row.modbusTcp}
+</td>
+
+
+                    <td
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '8px',
+    fontSize: '0.82rem',
+    color: '#424242'
+  }}
+>
+  {row.bacnetMstp}
+</td>
+
+
+                   <td
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '8px',
+    fontSize: '0.82rem',
+    color: '#424242'
+  }}
+>
+  {row.bacnetIp}
+</td>
+
+
+                   <td
+  style={{
+    border: '1px solid #e0e0e0',
+    padding: '8px',
+    fontSize: '0.82rem',
+    color: '#424242'
+  }}
+>
+  {row.mbus}
+</td>
+
+
                   </tr>
                 ))}
               </tbody>
