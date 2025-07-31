@@ -86,6 +86,20 @@ const heatingValveOptions = [
   'Proportional Valve Actuator with Feedback'
 ];
 
+const coolingValveOptions = [
+  'On/Off Valve Actuator',
+  'On/Off Valve Actuator with Feedback',
+  'Proportional Valve Actuator',
+  'Proportional Valve Actuator with Feedback'
+];
+
+const coolingDXOptions = [
+  '1-Staged DX Unit',
+  '2-Staged DX Unit',
+  '3-Staged DX Unit',
+  'Proportional DX Unit'
+];
+
 export default function AhuPage() {
   const navigate = useNavigate();
   const loggedInUser = localStorage.getItem('loggedInUser');
@@ -202,6 +216,15 @@ React.useEffect(() => {
     navigate('/projects');
   };
 
+React.useEffect(() => {
+  if (
+    coolingFunction === 'none' ||
+    coolingDXOptions.includes(coolingFunction)
+  ) {
+    setCoolingTemperature('');
+  }
+}, [coolingFunction]);
+
   const handleLogout = () => {
     navigate('/');
   };
@@ -254,6 +277,25 @@ const handleHeatingFunctionChange = (e: SelectChangeEvent) => {
   if (heatingValveOptions.includes(value)) {
     setHeatingPower('');
     setHeatingVoltage('');
+  }
+};
+
+const handleCoolingFunctionChange = (e: SelectChangeEvent) => {
+  const value = e.target.value;
+  setCoolingFunction(value);
+
+  const isCoolingValve = coolingValveOptions.includes(value);
+  const isCoolingDx = coolingDXOptions.includes(value); // DX Unit grubu
+
+  // Power ve Voltage temizle
+  if (value === 'none' || isCoolingValve) {
+    setCoolingPower('');
+    setCoolingVoltage('');
+  }
+
+  // Coil Temperature temizle (hem none hem DX seçildiyse)
+  if (value === 'none' || isCoolingDx) {
+    setCoolingTemperature('');
   }
 };
 
@@ -1002,6 +1044,7 @@ if (preheatingTemperature === 'Inlet Temperature') {
   );
 }
 
+
 const heatingRows: any[] = [];
 
 if (heatingFunction === 'On/Off Valve Actuator') {
@@ -1125,36 +1168,192 @@ if (heatingFunction === 'Proportional Electrical Heater') {
 
 const heatingTemperatureRows: any[] = [];
 
-if (heatingTemperature === 'Inlet Temperature') {
-  heatingTemperatureRows.push({
-    point: 'Heating Coil Inlet Temperature',
-    ai: 1, ao: 0, di: 0, do: 0,
-    projectCode, description, location,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-  });
-} else if (heatingTemperature === 'Outlet Temperature') {
-  heatingTemperatureRows.push({
-    point: 'Heating Coil Outlet Temperature',
-    ai: 1, ao: 0, di: 0, do: 0,
-    projectCode, description, location,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-  });
-} else if (heatingTemperature === 'Inlet and Outlet Temperature') {
-  heatingTemperatureRows.push(
-    {
+if (!heatingTemperatureRows.includes(heatingFunction)) {
+  if (heatingTemperature === 'Inlet Temperature') {
+    heatingTemperatureRows.push({
       point: 'Heating Coil Inlet Temperature',
       ai: 1, ao: 0, di: 0, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    });
+  } else if (heatingTemperature === 'Outlet Temperature') {
+    heatingTemperatureRows.push({
+      point: 'Heating Coil Outlet Temperature',
+      ai: 1, ao: 0, di: 0, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    });
+  } else if (heatingTemperature === 'Inlet and Outlet Temperature') {
+    heatingTemperatureRows.push(
+      {
+        point: 'Heating Coil Inlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      },
+      {
+        point: 'Heating Coil Outlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      }
+    );
+  }
+}
+
+
+const coolingRows: any[] = [];
+
+if (coolingFunction === 'On/Off Valve Actuator') {
+  coolingRows.push(
+    {
+      point: 'Cooling Valve Open Command',
+      ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     },
     {
-      point: 'Heating Coil Outlet Temperature',
+      point: 'Cooling Valve Close Command',
+      ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+if (coolingFunction === 'On/Off Valve Actuator with Feedback') {
+  coolingRows.push(
+    {
+      point: 'Cooling Valve Open Command',
+      ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Cooling Valve Close Command',
+      ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Cooling Valve Open Status',
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Cooling Valve Close Status',
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+if (coolingFunction === 'Proportional Valve Actuator') {
+  coolingRows.push({
+    point: 'Cooling Valve Proportional Command',
+    ai: 0, ao: 1, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (coolingFunction === 'Proportional Valve Actuator with Feedback') {
+  coolingRows.push(
+    {
+      point: 'Cooling Valve Proportional Command',
+      ai: 0, ao: 1, di: 0, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Cooling Valve Proportional Feedback',
       ai: 1, ao: 0, di: 0, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     }
   );
 }
+
+if (coolingFunction === '1-Staged DX Unit') {
+  coolingRows.push(
+    { point: 'Cooling DX Unit Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    
+
+  );
+}
+
+if (coolingFunction === '2-Staged DX Unit') {
+  coolingRows.push(
+    { point: 'Cooling DX Unit-1 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-1 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-1 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-2 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-2 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-2 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+  );
+}
+
+if (coolingFunction === '3-Staged DX Unit') {
+  coolingRows.push(
+    { point: 'Cooling DX Unit-1 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-1 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-1 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-2 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-2 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-2 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-3 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-3 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-3 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+  );
+}
+
+if (coolingFunction === 'Proportional DX Unit') {
+  coolingRows.push(
+    { point: 'Cooling DX Unit Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit Proportional Control', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit Feedback', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+const coolingTemperatureRows: any[] = [];
+
+if (coolingTemperature === 'Inlet Temperature') {
+  coolingTemperatureRows.push({
+    point: 'Cooling Coil Inlet Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (coolingTemperature === 'Outlet Temperature') {
+  coolingTemperatureRows.push({
+    point: 'Cooling Coil Outlet Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (coolingTemperature === 'Inlet and Outlet Temperature') {
+  coolingTemperatureRows.push(
+    {
+      point: 'Cooling Coil Inlet Temperature',
+      ai: 1, ao: 0, di: 0, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Cooling Coil Outlet Temperature',
+      ai: 1, ao: 0, di: 0, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
 
 
 setTableRows([
@@ -1168,7 +1367,9 @@ setTableRows([
   ...preheatingRows,
   ...preheatingTemperatureRows,
   ...heatingRows,
-  ...heatingTemperatureRows
+  ...heatingTemperatureRows,
+  ...coolingRows,
+  ...coolingTemperatureRows,
 ]);
 
 
@@ -1219,19 +1420,21 @@ setShowTable(true);
               {renderDropdown('Door Safety Contacts', doorSafety, (e) => setDoorSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
               {renderDropdown('Fire Safety Contacts', fireSafety, (e) => setFireSafety(e.target.value), ['none', 'only Viewing', 'Viewing and Control'])}
               {renderDropdown('Frost Safety Contacts', frostSafety, (e) => setFrostSafety(e.target.value), ['none', 'Automatic Reset', 'Manual Reset'])}
+              
               {renderDropdown('Preheating Function', preheatingFunction, handlePreheatingFunctionChange, ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'])}
               {renderDropdown('Preheating Power', preheatingPower, (e) => setPreheatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], preheatingFunction === 'none' || preheatingValveOptions.includes(preheatingFunction))}
               {renderDropdown('Preheating Voltage', preheatingVoltage, (e) => setPreheatingVoltage(e.target.value), ['230', '380'], preheatingFunction === 'none' || preheatingValveOptions.includes(preheatingFunction))}
               {renderDropdown('Preheating Coil Temperature', preheatingTemperature, (e) => setPreheatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], isPreheatingTemperatureDisabled())}
+              
               {renderDropdown('Heating Function', heatingFunction, handleHeatingFunctionChange, ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'])}
               {renderDropdown('Heating Power', heatingPower, (e) => setHeatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], heatingFunction === 'none' || heatingValveOptions.includes(heatingFunction))}
               {renderDropdown('Heating Voltage', heatingVoltage, (e) => setHeatingVoltage(e.target.value), ['230', '380'], heatingFunction === 'none' || heatingValveOptions.includes(heatingFunction))}
               {renderDropdown('Heating Coil Temperature', heatingTemperature, (e) => setHeatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'],isHeatingTemperatureDisabled())}
-              {renderDropdown('Cooling Function', coolingFunction, (e) => setCoolingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'Proportional Valve Actuator', 'Staged DX Unit', 'Proportional DX Unit'])}
-              {renderDropdown('Cooling Pieces', coolingPieces, (e) => setCoolingPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], coolingFunction === 'none')}
-              {renderDropdown('Cooling Power', coolingPower, (e) => setCoolingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], coolingFunction === 'none')}
-              {renderDropdown('Cooling Voltage', coolingVoltage, (e) => setCoolingVoltage(e.target.value), ['24', '230', '380'], coolingFunction === 'none')}
-              {renderDropdown('Cooling Coil Temperature', coolingTemperature, (e) => setCoolingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], coolingFunction === 'none')}
+              
+              {renderDropdown('Cooling Function', coolingFunction, (e) => setCoolingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged DX Unit', '2-Staged DX Unit', '3-Staged DX Unit', 'Proportional DX Unit'])}
+              {renderDropdown('Cooling Power', coolingPower, (e) => setCoolingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15','18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], coolingFunction === 'none' || coolingValveOptions.includes(coolingFunction))}
+              {renderDropdown('Cooling Voltage', coolingVoltage, (e) => setCoolingVoltage(e.target.value), ['230', '380'], coolingFunction === 'none' || coolingValveOptions.includes(coolingFunction))}
+              {renderDropdown('Cooling Coil Temperature', coolingTemperature, (e) => setCoolingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], coolingFunction === 'none' || coolingDXOptions.includes(coolingFunction))}
 
               {renderDropdown('Run Around Pump Control', pumpControl, (e) => setPumpControl(e.target.value), ['none', 'Dol', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
               {renderDropdown('Run Around Pump Pieces', pumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], pumpControl === 'none')}
