@@ -136,6 +136,15 @@ export default function AhuPage() {
   const [coolingPower, setCoolingPower] = useState('');
   const [coolingVoltage, setCoolingVoltage] = useState('');
   const [coolingTemperature, setCoolingTemperature] = useState('');
+  const [supplyAirSensor, setSupplyAirSensor] = useState('');
+  const [freshAirSensor, setFreshAirSensor] = useState('');
+  const [returnAirSensor, setReturnAirSensor] = useState('');
+  const [exhaustAirSensor, setExhaustAirSensor] = useState('');
+  const [mixedAirSensor, setMixedAirSensor] = useState('');
+  const [dehumidificationAirSensor, setDehumidificationAirSensor] = useState('');
+  const [heatExchangerAirSensor, setHeatExchangerAirSensor] = useState('');
+  
+
 
   const [pumpControl, setPumpControl] = useState('');
   const [pumpPieces, setPumpPieces] = useState('');
@@ -160,13 +169,7 @@ export default function AhuPage() {
   const [exhaustDamperActuator, setExhaustDamperActuator] = useState('');
   const [mixedDamperActuator, setMixedDamperActuator] = useState('');
   const [recirculationDamperActuator, setRecirculationDamperActuator] = useState('');
-  const [supplyAirSensor, setSupplyAirSensor] = useState('');
-  const [freshAirSensor, setFreshAirSensor] = useState('');
-  const [returnAirSensor, setReturnAirSensor] = useState('');
-  const [exhaustAirSensor, setExhaustAirSensor] = useState('');
-  const [heatExchangerAirSensor, setHeatExchangerAirSensor] = useState('');
-  const [mixedAirSensor, setMixedAirSensor] = useState('');
-  const [dehumidificationSensor, setDehumidificationSensor] = useState('');
+  
  
   const [supplyFilter, setSupplyFilter] = useState('');
   const [freshFilter, setFreshFilter] = useState('');
@@ -1354,7 +1357,248 @@ if (coolingTemperature === 'Inlet Temperature') {
   );
 }
 
+const supplyAirSensorRows: any[] = [];
 
+if (supplyAirSensor === 'Temperature') {
+  supplyAirSensorRows.push({
+    point: 'Supply Air Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (supplyAirSensor === 'Humidity') {
+  supplyAirSensorRows.push({
+    point: 'Supply Air Humidity',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (supplyAirSensor === 'Temperature and Humidity') {
+  supplyAirSensorRows.push({
+    point: 'Supply Air Temperature and Humidity',
+    ai: 2, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+const freshAirSensorRows: any[] = [];
+
+if (freshAirSensor === 'Temperature') {
+  freshAirSensorRows.push({
+    point: 'Fresh Air Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (freshAirSensor === 'Humidity') {
+  freshAirSensorRows.push({
+    point: 'Fresh Air Humidity',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (freshAirSensor === 'Temperature and Humidity') {
+  freshAirSensorRows.push({
+    point: 'Fresh Air Temperature and Humidity',
+    ai: 2, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+const returnAirSensorRows: any[] = [];
+
+if (returnAirSensor === 'Temperature') {
+  returnAirSensorRows.push({
+    point: 'Return Air Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (returnAirSensor === 'Humidity') {
+  returnAirSensorRows.push({
+    point: 'Return Air Humidity',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (returnAirSensor === 'Co2') {
+  returnAirSensorRows.push({
+    point: 'Return Air Co2',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (returnAirSensor === 'Temperature and Humidity') {
+  returnAirSensorRows.push({
+    point: 'Return Air Temperature and Humidity',
+    ai: 2, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (returnAirSensor === 'Temperature, Humidity and Co2') {
+  returnAirSensorRows.push({
+    point: 'Return Air Temperature, Humidity and Co2',
+    ai: 3, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+
+const exhaustAirSensorRows: any[] = [];
+
+if (exhaustAirSensor === 'Temperature') {
+  exhaustAirSensorRows.push({
+    point: 'Exhaust Air Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (exhaustAirSensor === 'Humidity') {
+  exhaustAirSensorRows.push({
+    point: 'Exhaust Air Humidity',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (exhaustAirSensor === 'Temperature and Humidity') {
+  exhaustAirSensorRows.push({
+    point: 'Exhaust Air Temperature and Humidity',
+    ai: 2, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+const mixedAirSensorRows: any[] = [];
+
+if (mixedAirSensor === 'Temperature') {
+  mixedAirSensorRows.push({
+    point: 'Mixed Air Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (mixedAirSensor === 'Humidity') {
+  mixedAirSensorRows.push({
+    point: 'Mixed Air Humidity',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (mixedAirSensor === 'Temperature and Humidity') {
+  mixedAirSensorRows.push({
+    point: 'Mixed Air Temperature and Humidity',
+    ai: 2, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+const dehumidificationRows: any[] = [];
+
+if (dehumidificationAirSensor === 'Temperature') {
+  dehumidificationRows.push({
+    point: 'Dehumidification Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0,
+    bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (dehumidificationAirSensor === 'Humidity') {
+  dehumidificationRows.push({
+    point: 'Dehumidification Humidity',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0,
+    bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (dehumidificationAirSensor === 'Temperature and Humidity') {
+  dehumidificationRows.push({
+    point: 'Dehumidification Temperature and Humidity',
+    ai: 2, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0,
+    bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+const heatExchangerAirRows: any[] = [];
+
+if (heatExchangerAirSensor === 'Inlet Temperature') {
+  heatExchangerAirRows.push(
+    ...[
+      {
+        point: 'Heat Exchanger Fresh Side Inlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0,
+        bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      },
+      {
+        point: 'Heat Exchanger Fresh Side Outlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0,
+        bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      }
+    ]
+  );
+} else if (heatExchangerAirSensor === 'Outlet Temperature') {
+  heatExchangerAirRows.push(
+    ...[
+      {
+        point: 'Heat Exchanger Return Side Inlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0,
+        bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      },
+      {
+        point: 'Heat Exchanger Return Side Outlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0,
+        bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      }
+    ]
+  );
+} else if (heatExchangerAirSensor === 'Inlet and Outlet Temperature') {
+  heatExchangerAirRows.push(
+    ...[
+      {
+        point: 'Heat Exchanger Fresh Side Inlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0,
+        bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      },
+      {
+        point: 'Heat Exchanger Fresh Side Outlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0,
+        bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      },
+      {
+        point: 'Heat Exchanger Return Side Inlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0,
+        bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      },
+      {
+        point: 'Heat Exchanger Return Side Outlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0,
+        bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      }
+    ]
+  );
+}
 
 setTableRows([
   ...vantrows,
@@ -1370,6 +1614,13 @@ setTableRows([
   ...heatingTemperatureRows,
   ...coolingRows,
   ...coolingTemperatureRows,
+  ...supplyAirSensorRows,
+  ...freshAirSensorRows,
+  ...returnAirSensorRows,
+  ...exhaustAirSensorRows,
+  ...mixedAirSensorRows,
+  ...dehumidificationRows,
+  ...heatExchangerAirRows,
 ]);
 
 
@@ -1420,22 +1671,26 @@ setShowTable(true);
               {renderDropdown('Door Safety Contacts', doorSafety, (e) => setDoorSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
               {renderDropdown('Fire Safety Contacts', fireSafety, (e) => setFireSafety(e.target.value), ['none', 'only Viewing', 'Viewing and Control'])}
               {renderDropdown('Frost Safety Contacts', frostSafety, (e) => setFrostSafety(e.target.value), ['none', 'Automatic Reset', 'Manual Reset'])}
-              
               {renderDropdown('Preheating Function', preheatingFunction, handlePreheatingFunctionChange, ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'])}
               {renderDropdown('Preheating Power', preheatingPower, (e) => setPreheatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], preheatingFunction === 'none' || preheatingValveOptions.includes(preheatingFunction))}
               {renderDropdown('Preheating Voltage', preheatingVoltage, (e) => setPreheatingVoltage(e.target.value), ['230', '380'], preheatingFunction === 'none' || preheatingValveOptions.includes(preheatingFunction))}
               {renderDropdown('Preheating Coil Temperature', preheatingTemperature, (e) => setPreheatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], isPreheatingTemperatureDisabled())}
-              
               {renderDropdown('Heating Function', heatingFunction, handleHeatingFunctionChange, ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'])}
               {renderDropdown('Heating Power', heatingPower, (e) => setHeatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], heatingFunction === 'none' || heatingValveOptions.includes(heatingFunction))}
               {renderDropdown('Heating Voltage', heatingVoltage, (e) => setHeatingVoltage(e.target.value), ['230', '380'], heatingFunction === 'none' || heatingValveOptions.includes(heatingFunction))}
               {renderDropdown('Heating Coil Temperature', heatingTemperature, (e) => setHeatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'],isHeatingTemperatureDisabled())}
-              
               {renderDropdown('Cooling Function', coolingFunction, (e) => setCoolingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged DX Unit', '2-Staged DX Unit', '3-Staged DX Unit', 'Proportional DX Unit'])}
               {renderDropdown('Cooling Power', coolingPower, (e) => setCoolingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15','18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], coolingFunction === 'none' || coolingValveOptions.includes(coolingFunction))}
               {renderDropdown('Cooling Voltage', coolingVoltage, (e) => setCoolingVoltage(e.target.value), ['230', '380'], coolingFunction === 'none' || coolingValveOptions.includes(coolingFunction))}
               {renderDropdown('Cooling Coil Temperature', coolingTemperature, (e) => setCoolingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], coolingFunction === 'none' || coolingDXOptions.includes(coolingFunction))}
-
+              {renderDropdown('Supply Air', supplyAirSensor, (e) => setSupplyAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
+              {renderDropdown('Fresh Air', freshAirSensor, (e) => setFreshAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
+              {renderDropdown('Return Air', returnAirSensor, (e) => setReturnAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity', 'Co2', 'Temperature, Humidity and Co2'])}
+              {renderDropdown('Exhaust Air', exhaustAirSensor, (e) => setExhaustAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
+              {renderDropdown('Mixed Air', mixedAirSensor, (e) => setMixedAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
+              {renderDropdown('Dehumidification Air', dehumidificationAirSensor, (e) => setDehumidificationAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
+              {renderDropdown('Heat Exchanger Air', heatExchangerAirSensor, (e) => setHeatExchangerAirSensor(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
+             
               {renderDropdown('Run Around Pump Control', pumpControl, (e) => setPumpControl(e.target.value), ['none', 'Dol', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
               {renderDropdown('Run Around Pump Pieces', pumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], pumpControl === 'none')}
               {renderDropdown('Run Around Pump Power', pumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], pumpControl === 'none')}
@@ -1452,21 +1707,12 @@ setShowTable(true);
               {renderDropdown('Dehumidification Pieces', dehumidificationPieces, (e) => setDehumidificationPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], dehumidificationFunction === 'none')}
               {renderDropdown('Dehumidification Power', dehumidificationPower, (e) => setDehumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], dehumidificationFunction === 'none')}
               {renderDropdown('Dehumidification Voltage', dehumidificationVoltage, (e) => setDehumidificationVoltage(e.target.value), ['230', '380'], dehumidificationFunction === 'none')}
-              
               {renderDropdown('Fresh Damper Actuator', freshDamperActuator, (e) => setFreshDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
               {renderDropdown('Supply Damper Actuator', supplyDamperActuator, (e) => setSupplyDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
               {renderDropdown('Return Damper Actuator', returnDamperActuator, (e) => setReturnDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
               {renderDropdown('Exhaust Damper Actuator', exhaustDamperActuator, (e) => setExhaustDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
               {renderDropdown('Mixed Damper Actuator', mixedDamperActuator, (e) => setMixedDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
               {renderDropdown('Re Circilation Damper Actuator', recirculationDamperActuator, (e) => setRecirculationDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
-              {renderDropdown('Supply Air', supplyAirSensor, (e) => setSupplyAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
-              {renderDropdown('Fresh Air', freshAirSensor, (e) => setFreshAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
-              {renderDropdown('Return Air', returnAirSensor, (e) => setReturnAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Co2', 'Temperature, Humidity and Co2'])}
-              {renderDropdown('Exhaust Air', exhaustAirSensor, (e) => setExhaustAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
-              {renderDropdown('Heat Exchanger Air', heatExchangerAirSensor, (e) => setHeatExchangerAirSensor(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
-              {renderDropdown('Mixed Air', mixedAirSensor, (e) => setMixedAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
-              {renderDropdown('Dehumidification', dehumidificationSensor, (e) => setDehumidificationSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
-              
               {renderDropdown('Supply Filter', supplyFilter, (e) => setSupplyFilter(e.target.value), ['none', 'Analog', 'Digital'])}
               {renderDropdown('Fresh Filter', freshFilter, (e) => setFreshFilter(e.target.value), ['none', 'Analog', 'Digital'])}
               {renderDropdown('Return Filter', returnFilter, (e) => setReturnFilter(e.target.value), ['none', 'Analog', 'Digital'])}
@@ -1475,6 +1721,7 @@ setShowTable(true);
               {renderDropdown('Return Flow', returnFlow, (e) => setReturnFlow(e.target.value), ['none', 'Pressure', 'Volume'])}
               {renderDropdown('System Integration', systemIntegration, (e) => setSystemIntegration(e.target.value), ['none', 'Package', 'VFD'])}
               {renderDropdown('Protocol Integration', protocolIntegration, (e) => setProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], systemIntegration === 'none')}
+              
               <TextField
                 fullWidth
                 variant="outlined"
