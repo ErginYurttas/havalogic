@@ -148,7 +148,7 @@ export default function AhuPage() {
   const [returnDamperActuator, setReturnDamperActuator] = useState('');
   const [exhaustDamperActuator, setExhaustDamperActuator] = useState('');
   const [mixedDamperActuator, setMixedDamperActuator] = useState('');
-  const [recirculationDamperActuator, setRecirculationDamperActuator] = useState('');
+  const [reCirculationDamperActuator, setReCirculationDamperActuator] = useState('none');
 
 
   const [pumpControl, setPumpControl] = useState('');
@@ -1665,36 +1665,688 @@ if (heatExchangerAirSensor === 'Inlet Temperature') {
   heatExchangerAirRows.push(
     ...[
       {
-        point: 'Heat Exchanger Fresh Side Inlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        projectCode, description, location,
-        modbusRtu: 0, modbusTcp: 0,
-        bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      },
+        point: 'Heat Exchanger Fresh Side Inlet Temperature', 
+        ai: 1, ao: 0, di: 0, do: 0, 
+        projectCode, description, location, modbusRtu: 0, modbusTcp: 0, 
+        bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
       {
-        point: 'Heat Exchanger Fresh Side Outlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        projectCode, description, location,
-        modbusRtu: 0, modbusTcp: 0,
-        bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      },
+        point: 'Heat Exchanger Fresh Side Outlet Temperature', 
+        ai: 1, ao: 0, di: 0, do: 0, 
+        projectCode, description, location, modbusRtu: 0, modbusTcp: 0, 
+        bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
       {
-        point: 'Heat Exchanger Return Side Inlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        projectCode, description, location,
-        modbusRtu: 0, modbusTcp: 0,
-        bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      },
+        point: 'Heat Exchanger Return Side Inlet Temperature', 
+        ai: 1, ao: 0, di: 0, do: 0, 
+        projectCode, description, location, modbusRtu: 0, modbusTcp: 0, 
+        bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
       {
-        point: 'Heat Exchanger Return Side Outlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        projectCode, description, location,
-        modbusRtu: 0, modbusTcp: 0,
-        bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        point: 'Heat Exchanger Return Side Outlet Temperature', 
+        ai: 1, ao: 0, di: 0, do: 0, 
+        projectCode, description, location, modbusRtu: 0, modbusTcp: 0, 
+        bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+      ]);
       }
-    ]
+
+      const freshDamperRows: any[] = [];
+
+if (freshDamperActuator === 'none') {
+
+}
+
+if (freshDamperActuator === 'On/Off Damper Actuator') {
+  freshDamperRows.push({
+    point: 'Fresh Air On/Off Damper Actuator Command', ai: 0, ao: 0, di: 0, do: 1,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshDamperActuator === 'On/Off Damper Actuator with Feedback') {
+  freshDamperRows.push(
+    { point: 'Fresh Air On/Off Damper Actuator Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air On/Off Damper Actuator Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
   );
 }
+
+if (freshDamperActuator === 'Floating Damper Actuator') {
+  freshDamperRows.push(
+    { point: 'Fresh Air Floating Damper Actuator Open Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Close Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (freshDamperActuator === 'Floating Damper Actuator with Feedback') {
+  freshDamperRows.push(
+    { point: 'Fresh Air Floating Damper Actuator Open Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Close Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Open Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Close Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (freshDamperActuator === 'Proportional Damper Actuator') {
+  freshDamperRows.push({
+    point: 'Fresh Air Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshDamperActuator === 'Proportional Damper Actuator with Feedback') {
+  freshDamperRows.push(
+    { point: 'Fresh Air Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Proportional Damper Actuator Feedback', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (freshDamperActuator === '2x On/Off Damper Actuator') {
+  freshDamperRows.push(
+    { point: 'Fresh Air On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (freshDamperActuator === '2x On/Off Damper Actuator with Feedback') {
+  freshDamperRows.push(
+    { point: 'Fresh Air On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air On/Off Damper Actuator Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air On/Off Damper Actuator Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (freshDamperActuator === '2x Floating Damper Actuator') {
+  freshDamperRows.push(
+    { point: 'Fresh Air Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (freshDamperActuator === '2x Floating Damper Actuator with Feedback') {
+  freshDamperRows.push(
+    { point: 'Fresh Air Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Open Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Close Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Open Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Floating Damper Actuator Close Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (freshDamperActuator === '2x Proportional Damper Actuator') {
+  freshDamperRows.push(
+    { point: 'Fresh Air Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (freshDamperActuator === '2x Proportional Damper Actuator with Feedback') {
+  freshDamperRows.push(
+    { point: 'Fresh Air Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Proportional Damper Actuator Feedback-1', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Fresh Air Proportional Damper Actuator Feedback-2', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+
+const supplyDamperRows: any[] = [];
+
+
+
+if (supplyDamperActuator === 'none') {
+
+}
+
+if (supplyDamperActuator === 'On/Off Damper Actuator') {
+  supplyDamperRows.push({
+    point: 'Supply Air On/Off Damper Actuator Command', ai: 0, ao: 0, di: 0, do: 1,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyDamperActuator === 'On/Off Damper Actuator with Feedback') {
+  supplyDamperRows.push(
+    { point: 'Supply Air On/Off Damper Actuator Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air On/Off Damper Actuator Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (supplyDamperActuator === 'Floating Damper Actuator') {
+  supplyDamperRows.push(
+    { point: 'Supply Air Floating Damper Actuator Open Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Close Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (supplyDamperActuator === 'Floating Damper Actuator with Feedback') {
+  supplyDamperRows.push(
+    { point: 'Supply Air Floating Damper Actuator Open Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Close Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Open Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Close Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (supplyDamperActuator === 'Proportional Damper Actuator') {
+  supplyDamperRows.push({
+    point: 'Supply Air Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyDamperActuator === 'Proportional Damper Actuator with Feedback') {
+  supplyDamperRows.push(
+    { point: 'Supply Air Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Proportional Damper Actuator Feedback', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (supplyDamperActuator === '2x On/Off Damper Actuator') {
+  supplyDamperRows.push(
+    { point: 'Supply Air On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (supplyDamperActuator === '2x On/Off Damper Actuator with Feedback') {
+  supplyDamperRows.push(
+    { point: 'Supply Air On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air On/Off Damper Actuator Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air On/Off Damper Actuator Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (supplyDamperActuator === '2x Floating Damper Actuator') {
+  supplyDamperRows.push(
+    { point: 'Supply Air Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (supplyDamperActuator === '2x Floating Damper Actuator with Feedback') {
+  supplyDamperRows.push(
+    { point: 'Supply Air Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Open Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Close Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Open Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Floating Damper Actuator Close Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (supplyDamperActuator === '2x Proportional Damper Actuator') {
+  supplyDamperRows.push(
+    { point: 'Supply Air Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (supplyDamperActuator === '2x Proportional Damper Actuator with Feedback') {
+  supplyDamperRows.push(
+    { point: 'Supply Air Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Proportional Damper Actuator Feedback-1', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Supply Air Proportional Damper Actuator Feedback-2', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+
+const returnDamperRows: any[] = [];
+
+if (returnDamperActuator === 'none') {
+
+}
+
+if (returnDamperActuator === 'On/Off Damper Actuator') {
+  returnDamperRows.push({
+    point: 'Return Air On/Off Damper Actuator Command', ai: 0, ao: 0, di: 0, do: 1,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (returnDamperActuator === 'On/Off Damper Actuator with Feedback') {
+  returnDamperRows.push(
+    { point: 'Return Air On/Off Damper Actuator Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air On/Off Damper Actuator Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (returnDamperActuator === 'Floating Damper Actuator') {
+  returnDamperRows.push(
+    { point: 'Return Air Floating Damper Actuator Open Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Close Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (returnDamperActuator === 'Floating Damper Actuator with Feedback') {
+  returnDamperRows.push(
+    { point: 'Return Air Floating Damper Actuator Open Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Close Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Open Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Close Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (returnDamperActuator === 'Proportional Damper Actuator') {
+  returnDamperRows.push({
+    point: 'Return Air Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (returnDamperActuator === 'Proportional Damper Actuator with Feedback') {
+  returnDamperRows.push(
+    { point: 'Return Air Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Proportional Damper Actuator Feedback', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (returnDamperActuator === '2x On/Off Damper Actuator') {
+  returnDamperRows.push(
+    { point: 'Return Air On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (returnDamperActuator === '2x On/Off Damper Actuator with Feedback') {
+  returnDamperRows.push(
+    { point: 'Return Air On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air On/Off Damper Actuator Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air On/Off Damper Actuator Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (returnDamperActuator === '2x Floating Damper Actuator') {
+  returnDamperRows.push(
+    { point: 'Return Air Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (returnDamperActuator === '2x Floating Damper Actuator with Feedback') {
+  returnDamperRows.push(
+    { point: 'Return Air Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Open Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Close Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Open Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Floating Damper Actuator Close Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (returnDamperActuator === '2x Proportional Damper Actuator') {
+  returnDamperRows.push(
+    { point: 'Return Air Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (returnDamperActuator === '2x Proportional Damper Actuator with Feedback') {
+  returnDamperRows.push(
+    { point: 'Return Air Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Proportional Damper Actuator Feedback-1', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Return Air Proportional Damper Actuator Feedback-2', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+
+const exhaustDamperRows: any[] = [];
+
+if (exhaustDamperActuator === 'none') {
+  // Hiçbir işlem yapılmaz
+}
+
+if (exhaustDamperActuator === 'On/Off Damper Actuator') {
+  exhaustDamperRows.push({
+    point: 'Exhaust Air On/Off Damper Actuator Command', ai: 0, ao: 0, di: 0, do: 1,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (exhaustDamperActuator === 'On/Off Damper Actuator with Feedback') {
+  exhaustDamperRows.push(
+    { point: 'Exhaust Air On/Off Damper Actuator Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air On/Off Damper Actuator Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (exhaustDamperActuator === 'Floating Damper Actuator') {
+  exhaustDamperRows.push(
+    { point: 'Exhaust Air Floating Damper Actuator Open Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Close Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (exhaustDamperActuator === 'Floating Damper Actuator with Feedback') {
+  exhaustDamperRows.push(
+    { point: 'Exhaust Air Floating Damper Actuator Open Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Close Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Open Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Close Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (exhaustDamperActuator === 'Proportional Damper Actuator') {
+  exhaustDamperRows.push({
+    point: 'Exhaust Air Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (exhaustDamperActuator === 'Proportional Damper Actuator with Feedback') {
+  exhaustDamperRows.push(
+    { point: 'Exhaust Air Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Proportional Damper Actuator Feedback', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (exhaustDamperActuator === '2x On/Off Damper Actuator') {
+  exhaustDamperRows.push(
+    { point: 'Exhaust Air On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (exhaustDamperActuator === '2x On/Off Damper Actuator with Feedback') {
+  exhaustDamperRows.push(
+    { point: 'Exhaust Air On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air On/Off Damper Actuator Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air On/Off Damper Actuator Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (exhaustDamperActuator === '2x Floating Damper Actuator') {
+  exhaustDamperRows.push(
+    { point: 'Exhaust Air Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (exhaustDamperActuator === '2x Floating Damper Actuator with Feedback') {
+  exhaustDamperRows.push(
+    { point: 'Exhaust Air Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Open Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Close Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Open Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Floating Damper Actuator Close Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (exhaustDamperActuator === '2x Proportional Damper Actuator') {
+  exhaustDamperRows.push(
+    { point: 'Exhaust Air Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (exhaustDamperActuator === '2x Proportional Damper Actuator with Feedback') {
+  exhaustDamperRows.push(
+    { point: 'Exhaust Air Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Proportional Damper Actuator Feedback-1', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Exhaust Air Proportional Damper Actuator Feedback-2', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+
+const mixedDamperRows: any[] = [];
+
+if (mixedDamperActuator === 'none') {
+
+}
+
+if (mixedDamperActuator === 'On/Off Damper Actuator') {
+  mixedDamperRows.push({
+    point: 'Mixed Air On/Off Damper Actuator Command', ai: 0, ao: 0, di: 0, do: 1,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (mixedDamperActuator === 'On/Off Damper Actuator with Feedback') {
+  mixedDamperRows.push(
+    { point: 'Mixed Air On/Off Damper Actuator Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air On/Off Damper Actuator Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (mixedDamperActuator === 'Floating Damper Actuator') {
+  mixedDamperRows.push(
+    { point: 'Mixed Air Floating Damper Actuator Open Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Close Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (mixedDamperActuator === 'Floating Damper Actuator with Feedback') {
+  mixedDamperRows.push(
+    { point: 'Mixed Air Floating Damper Actuator Open Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Close Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Open Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Close Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (mixedDamperActuator === 'Proportional Damper Actuator') {
+  mixedDamperRows.push({
+    point: 'Mixed Air Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (mixedDamperActuator === 'Proportional Damper Actuator with Feedback') {
+  mixedDamperRows.push(
+    { point: 'Mixed Air Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Proportional Damper Actuator Feedback', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (mixedDamperActuator === '2x On/Off Damper Actuator') {
+  mixedDamperRows.push(
+    { point: 'Mixed Air On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (mixedDamperActuator === '2x On/Off Damper Actuator with Feedback') {
+  mixedDamperRows.push(
+    { point: 'Mixed Air On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air On/Off Damper Actuator Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air On/Off Damper Actuator Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (mixedDamperActuator === '2x Floating Damper Actuator') {
+  mixedDamperRows.push(
+    { point: 'Mixed Air Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (mixedDamperActuator === '2x Floating Damper Actuator with Feedback') {
+  mixedDamperRows.push(
+    { point: 'Mixed Air Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Open Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Close Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Open Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Floating Damper Actuator Close Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (mixedDamperActuator === '2x Proportional Damper Actuator') {
+  mixedDamperRows.push(
+    { point: 'Mixed Air Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (mixedDamperActuator === '2x Proportional Damper Actuator with Feedback') {
+  mixedDamperRows.push(
+    { point: 'Mixed Air Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Proportional Damper Actuator Feedback-1', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Mixed Air Proportional Damper Actuator Feedback-2', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+
+const reCirculationDamperRows: any[] = [];
+
+if (reCirculationDamperActuator === 'On/Off Damper Actuator') {
+  reCirculationDamperRows.push({
+    point: 'Re Circulation Air On/Off Damper Actuator Command', ai: 0, ao: 0, di: 0, do: 1,
+    projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (reCirculationDamperActuator === 'On/Off Damper Actuator with Feedback') {
+  reCirculationDamperRows.push(
+    { point: 'Re Circulation Air On/Off Damper Actuator Command', ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air On/Off Damper Actuator Status', ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (reCirculationDamperActuator === 'Floating Damper Actuator') {
+  reCirculationDamperRows.push(
+    { point: 'Re Circulation Air Floating Damper Actuator Open Command', ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Close Command', ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (reCirculationDamperActuator === 'Floating Damper Actuator with Feedback') {
+  reCirculationDamperRows.push(
+    { point: 'Re Circulation Air Floating Damper Actuator Open Command', ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Close Command', ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Open Status', ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Close Status', ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (reCirculationDamperActuator === 'Proportional Damper Actuator') {
+  reCirculationDamperRows.push({
+    point: 'Re Circulation Air Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0,
+    projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (reCirculationDamperActuator === 'Proportional Damper Actuator with Feedback') {
+  reCirculationDamperRows.push(
+    { point: 'Re Circulation Air Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Proportional Damper Actuator Feedback', ai: 1, ao: 0, di: 0, do: 0,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (reCirculationDamperActuator === '2x On/Off Damper Actuator') {
+  reCirculationDamperRows.push(
+    { point: 'Re Circulation Air On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (reCirculationDamperActuator === '2x On/Off Damper Actuator with Feedback') {
+  reCirculationDamperRows.push(
+    { point: 'Re Circulation Air On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air On/Off Damper Actuator Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air On/Off Damper Actuator Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (reCirculationDamperActuator === '2x Floating Damper Actuator') {
+  reCirculationDamperRows.push(
+    { point: 'Re Circulation Air Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (reCirculationDamperActuator === '2x Floating Damper Actuator with Feedback') {
+  reCirculationDamperRows.push(
+    { point: 'Re Circulation Air Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Open Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Close Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Open Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Floating Damper Actuator Close Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (reCirculationDamperActuator === '2x Proportional Damper Actuator') {
+  reCirculationDamperRows.push(
+    { point: 'Re Circulation Air Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (reCirculationDamperActuator === '2x Proportional Damper Actuator with Feedback') {
+  reCirculationDamperRows.push(
+    { point: 'Re Circulation Air Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Proportional Damper Actuator Feedback-1', ai: 1, ao: 0, di: 0, do: 0,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Re Circulation Air Proportional Damper Actuator Feedback-2', ai: 1, ao: 0, di: 0, do: 0,
+      projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+
 
 setTableRows([
   ...vantrows,
@@ -1717,6 +2369,12 @@ setTableRows([
   ...mixedAirSensorRows,
   ...dehumidificationRows,
   ...heatExchangerAirRows,
+  ...freshDamperRows,
+  ...supplyDamperRows,
+  ...returnDamperRows,
+  ...exhaustDamperRows,
+  ...mixedDamperRows,
+  ...reCirculationDamperRows
 ]);
 
 
@@ -1786,12 +2444,12 @@ setShowTable(true);
               {renderDropdown('Mixed Air', mixedAirSensor, (e) => setMixedAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
               {renderDropdown('Dehumidification Air', dehumidificationAirSensor, (e) => setDehumidificationAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
               {renderDropdown('Heat Exchanger Air', heatExchangerAirSensor, (e) => setHeatExchangerAirSensor(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
-              {renderDropdown('Fresh Damper Actuator', freshDamperActuator, (e) => setFreshDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator', '2x On/Off  Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback'])}
-              {renderDropdown('Supply Damper Actuator', supplyDamperActuator, (e) => setSupplyDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator', '2x On/Off  Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback'])}
-              {renderDropdown('Return Damper Actuator', returnDamperActuator, (e) => setReturnDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator', '2x On/Off  Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback'])}
-              {renderDropdown('Exhaust Damper Actuator', exhaustDamperActuator, (e) => setExhaustDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator', '2x On/Off  Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback'])}
-              {renderDropdown('Mixed Damper Actuator', mixedDamperActuator, (e) => setMixedDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator', '2x On/Off  Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback'])}
-              {renderDropdown('Re Circilation Damper Actuator', recirculationDamperActuator, (e) => setRecirculationDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator', '2x On/Off  Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback'])}
+              {renderDropdown('Fresh Damper Actuator', freshDamperActuator, (e) => setFreshDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
+              {renderDropdown('Supply Damper Actuator', supplyDamperActuator, (e) => setSupplyDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ])}
+              {renderDropdown('Return Damper Actuator', returnDamperActuator, (e) => setReturnDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ])}
+              {renderDropdown('Exhaust Damper Actuator',exhaustDamperActuator, (e) => setExhaustDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ])}
+              {renderDropdown('Mixed Damper Actuator', mixedDamperActuator, (e) => setMixedDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
+              {renderDropdown('Re Circulation Damper Actuator', reCirculationDamperActuator, (e) => setReCirculationDamperActuator(e.target.value), ['none','On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
 
 
 
