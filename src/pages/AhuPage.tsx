@@ -148,7 +148,15 @@ export default function AhuPage() {
   const [returnDamperActuator, setReturnDamperActuator] = useState('');
   const [exhaustDamperActuator, setExhaustDamperActuator] = useState('');
   const [mixedDamperActuator, setMixedDamperActuator] = useState('');
-  const [reCirculationDamperActuator, setReCirculationDamperActuator] = useState('none');
+  const [reCirculationDamperActuator, setReCirculationDamperActuator] = useState('');
+  const [recuperatorDamperActuator, setRecuperatorDamperActuator] = useState('');
+  const [supplyFilter, setSupplyFilter] = useState('');
+  const [freshFilter, setFreshFilter] = useState('');
+  const [returnFilter, setReturnFilter] = useState('');
+  const [exhaustFilter, setExhaustFilter] = useState('');
+  const [recuperatorFilter, setRecuperatorFilter] = useState('');
+  const [supplyFlow, setSupplyFlow] = useState('');
+  const [returnFlow, setReturnFlow] = useState('');
 
 
   const [pumpControl, setPumpControl] = useState('');
@@ -167,16 +175,9 @@ export default function AhuPage() {
   const [dehumidificationPieces, setDehumidificationPieces] = useState('');
   const [dehumidificationPower, setDehumidificationPower] = useState('');
   const [dehumidificationVoltage, setDehumidificationVoltage] = useState('');
+
   
- 
   
- 
-  const [supplyFilter, setSupplyFilter] = useState('');
-  const [freshFilter, setFreshFilter] = useState('');
-  const [returnFilter, setReturnFilter] = useState('');
-  const [recuperatorFilter, setRecuperatorFilter] = useState('');
-  const [supplyFlow, setSupplyFlow] = useState('');
-  const [returnFlow, setReturnFlow] = useState('');
   const [systemIntegration, setSystemIntegration] = useState('');
   const [protocolIntegration, setProtocolIntegration] = useState('');
   const [totalIntegrationPoints, setTotalIntegrationPoints] = useState('');
@@ -2347,6 +2348,584 @@ if (reCirculationDamperActuator === '2x Proportional Damper Actuator with Feedba
 }
 
 
+const recuperatorDamperRows: any[] = [];
+
+if (recuperatorDamperActuator === 'On/Off Damper Actuator') { recuperatorDamperRows.push({   point: 'Recuperator On/Off Damper Actuator Command',   ai: 0, ao: 0, di: 0, do: 1,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (recuperatorDamperActuator === 'On/Off Damper Actuator with Feedback') { recuperatorDamperRows.push(   {  point: 'Recuperator On/Off Damper Actuator Command',     ai: 0, ao: 0, di: 0, do: 1,     projectCode, description, location,     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Recuperator On/Off Damper Actuator Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+if (recuperatorDamperActuator === 'Floating Damper Actuator') {recuperatorDamperRows.push(  {   point: 'Recuperator Floating Damper Actuator Open Command',    ai: 0, ao: 0, di: 0, do: 1,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Recuperator Floating Damper Actuator Close Command',    ai: 0, ao: 0, di: 0, do: 1,    projectCode, description, location,    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+if (recuperatorDamperActuator === 'Floating Damper Actuator with Feedback') { recuperatorDamperRows.push(  {   point: 'Recuperator Floating Damper Actuator Open Command',     ai: 0, ao: 0, di: 0, do: 1,     projectCode, description, location,     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Recuperator Floating Damper Actuator Close Command',   ai: 0, ao: 0, di: 0, do: 1,  projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Recuperator Floating Damper Actuator Open Status',   ai: 0, ao: 0, di: 1, do: 0,  projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Recuperator Floating Damper Actuator Close Status',  ai: 0, ao: 0, di: 1, do: 0,  projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+if (recuperatorDamperActuator === 'Proportional Damper Actuator') {recuperatorDamperRows.push({  point: 'Recuperator Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (recuperatorDamperActuator === 'Proportional Damper Actuator with Feedback') { recuperatorDamperRows.push( { point: 'Recuperator Proportional Damper Actuator Command',  ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location,  modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Recuperator Proportional Damper Actuator Feedback',  ai: 1, ao: 0, di: 0, do: 0,  projectCode, description, location,  modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+if (recuperatorDamperActuator === '2x On/Off Damper Actuator') {
+  recuperatorDamperRows.push(
+    {
+      point: 'Recuperator On/Off Damper Actuator Command-1',
+      ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Recuperator On/Off Damper Actuator Command-2',
+      ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+if (recuperatorDamperActuator === '2x On/Off Damper Actuator with Feedback') {
+  recuperatorDamperRows.push(
+    {
+      point: 'Recuperator On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    {
+      point: 'Recuperator On/Off Damper Actuator Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    {
+      point: 'Recuperator On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    {
+      point: 'Recuperator On/Off Damper Actuator Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (recuperatorDamperActuator === '2x Floating Damper Actuator') {
+  recuperatorDamperRows.push(
+    {
+      point: 'Recuperator Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    {
+      point: 'Recuperator Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    {
+      point: 'Recuperator Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    {
+      point: 'Recuperator Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (recuperatorDamperActuator === '2x Floating Damper Actuator with Feedback') {
+  recuperatorDamperRows.push(
+    { point: 'Recuperator Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Recuperator Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Recuperator Floating Damper Actuator Open Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Recuperator Floating Damper Actuator Close Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Recuperator Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Recuperator Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Recuperator Floating Damper Actuator Open Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Recuperator Floating Damper Actuator Close Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (recuperatorDamperActuator === '2x Proportional Damper Actuator') {
+  recuperatorDamperRows.push(
+    { point: 'Recuperator Proportional Damper Actuator Proportional Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Recuperator Proportional Damper Actuator Proportional Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+if (recuperatorDamperActuator === '2x Proportional Damper Actuator with Feedback') {
+  recuperatorDamperRows.push(
+    { point: 'Recuperator Proportional Damper Actuator Proportional Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Recuperator Proportional Damper Actuator Feedback-1', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Recuperator Proportional Damper Actuator Proportional Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Recuperator Proportional Damper Actuator Feedback-2', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+const supplyFilterRows: any[] = [];
+
+if (supplyFilter === 'Analog G4') {
+  supplyFilterRows.push({
+    point: 'Supply Filter G4 Pressure',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Digital G4') {
+  supplyFilterRows.push({
+    point: 'Supply Filter G4 Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Analog F5') {
+  supplyFilterRows.push({
+    point: 'Supply Filter F5 Pressure',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Digital F5') {
+  supplyFilterRows.push({
+    point: 'Supply Filter F5 Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Analog F6') {
+  supplyFilterRows.push({
+    point: 'Supply Filter F6 Pressure',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Digital F6') {
+  supplyFilterRows.push({
+    point: 'Supply Filter F6 Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Analog F7') {
+  supplyFilterRows.push({
+    point: 'Supply Filter F7 Pressure',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Digital F7') {
+  supplyFilterRows.push({
+    point: 'Supply Filter F7 Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Analog F8') {
+  supplyFilterRows.push({
+    point: 'Supply Filter F8 Pressure',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Digital F8') {
+  supplyFilterRows.push({
+    point: 'Supply Filter F8 Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Analog F9') {
+  supplyFilterRows.push({
+    point: 'Supply Filter F9 Pressure',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Digital F9') {
+  supplyFilterRows.push({
+    point: 'Supply Filter F9 Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Analog H13') {
+  supplyFilterRows.push({
+    point: 'Supply Filter H13 Pressure',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Digital H13') {
+  supplyFilterRows.push({
+    point: 'Supply Filter H13 Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Analog H14') {
+  supplyFilterRows.push({
+    point: 'Supply Filter H14 Pressure',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFilter === 'Digital H14') {
+  supplyFilterRows.push({
+    point: 'Supply Filter H14 Status',
+    ai: 0, ao: 0, di: 1, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+const freshFilterRows: any[] = [];
+
+if (freshFilter === 'Analog G4') { freshFilterRows.push({   point: 'Fresh Filter G4 Pressure',   ai: 1, ao: 0, di: 0, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Digital G4') { freshFilterRows.push({   point: 'Fresh Filter G4 Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Analog F5') { freshFilterRows.push({   point: 'Fresh Filter F5 Pressure',   ai: 1, ao: 0, di: 0, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Digital F5') { freshFilterRows.push({   point: 'Fresh Filter F5 Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Analog F6') { freshFilterRows.push({   point: 'Fresh Filter F6 Pressure',   ai: 1, ao: 0, di: 0, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Digital F6') { freshFilterRows.push({   point: 'Fresh Filter F6 Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Analog F7') { freshFilterRows.push({   point: 'Fresh Filter F7 Pressure',   ai: 1, ao: 0, di: 0, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Digital F7') { freshFilterRows.push({   point: 'Fresh Filter F7 Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Analog F8') { freshFilterRows.push({   point: 'Fresh Filter F8 Pressure',   ai: 1, ao: 0, di: 0, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Digital F8') { freshFilterRows.push({   point: 'Fresh Filter F8 Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Analog F9') { freshFilterRows.push({   point: 'Fresh Filter F9 Pressure',   ai: 1, ao: 0, di: 0, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Digital F9') { freshFilterRows.push({   point: 'Fresh Filter F9 Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Analog H13') { freshFilterRows.push({   point: 'Fresh Filter H13 Pressure',   ai: 1, ao: 0, di: 0, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Digital H13') { freshFilterRows.push({   point: 'Fresh Filter H13 Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Analog H14') { freshFilterRows.push({   point: 'Fresh Filter H14 Pressure',   ai: 1, ao: 0, di: 0, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (freshFilter === 'Digital H14') { freshFilterRows.push({   point: 'Fresh Filter H14 Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+const returnFilterRows: any[] = [];
+
+if (returnFilter === 'Analog G4') { returnFilterRows.push({   point: 'Return Filter G4 Pressure',   ai: 1, ao: 0, di: 0, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+if (returnFilter === 'Digital G4') { returnFilterRows.push({   point: 'Return Filter G4 Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,  bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (returnFilter === 'Analog F5') { returnFilterRows.push({ point: 'Return Filter F5 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (returnFilter === 'Digital F5') { returnFilterRows.push({ point: 'Return Filter F5 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (returnFilter === 'Analog F6') { returnFilterRows.push({ point: 'Return Filter F6 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (returnFilter === 'Digital F6') { returnFilterRows.push({ point: 'Return Filter F6 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (returnFilter === 'Analog F7') { returnFilterRows.push({ point: 'Return Filter F7 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (returnFilter === 'Digital F7') { returnFilterRows.push({ point: 'Return Filter F7 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (returnFilter === 'Analog F8') { returnFilterRows.push({ point: 'Return Filter F8 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (returnFilter === 'Digital F8') { returnFilterRows.push({ point: 'Return Filter F8 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (returnFilter === 'Analog F9') { returnFilterRows.push({ point: 'Return Filter F9 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (returnFilter === 'Digital F9') { returnFilterRows.push({ point: 'Return Filter F9 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (returnFilter === 'Analog H13') { returnFilterRows.push({ point: 'Return Filter H13 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (returnFilter === 'Digital H13') {returnFilterRows.push({ point: 'Return Filter H13 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (returnFilter === 'Analog H14') { returnFilterRows.push({ point: 'Return Filter H14 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (returnFilter === 'Digital H14') { returnFilterRows.push({ point: 'Return Filter H14 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+const exhaustFilterRows: any[] = [];
+
+if (exhaustFilter === 'Analog G4') { exhaustFilterRows.push({   point: 'Exhaust Filter G4 Pressure',   ai: 1, ao: 0, di: 0, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+if (exhaustFilter === 'Digital G4') { exhaustFilterRows.push({   point: 'Exhaust Filter G4 Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (exhaustFilter === 'Analog F5') { exhaustFilterRows.push({   point: 'Exhaust Filter F5 Pressure',   ai: 1, ao: 0, di: 0, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+if (exhaustFilter === 'Digital F5') { exhaustFilterRows.push({   point: 'Exhaust Filter F5 Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0,   bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (exhaustFilter === 'Analog F6') {exhaustFilterRows.push({  point: 'Exhaust Filter F6 Pressure',  ai: 1, ao: 0, di: 0, do: 0,  projectCode, description, location,  modbusRtu: 0, modbusTcp: 0,  bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+if (exhaustFilter === 'Digital F6') { exhaustFilterRows.push({  point: 'Exhaust Filter F6 Status',  ai: 0, ao: 0, di: 1, do: 0,  projectCode, description, location, modbusRtu: 0, modbusTcp: 0,  bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (exhaustFilter === 'Analog F7') { exhaustFilterRows.push({  point: 'Exhaust Filter F7 Pressure',  ai: 1, ao: 0, di: 0, do: 0,  projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+if (exhaustFilter === 'Digital F7') {exhaustFilterRows.push({ point: 'Exhaust Filter F7 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location,  modbusRtu: 0, modbusTcp: 0,  bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (exhaustFilter === 'Analog F8') {exhaustFilterRows.push({ point: 'Exhaust Filter F8 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+if (exhaustFilter === 'Digital F8') { exhaustFilterRows.push({ point: 'Exhaust Filter F8 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location,  modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (exhaustFilter === 'Analog F9') {exhaustFilterRows.push({ point: 'Exhaust Filter F9 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+if (exhaustFilter === 'Digital F9') {exhaustFilterRows.push({ point: 'Exhaust Filter F9 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (exhaustFilter === 'Analog H13') {exhaustFilterRows.push({ point: 'Exhaust Filter H13 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+if (exhaustFilter === 'Digital H13') { exhaustFilterRows.push({ point: 'Exhaust Filter H13 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location,  modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (exhaustFilter === 'Analog H14') { exhaustFilterRows.push({ point: 'Exhaust Filter H14 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (exhaustFilter === 'Digital H14') {exhaustFilterRows.push({ point: 'Exhaust Filter H14 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+
+
+const recuperatorFilterRows: any[] = [];
+
+if (recuperatorFilter === 'Analog G4') {recuperatorFilterRows.push({ point: 'Recuperator Filter G4 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+if (recuperatorFilter === 'Digital G4') {recuperatorFilterRows.push({ point: 'Recuperator Filter G4 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (recuperatorFilter === 'Analog F5') {recuperatorFilterRows.push({ point: 'Recuperator Filter F5 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (recuperatorFilter === 'Digital F5') {recuperatorFilterRows.push({ point: 'Recuperator Filter F5 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (recuperatorFilter === 'Analog F6') {recuperatorFilterRows.push({ point: 'Recuperator Filter F6 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (recuperatorFilter === 'Digital F6') {recuperatorFilterRows.push({ point: 'Recuperator Filter F6 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (recuperatorFilter === 'Analog F7') {recuperatorFilterRows.push({ point: 'Recuperator Filter F7 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (recuperatorFilter === 'Digital F7') {recuperatorFilterRows.push({ point: 'Recuperator Filter F7 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (recuperatorFilter === 'Analog F8') {recuperatorFilterRows.push({ point: 'Recuperator Filter F8 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (recuperatorFilter === 'Digital F8') {recuperatorFilterRows.push({ point: 'Recuperator Filter F8 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (recuperatorFilter === 'Analog F9') {recuperatorFilterRows.push({ point: 'Recuperator Filter F9 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (recuperatorFilter === 'Digital F9') {recuperatorFilterRows.push({ point: 'Recuperator Filter F9 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (recuperatorFilter === 'Analog H13') {recuperatorFilterRows.push({ point: 'Recuperator Filter H13 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (recuperatorFilter === 'Digital H13') {recuperatorFilterRows.push({ point: 'Recuperator Filter H13 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (recuperatorFilter === 'Analog H14') {recuperatorFilterRows.push({ point: 'Recuperator Filter H14 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (recuperatorFilter === 'Digital H14') {recuperatorFilterRows.push({ point: 'Recuperator Filter H14 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+
+
+const supplyFlowRows: any[] = [];
+
+if (supplyFlow === 'Belt') { supplyFlowRows.push({point: 'Supply Fan Belt Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFlow === 'Pressure') {supplyFlowRows.push({point: 'Supply Fan Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFlow === 'Volume') {supplyFlowRows.push({point: 'Supply Fan Volume', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (supplyFlow === 'Belt and Pressure') {supplyFlowRows.push({ point: 'Supply Fan Belt Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Supply Fan Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+if (supplyFlow === 'Belt and Volume') {supplyFlowRows.push({ point: 'Supply Fan Belt Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Supply Fan Volume', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+if (supplyFlow === 'Pressure and Volume') {supplyFlowRows.push({ point: 'Supply Fan Pressure',ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Supply Fan Volume', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+if (supplyFlow === 'Belt, Pressure and Volume') {supplyFlowRows.push({ point: 'Supply Fan Belt Status',  ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Supply Fan Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    {
+      point: 'Supply Fan Volume', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+
+const returnFlowRows: any[] = [];
+
+if (returnFlow === 'Belt') {returnFlowRows.push({ point: 'Return Fan Belt Status',  ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0,  bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (returnFlow === 'Pressure') {returnFlowRows.push({ point: 'Return Fan Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (returnFlow === 'Volume') {returnFlowRows.push({ point: 'Return Fan Volume', ai: 1, ao: 0, di: 0, do: 0,projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (returnFlow === 'Belt and Pressure') {returnFlowRows.push( {  point: 'Return Fan Belt Status',  ai: 0, ao: 0, di: 1, do: 0,  projectCode, description, location,  modbusRtu: 0, modbusTcp: 0,  bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Return Fan Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location,  modbusRtu: 0, modbusTcp: 0,  bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+if (returnFlow === 'Belt and Volume') {returnFlowRows.push( {
+      point: 'Return Fan Belt Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Return Fan Volume', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location,  modbusRtu: 0, modbusTcp: 0,  bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+if (returnFlow === 'Pressure and Volume') {returnFlowRows.push( { point: 'Return Fan Pressure', ai: 1, ao: 0, di: 0, do: 0,  projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Return Fan Volume', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+if (returnFlow === 'Belt, Pressure and Volume') {returnFlowRows.push( { point: 'Return Fan Belt Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Return Fan Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location,  modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Return Fan Volume', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location,  modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
+
+
 
 setTableRows([
   ...vantrows,
@@ -2374,7 +2953,15 @@ setTableRows([
   ...returnDamperRows,
   ...exhaustDamperRows,
   ...mixedDamperRows,
-  ...reCirculationDamperRows
+  ...reCirculationDamperRows,
+  ...recuperatorDamperRows,
+  ...supplyFilterRows,
+  ...freshFilterRows,
+  ...returnFilterRows,
+  ...exhaustFilterRows,
+  ...recuperatorFilterRows,
+  ...supplyFlowRows,
+  ...returnFlowRows
 ]);
 
 
@@ -2450,15 +3037,20 @@ setShowTable(true);
               {renderDropdown('Exhaust Damper Actuator',exhaustDamperActuator, (e) => setExhaustDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ])}
               {renderDropdown('Mixed Damper Actuator', mixedDamperActuator, (e) => setMixedDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
               {renderDropdown('Re Circulation Damper Actuator', reCirculationDamperActuator, (e) => setReCirculationDamperActuator(e.target.value), ['none','On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
-
-
-
+              {renderDropdown('Recuperator Damper Actuator', recuperatorDamperActuator, (e) => setRecuperatorDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback', 'Floating Damper Actuator', 'Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
+              {renderDropdown('Supply Filter', supplyFilter, (e) => setSupplyFilter(e.target.value), ['none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14'])}
+              {renderDropdown('Fresh Filter', freshFilter, (e) => setFreshFilter(e.target.value), ['none','Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
+              {renderDropdown('Return Filter', returnFilter, (e) => setReturnFilter(e.target.value), ['none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
+              {renderDropdown('Exhaust Filter', exhaustFilter, (e) => setExhaustFilter(e.target.value), ['none','Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
+              {renderDropdown('Recuperator Filter', recuperatorFilter, (e) => setRecuperatorFilter(e.target.value), [ 'none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
+              {renderDropdown('Supply Flow', supplyFlow, (e) => setSupplyFlow(e.target.value), [ 'none', 'Belt', 'Pressure', 'Volume', 'Belt and Pressure', 'Belt and Volume', 'Pressure and Volume', 'Belt, Pressure and Volume'])}
+              {renderDropdown('Return Flow', returnFlow, (e) => setReturnFlow(e.target.value), [ 'none', 'Belt', 'Pressure', 'Volume', 'Belt and Pressure', 'Belt and Volume', 'Pressure and Volume', 'Belt, Pressure and Volume'])}
 
               {renderDropdown('Run Around Pump Control', pumpControl, (e) => setPumpControl(e.target.value), ['none', 'DOL', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
               {renderDropdown('Run Around Pump Pieces', pumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], pumpControl === 'none')}
               {renderDropdown('Run Around Pump Power', pumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], pumpControl === 'none')}
               {renderDropdown('Run Around Pump Voltage', pumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], pumpControl === 'none')}
-              {renderDropdown('Run Around Temperature', runAroundTemperature, (e) => setRunAroundTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], pumpControl === 'none')}
+              {renderDropdown('Run Around Coil Temperature', runAroundTemperature, (e) => setRunAroundTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], pumpControl === 'none')}
               {renderDropdown('Heat Recovery Control', heatRecoveryControl, (e) => setHeatRecoveryControl(e.target.value), ['none', 'Heat Wheel with MCC', 'Heat Wheel with Packaged', 'Plate Recuperator'])}
               {renderDropdown('Heat Recovery Power', heatRecoveryPower, (e) => setHeatRecoveryPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11'], heatRecoveryControl === 'none')}
               {renderDropdown('Heat Recovery Voltage', heatRecoveryVoltage, (e) => setHeatRecoveryVoltage(e.target.value), ['230', '380'], heatRecoveryControl === 'none')}
@@ -2471,12 +3063,8 @@ setShowTable(true);
               {renderDropdown('Dehumidification Power', dehumidificationPower, (e) => setDehumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], dehumidificationFunction === 'none')}
               {renderDropdown('Dehumidification Voltage', dehumidificationVoltage, (e) => setDehumidificationVoltage(e.target.value), ['230', '380'], dehumidificationFunction === 'none')}
               
-              {renderDropdown('Supply Filter', supplyFilter, (e) => setSupplyFilter(e.target.value), ['none', 'Analog', 'Digital'])}
-              {renderDropdown('Fresh Filter', freshFilter, (e) => setFreshFilter(e.target.value), ['none', 'Analog', 'Digital'])}
-              {renderDropdown('Return Filter', returnFilter, (e) => setReturnFilter(e.target.value), ['none', 'Analog', 'Digital'])}
-              {renderDropdown('Recuperator Filter', recuperatorFilter, (e) => setRecuperatorFilter(e.target.value), ['none', 'Analog', 'Digital'])}
-              {renderDropdown('Supply Flow', supplyFlow, (e) => setSupplyFlow(e.target.value), ['none', 'Pressure', 'Volume'])}
-              {renderDropdown('Return Flow', returnFlow, (e) => setReturnFlow(e.target.value), ['none', 'Pressure', 'Volume'])}
+              
+              
               {renderDropdown('System Integration', systemIntegration, (e) => setSystemIntegration(e.target.value), ['none', 'Package', 'VFD'])}
               {renderDropdown('Protocol Integration', protocolIntegration, (e) => setProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], systemIntegration === 'none')}
               
