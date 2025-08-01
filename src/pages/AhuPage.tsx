@@ -143,7 +143,12 @@ export default function AhuPage() {
   const [mixedAirSensor, setMixedAirSensor] = useState('');
   const [dehumidificationAirSensor, setDehumidificationAirSensor] = useState('');
   const [heatExchangerAirSensor, setHeatExchangerAirSensor] = useState('');
-  
+  const [freshDamperActuator, setFreshDamperActuator] = useState('');
+  const [supplyDamperActuator, setSupplyDamperActuator] = useState('');
+  const [returnDamperActuator, setReturnDamperActuator] = useState('');
+  const [exhaustDamperActuator, setExhaustDamperActuator] = useState('');
+  const [mixedDamperActuator, setMixedDamperActuator] = useState('');
+  const [recirculationDamperActuator, setRecirculationDamperActuator] = useState('');
 
 
   const [pumpControl, setPumpControl] = useState('');
@@ -163,12 +168,7 @@ export default function AhuPage() {
   const [dehumidificationPower, setDehumidificationPower] = useState('');
   const [dehumidificationVoltage, setDehumidificationVoltage] = useState('');
   
-  const [freshDamperActuator, setFreshDamperActuator] = useState('');
-  const [supplyDamperActuator, setSupplyDamperActuator] = useState('');
-  const [returnDamperActuator, setReturnDamperActuator] = useState('');
-  const [exhaustDamperActuator, setExhaustDamperActuator] = useState('');
-  const [mixedDamperActuator, setMixedDamperActuator] = useState('');
-  const [recirculationDamperActuator, setRecirculationDamperActuator] = useState('');
+ 
   
  
   const [supplyFilter, setSupplyFilter] = useState('');
@@ -312,7 +312,7 @@ const handleCoolingFunctionChange = (e: SelectChangeEvent) => {
     const vantpieces = Number(vantPieces) || 1;
     let vantrows: any[] = [];
 
-    if (vantControl === 'Dol' || vantControl === 'Star-Delta') {
+    if (vantControl === 'DOL' || vantControl === 'Star-Delta') {
   const dolRows = [
     { point: 'Vantilator Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Vantilator Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
@@ -507,7 +507,7 @@ if (vantControl === 'EC') {
 const asppieces = Number(aspPieces) || 1;
 let asprows: any[] = [];
 
-if (aspControl === 'Dol' || aspControl === 'Star-Delta') {
+if (aspControl === 'DOL' || aspControl === 'Star-Delta') {
   const dolRows = [
     { point: 'Aspirator Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Aspirator Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
@@ -1657,12 +1657,12 @@ setShowTable(true);
               <TextField fullWidth variant="outlined" placeholder="AHU Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               <TextField fullWidth variant="outlined" placeholder="AHU Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               <TextField fullWidth variant="outlined" placeholder="AHU Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              {renderDropdown('AHU Control Type', ahuControl, (e) => setAhuControl(e.target.value), ['MCC', 'Own Panel', 'Smart'])}
-              {renderDropdown('Vantilator Control', vantControl, (e) => setVantControl(e.target.value), ['Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+              {renderDropdown('AHU Control Type', ahuControl, (e) => setAhuControl(e.target.value), ['MCC', 'Own Panel'])}
+              {renderDropdown('Vantilator Control', vantControl, (e) => setVantControl(e.target.value), ['DOL', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
               {renderDropdown('Vantilator Pieces', vantPieces, (e) => setVantPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
               {renderDropdown('Vantilator Power', fanPower, (e) => setFanPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
               {renderDropdown('Vantilator Voltage', fanVoltage, (e) => setFanVoltage(e.target.value), ['230', '380'])}
-              {renderDropdown('Aspirator Control', aspControl, handleAspControlChange, ['none', 'Dol', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta','Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+              {renderDropdown('Aspirator Control', aspControl, handleAspControlChange, ['none', 'DOL', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta','Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
               {renderDropdown('Aspirator Pieces', aspPieces, (e) => setAspPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], aspControl === 'none')}
               {renderDropdown('Aspirator Power', aspPower, (e) => setAspPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], aspControl === 'none')}
               {renderDropdown('Aspirator Voltage', aspVoltage, (e) => setAspVoltage(e.target.value), ['230', '380'], aspControl === 'none')}
@@ -1690,8 +1690,17 @@ setShowTable(true);
               {renderDropdown('Mixed Air', mixedAirSensor, (e) => setMixedAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
               {renderDropdown('Dehumidification Air', dehumidificationAirSensor, (e) => setDehumidificationAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
               {renderDropdown('Heat Exchanger Air', heatExchangerAirSensor, (e) => setHeatExchangerAirSensor(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
-             
-              {renderDropdown('Run Around Pump Control', pumpControl, (e) => setPumpControl(e.target.value), ['none', 'Dol', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
+              {renderDropdown('Fresh Damper Actuator', freshDamperActuator, (e) => setFreshDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator', '2x On/Off  Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback'])}
+              {renderDropdown('Supply Damper Actuator', supplyDamperActuator, (e) => setSupplyDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator', '2x On/Off  Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback'])}
+              {renderDropdown('Return Damper Actuator', returnDamperActuator, (e) => setReturnDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator', '2x On/Off  Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback'])}
+              {renderDropdown('Exhaust Damper Actuator', exhaustDamperActuator, (e) => setExhaustDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator', '2x On/Off  Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback'])}
+              {renderDropdown('Mixed Damper Actuator', mixedDamperActuator, (e) => setMixedDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator', '2x On/Off  Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback'])}
+              {renderDropdown('Re Circilation Damper Actuator', recirculationDamperActuator, (e) => setRecirculationDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator', '2x On/Off  Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback'])}
+
+
+
+
+              {renderDropdown('Run Around Pump Control', pumpControl, (e) => setPumpControl(e.target.value), ['none', 'DOL', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
               {renderDropdown('Run Around Pump Pieces', pumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], pumpControl === 'none')}
               {renderDropdown('Run Around Pump Power', pumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], pumpControl === 'none')}
               {renderDropdown('Run Around Pump Voltage', pumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], pumpControl === 'none')}
@@ -1707,12 +1716,7 @@ setShowTable(true);
               {renderDropdown('Dehumidification Pieces', dehumidificationPieces, (e) => setDehumidificationPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], dehumidificationFunction === 'none')}
               {renderDropdown('Dehumidification Power', dehumidificationPower, (e) => setDehumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], dehumidificationFunction === 'none')}
               {renderDropdown('Dehumidification Voltage', dehumidificationVoltage, (e) => setDehumidificationVoltage(e.target.value), ['230', '380'], dehumidificationFunction === 'none')}
-              {renderDropdown('Fresh Damper Actuator', freshDamperActuator, (e) => setFreshDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
-              {renderDropdown('Supply Damper Actuator', supplyDamperActuator, (e) => setSupplyDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
-              {renderDropdown('Return Damper Actuator', returnDamperActuator, (e) => setReturnDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
-              {renderDropdown('Exhaust Damper Actuator', exhaustDamperActuator, (e) => setExhaustDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
-              {renderDropdown('Mixed Damper Actuator', mixedDamperActuator, (e) => setMixedDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
-              {renderDropdown('Re Circilation Damper Actuator', recirculationDamperActuator, (e) => setRecirculationDamperActuator(e.target.value), ['none', 'On/Off', 'Proportional', '2x On/Off', '2x Proportional'])}
+              
               {renderDropdown('Supply Filter', supplyFilter, (e) => setSupplyFilter(e.target.value), ['none', 'Analog', 'Digital'])}
               {renderDropdown('Fresh Filter', freshFilter, (e) => setFreshFilter(e.target.value), ['none', 'Analog', 'Digital'])}
               {renderDropdown('Return Filter', returnFilter, (e) => setReturnFilter(e.target.value), ['none', 'Analog', 'Digital'])}
@@ -1749,9 +1753,9 @@ setShowTable(true);
 
         {/* Tablo */}
         <Box sx={{ flex: 1, p: 4, backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '12px', mr: 1, ml: 0, mt: 6, maxHeight: '85vh', overflowY: 'auto', color: 'white' }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>
-  {projectCode ? `${projectCode} Output Table` : 'AHU Output Table'}
-</Typography>
+          <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
+          {projectCode ? `${projectCode} Output Table` : 'AHU Output Table'}
+          </Typography>
 
           {showTable && tableRows.length > 0 && (
             <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#ffffff',

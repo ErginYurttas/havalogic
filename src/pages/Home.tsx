@@ -211,12 +211,15 @@ export default function Home() {
       <HeroSection>
         <Container sx={{ height: '100%', display: 'flex', alignItems: 'center', position: 'relative', zIndex: 2, py: 10 }}>
           <Box sx={{ width: '50%' }}>
+            
+            
             <HeroText variant="h2" sx={{ mb: 3, fontSize: '3.5rem' }}>
-              Create your projects accurately and quickly
+            From Concept to Completion Instantly
             </HeroText>
             <Typography variant="h5" sx={{ mb: 4, opacity: 0.9, fontStyle: 'italic', color: '#e0e0e0' }}>
-              We've built something amazing, stay tuned!
+            For decision-makers who demand efficiency and accuracy
             </Typography>
+
             <Stack direction="row" spacing={2}>
               <PrimaryButton 
                 startIcon={<AddIcon sx={{ fontSize: '1rem' }} />} 
