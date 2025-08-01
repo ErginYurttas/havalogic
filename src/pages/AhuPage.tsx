@@ -898,6 +898,37 @@ const preheatingRows: any[] = [];
 if (preheatingFunction === 'On/Off Valve Actuator') {
   preheatingRows.push(
     {
+      point: 'Preheating Valve Command',
+      ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    
+  );
+}
+
+if (preheatingFunction === 'On/Off Valve Actuator with Feedback') {
+  preheatingRows.push(
+    {
+      point: 'Preheating Valve Command',
+      ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    
+    {
+      point: 'Preheating Valve Status',
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    
+  );
+}
+
+if (preheatingFunction === 'Floating Valve Actuator') {
+  preheatingRows.push(
+   {
       point: 'Preheating Valve Open Command',
       ai: 0, ao: 0, di: 0, do: 1,
       projectCode, description, location,
@@ -908,11 +939,12 @@ if (preheatingFunction === 'On/Off Valve Actuator') {
       ai: 0, ao: 0, di: 0, do: 1,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    }
+    },
+    
   );
 }
 
-if (preheatingFunction === 'On/Off Valve Actuator with Feedback') {
+if (preheatingFunction === 'Floating Valve Actuator with Feedback') {
   preheatingRows.push(
     {
       point: 'Preheating Valve Open Command',
@@ -940,6 +972,7 @@ if (preheatingFunction === 'On/Off Valve Actuator with Feedback') {
     }
   );
 }
+
 
 if (preheatingFunction === 'Proportional Valve Actuator') {
   preheatingRows.push({
@@ -1053,6 +1086,37 @@ const heatingRows: any[] = [];
 if (heatingFunction === 'On/Off Valve Actuator') {
   heatingRows.push(
     {
+      point: 'Heating Valve Command',
+      ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+     
+  );
+}
+
+if (heatingFunction === 'On/Off Valve Actuator with Feedback') {
+  heatingRows.push(
+    {
+      point: 'Heating Valve Command',
+      ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    
+    {
+      point: 'Heating Valve Status',
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    
+  );
+}
+
+if (heatingFunction === 'Floating Valve Actuator') {
+  heatingRows.push(
+   {
       point: 'Heating Valve Open Command',
       ai: 0, ao: 0, di: 0, do: 1,
       projectCode, description, location,
@@ -1063,11 +1127,12 @@ if (heatingFunction === 'On/Off Valve Actuator') {
       ai: 0, ao: 0, di: 0, do: 1,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    }
+    },
+    
   );
 }
 
-if (heatingFunction === 'On/Off Valve Actuator with Feedback') {
+if (heatingFunction === 'Floating Valve Actuator with Feedback') {
   heatingRows.push(
     {
       point: 'Heating Valve Open Command',
@@ -1210,6 +1275,34 @@ const coolingRows: any[] = [];
 if (coolingFunction === 'On/Off Valve Actuator') {
   coolingRows.push(
     {
+      point: 'Cooling Valve Command',
+      ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+  );
+}
+
+if (coolingFunction === 'On/Off Valve Actuator with Feedback') {
+  coolingRows.push(
+    {
+      point: 'Cooling Valve Command',
+      ai: 0, ao: 0, di: 0, do: 1,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Cooling Valve Status',
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+  );
+}
+
+if (coolingFunction === 'Floating Valve Actuator') {
+  coolingRows.push(
+   {
       point: 'Cooling Valve Open Command',
       ai: 0, ao: 0, di: 0, do: 1,
       projectCode, description, location,
@@ -1220,11 +1313,12 @@ if (coolingFunction === 'On/Off Valve Actuator') {
       ai: 0, ao: 0, di: 0, do: 1,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    }
+    },
+    
   );
 }
 
-if (coolingFunction === 'On/Off Valve Actuator with Feedback') {
+if (coolingFunction === 'Floating Valve Actuator with Feedback') {
   coolingRows.push(
     {
       point: 'Cooling Valve Open Command',
@@ -1252,6 +1346,8 @@ if (coolingFunction === 'On/Off Valve Actuator with Feedback') {
     }
   );
 }
+
+
 
 if (coolingFunction === 'Proportional Valve Actuator') {
   coolingRows.push({
@@ -1671,15 +1767,15 @@ setShowTable(true);
               {renderDropdown('Door Safety Contacts', doorSafety, (e) => setDoorSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
               {renderDropdown('Fire Safety Contacts', fireSafety, (e) => setFireSafety(e.target.value), ['none', 'only Viewing', 'Viewing and Control'])}
               {renderDropdown('Frost Safety Contacts', frostSafety, (e) => setFrostSafety(e.target.value), ['none', 'Automatic Reset', 'Manual Reset'])}
-              {renderDropdown('Preheating Function', preheatingFunction, handlePreheatingFunctionChange, ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'])}
+              {renderDropdown('Preheating Function', preheatingFunction, handlePreheatingFunctionChange, ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Floating Valve Actuator', 'Floating Valve Actuator with Feedback','Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'])}
               {renderDropdown('Preheating Power', preheatingPower, (e) => setPreheatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], preheatingFunction === 'none' || preheatingValveOptions.includes(preheatingFunction))}
               {renderDropdown('Preheating Voltage', preheatingVoltage, (e) => setPreheatingVoltage(e.target.value), ['230', '380'], preheatingFunction === 'none' || preheatingValveOptions.includes(preheatingFunction))}
               {renderDropdown('Preheating Coil Temperature', preheatingTemperature, (e) => setPreheatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], isPreheatingTemperatureDisabled())}
-              {renderDropdown('Heating Function', heatingFunction, handleHeatingFunctionChange, ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'])}
+              {renderDropdown('Heating Function', heatingFunction, handleHeatingFunctionChange, ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Floating Valve Actuator', 'Floating Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'])}
               {renderDropdown('Heating Power', heatingPower, (e) => setHeatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], heatingFunction === 'none' || heatingValveOptions.includes(heatingFunction))}
               {renderDropdown('Heating Voltage', heatingVoltage, (e) => setHeatingVoltage(e.target.value), ['230', '380'], heatingFunction === 'none' || heatingValveOptions.includes(heatingFunction))}
               {renderDropdown('Heating Coil Temperature', heatingTemperature, (e) => setHeatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'],isHeatingTemperatureDisabled())}
-              {renderDropdown('Cooling Function', coolingFunction, (e) => setCoolingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged DX Unit', '2-Staged DX Unit', '3-Staged DX Unit', 'Proportional DX Unit'])}
+              {renderDropdown('Cooling Function', coolingFunction, (e) => setCoolingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Floating Valve Actuator', 'Floating Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged DX Unit', '2-Staged DX Unit', '3-Staged DX Unit', 'Proportional DX Unit'])}
               {renderDropdown('Cooling Power', coolingPower, (e) => setCoolingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15','18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], coolingFunction === 'none' || coolingValveOptions.includes(coolingFunction))}
               {renderDropdown('Cooling Voltage', coolingVoltage, (e) => setCoolingVoltage(e.target.value), ['230', '380'], coolingFunction === 'none' || coolingValveOptions.includes(coolingFunction))}
               {renderDropdown('Cooling Coil Temperature', coolingTemperature, (e) => setCoolingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], coolingFunction === 'none' || coolingDXOptions.includes(coolingFunction))}
