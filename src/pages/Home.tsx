@@ -93,7 +93,7 @@ export default function Home() {
   const [showAlert, setShowAlert] = React.useState(false);
   const [showLogin, setShowLogin] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [showLearnMoreAlert, setShowLearnMoreAlert] = React.useState(false);
+  const [showLearnMorePopup, setShowLearnMorePopup] = React.useState(false);
   const [showDemoAlert, setShowDemoAlert] = React.useState(false);
   const [validationError, setValidationError] = React.useState(false);
   const [formData, setFormData] = React.useState<FormData>({
@@ -229,10 +229,10 @@ export default function Home() {
                 New Project
               </PrimaryButton>
               <OutlinedButton 
-                sx={{ color: 'white', borderColor: 'rgba(255, 255, 255, 0.7)', '&:hover': { borderColor: 'white' } }}
-                onClick={() => setShowLearnMoreAlert(true)}
+              sx={{ color: 'white', borderColor: 'rgba(255, 255, 255, 0.7)', '&:hover': { borderColor: 'white' } }}
+              onClick={() => setShowLearnMorePopup(true)}
               >
-                Learn More
+              Learn More
               </OutlinedButton>
             </Stack>
           </Box>
@@ -370,6 +370,76 @@ export default function Home() {
         </DialogActions>
       </Dialog>
 
+<Dialog
+  open={showLearnMorePopup}
+  onClose={() => setShowLearnMorePopup(false)}
+  maxWidth="sm"
+  fullWidth
+  sx={{
+    '& .MuiPaper-root': {
+      background: 'linear-gradient(to bottom, #f8fafc, #e6f0fa)',
+      borderRadius: '12px',
+      boxShadow: '0 4px 20px rgba(25, 118, 210, 0.15)'
+    }
+  }}
+>
+  <DialogTitle sx={{ color: '#1976d2', fontWeight: 600, borderBottom: '1px solid rgba(25, 118, 210, 0.1)' }}>
+    Learn More
+  </DialogTitle>
+  <DialogContent sx={{ py: 4 }}>
+  <Stack spacing={2}>
+    <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 600 }}>
+      Designed with Vision, Built for the Future
+    </Typography>
+
+    <Typography variant="body2" sx={{ color: '#333' }}>
+      HavaLogic is an original platform developed through the collaboration between a visionary Turk and artificial intelligence.  
+      Our goal was to create a tool that is both simple and powerful — starting with the HVAC industry, where we've taken our first step.  
+      We're planning to expand soon into the fields of energy, KNX, and other low-current systems.
+    </Typography>
+
+    <Typography variant="body2" sx={{ color: '#333' }}>
+      Today, building automation, energy efficiency, and system integration are no longer luxuries — they are necessities.  
+      Accessing information is easier than ever, but in real-life projects, finding the right knowledge, filtering it, and applying it effectively is still a major challenge.  
+      The industry is overwhelmed by noise and information pollution, which slows down progress.
+    </Typography>
+
+    <Typography variant="body2" sx={{ color: '#333' }}>
+      That’s exactly where HavaLogic steps in.  
+      It simplifies complexity, accelerates workflows, and offers an intuitive interface for everyone involved.  
+      The questions we ask are simple — but the answers you provide lead to meaningful, measurable results in the field.
+    </Typography>
+
+    <Typography variant="body2" sx={{ color: '#333' }}>
+      This tool isn’t just for design teams at automation firms.  
+      Sales teams can also benefit from it. Even contractors — as long as they know the answers — can easily use the system.  
+      HavaLogic is designed to support everyone in the process.  
+      <strong>So where do you fit in?</strong>
+    </Typography>
+
+    <Typography variant="body2" sx={{ color: '#333' }}>
+      This platform was built not just with today in mind, but with a strong vision for the future.  
+      It is the product of a new-generation mindset and a digital transformation perspective.
+    </Typography>
+
+    <Typography variant="body2" sx={{ color: '#333' }}>
+      We’re excited — because we believe we've created something that truly contributes to the digital world.  
+      We’re hopeful — because together, we believe we can design smarter and more efficient systems.
+    </Typography>
+
+    <Typography variant="body2" sx={{ color: '#333' }}>
+      We are currently uploading data into our system.  
+      Our goal is to reach full performance before the year 2026.
+    </Typography>
+  </Stack>
+</DialogContent>
+
+
+  <DialogActions sx={{ px: 3, py: 2, borderTop: '1px solid rgba(25, 118, 210, 0.1)' }}>
+    <OutlinedButton onClick={() => setShowLearnMorePopup(false)}>Close</OutlinedButton>
+  </DialogActions>
+</Dialog>
+
       
       <Snackbar
         open={showAlert}
@@ -384,20 +454,11 @@ export default function Home() {
           } 
         }}
       />
-      <Snackbar
-        open={showLearnMoreAlert}
-        autoHideDuration={3000}
-        onClose={() => setShowLearnMoreAlert(false)}
-        message="Under construction"
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        sx={{ 
-          '& .MuiSnackbarContent-root': { 
-            backgroundColor: '#FFA500',
-            color: 'black',
-            fontWeight: 500 
-          } 
-        }}
-      />
+
+
+
+
+      
       <Snackbar
         open={showDemoAlert}
         autoHideDuration={3000}
@@ -414,17 +475,17 @@ export default function Home() {
       />
 
       <Snackbar
-  open={validationError}
-  autoHideDuration={3000}
-  onClose={() => setValidationError(false)}
-  message="Please fill in all required fields"
-  anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-  sx={{ 
-    '& .MuiSnackbarContent-root': { 
+       open={validationError}
+       autoHideDuration={3000}
+       onClose={() => setValidationError(false)}
+       message="Please fill in all required fields"
+       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      sx={{ 
+      '& .MuiSnackbarContent-root': { 
       backgroundColor: '#d21947',
       color: 'white'
-    } 
-  }}
+      } 
+    }}
 />
 
       <LoginModalWrapper
