@@ -213,11 +213,11 @@ export default function Home() {
           <Box sx={{ width: '50%' }}>
             
             
-            <HeroText variant="h2" sx={{ mb: 3, fontSize: '3.5rem' }}>
-            From Concept to Completion Instantly
+            <HeroText variant="h2" sx={{ mb: 3, fontSize: '3.2rem' }}>
+            We've built something we're proud of.
             </HeroText>
             <Typography variant="h5" sx={{ mb: 4, opacity: 0.9, fontStyle: 'italic', color: '#e0e0e0' }}>
-            For decision-makers who demand efficiency and accuracy
+            Try it — you might just love it too.
             </Typography>
 
             <Stack direction="row" spacing={2}>
@@ -277,31 +277,31 @@ export default function Home() {
               fullWidth
               sx={{
                 bgcolor: '#fff',
-                '& .MuiInputBase-input': { color: '#000' },
+                '& .MuiInputBase-input': { color: '#1976d2' },
                 '& fieldset': { borderColor: 'rgba(25, 118, 210, 0.3)' },
                 '&:hover fieldset': { borderColor: '#1976d2' }
               }}
             >
               <MenuItem value="" disabled>Select Building Type</MenuItem>
               <MenuItem value="Airport">Airport</MenuItem>
-<MenuItem value="Bank">Bank</MenuItem>
-<MenuItem value="Data Center">Data Center</MenuItem>
-<MenuItem value="Factory">Factory</MenuItem>
-<MenuItem value="Government Building">Government Building</MenuItem>
-<MenuItem value="Hospital">Hospital</MenuItem>
-<MenuItem value="Hotel">Hotel</MenuItem>
-<MenuItem value="Laboratory">Laboratory</MenuItem>
-<MenuItem value="Library">Library</MenuItem>
-<MenuItem value="Mall">Mall</MenuItem>
-<MenuItem value="Museum">Museum</MenuItem>
-<MenuItem value="Office">Office</MenuItem>
-<MenuItem value="Residential">Residential</MenuItem>
-<MenuItem value="School">School</MenuItem>
-<MenuItem value="Shepyard">Shepyard</MenuItem>
-<MenuItem value="Skyscraper">Skyscraper</MenuItem>
-<MenuItem value="Sport Complex">Sport Complex</MenuItem>
-<MenuItem value="Warehouse">Warehouse</MenuItem>
-<MenuItem value="Other">Other</MenuItem>
+              <MenuItem value="Bank">Bank</MenuItem>
+              <MenuItem value="Data Center">Data Center</MenuItem>
+              <MenuItem value="Factory">Factory</MenuItem>
+              <MenuItem value="Government Building">Government Building</MenuItem>
+              <MenuItem value="Hospital">Hospital</MenuItem>
+              <MenuItem value="Hotel">Hotel</MenuItem>
+              <MenuItem value="Laboratory">Laboratory</MenuItem>
+              <MenuItem value="Library">Library</MenuItem>
+              <MenuItem value="Mall">Mall</MenuItem>
+              <MenuItem value="Museum">Museum</MenuItem>
+              <MenuItem value="Office">Office</MenuItem>
+              <MenuItem value="Residential">Residential</MenuItem>
+              <MenuItem value="School">School</MenuItem>
+              <MenuItem value="Shepyard">Shepyard</MenuItem>
+              <MenuItem value="Skyscraper">Skyscraper</MenuItem>
+              <MenuItem value="Sport Complex">Sport Complex</MenuItem>
+              <MenuItem value="Warehouse">Warehouse</MenuItem>
+              <MenuItem value="Other">Other</MenuItem>
 
             </Select>
             <Select
@@ -313,19 +313,18 @@ export default function Home() {
               fullWidth
               sx={{
                 bgcolor: '#fff',
-                '& .MuiInputBase-input': { color: '#000' },
+                '& .MuiInputBase-input': { color: '#1976d2' },
                 '& fieldset': { borderColor: 'rgba(25, 118, 210, 0.3)' },
                 '&:hover fieldset': { borderColor: '#1976d2' }
               }}
             >
               <MenuItem value="" disabled>Select System</MenuItem>
-              <MenuItem value="Access">Access</MenuItem>
-              <MenuItem value="CCTV">Cctv</MenuItem>
-              <MenuItem value="Energy Monitoring">Energy</MenuItem>
-              <MenuItem value="Fire Detecting Systems">Fire Detecting Systems</MenuItem>
+              <MenuItem value="Access" disabled>Access</MenuItem>
+              <MenuItem value="CCTV" disabled>Cctv</MenuItem>
+              <MenuItem value="Energy Monitoring" disabled>Energy</MenuItem>
+              <MenuItem value="Fire Detecting Systems" disabled>Fire Detecting Systems</MenuItem>
               <MenuItem value="HVAC">Hvac</MenuItem>
-              <MenuItem value="KNX">Knx</MenuItem>
-
+              <MenuItem value="KNX" disabled>Knx</MenuItem>
             </Select>
             {(['city', 'country', 'responsible'] as const).map((field) => (
               <TextField
@@ -431,14 +430,21 @@ export default function Home() {
       We are currently uploading data into our system.  
       Our goal is to reach full performance before the year 2026.
     </Typography>
+
+    <Typography variant="body2" sx={{ color: '#333' }}>
+    If this journey resonates with you, please consider sharing HavaLogic with your colleagues.  
+     We might truly need that support — and it would mean a lot to us.
+    </Typography>
+
+
   </Stack>
 </DialogContent>
 
 
-  <DialogActions sx={{ px: 3, py: 2, borderTop: '1px solid rgba(25, 118, 210, 0.1)' }}>
-    <OutlinedButton onClick={() => setShowLearnMorePopup(false)}>Close</OutlinedButton>
-  </DialogActions>
-</Dialog>
+        <DialogActions sx={{ px: 3, py: 2, borderTop: '1px solid rgba(25, 118, 210, 0.1)' }}>
+        <OutlinedButton onClick={() => setShowLearnMorePopup(false)}>Close</OutlinedButton>
+        </DialogActions>
+      </Dialog>
 
       
       <Snackbar
@@ -448,10 +454,17 @@ export default function Home() {
         message="Please log in or continue with demo"
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         sx={{ 
-          '& .MuiSnackbarContent-root': { 
-            backgroundColor: '#d21947ff',
-            color: 'white' 
-          } 
+        '& .MuiSnackbarContent-root': { 
+        backgroundColor: '#d21947ff',
+        color: 'white',
+        fontWeight: 500,
+        padding: '10px 24px',
+        minWidth: 'auto',
+        justifyContent: 'center',
+        textAlign: 'center',
+        borderRadius: '8px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+          }    
         }}
       />
 
@@ -463,7 +476,7 @@ export default function Home() {
         open={showDemoAlert}
         autoHideDuration={3000}
         onClose={() => setShowDemoAlert(false)}
-        message="Under construction"
+        message="Currently available to registered users. Public demo access is coming soon."
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         sx={{ 
           '& .MuiSnackbarContent-root': { 

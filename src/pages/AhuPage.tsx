@@ -44,25 +44,17 @@ const PrimaryButton = styled(ModernButton)({
 // Yeni Select stilleri
 const selectStyles = {
   color: '#ECEFF1',
-  '.MuiOutlinedInput-notchedOutline': {
-    borderColor: '#B0BEC5'
+  '.MuiOutlinedInput-notchedOutline': {   borderColor: '#B0BEC5'
   },
-  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-    borderColor: '#90A4AE'
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {   borderColor: '#90A4AE'
   },
-  '&:hover .MuiOutlinedInput-notchedOutline': {
-    borderColor: '#CFD8DC'
+  '&:hover .MuiOutlinedInput-notchedOutline': {   borderColor: '#CFD8DC'
   },
-  '&.Mui-disabled': {
-    color: '#888',
-    backgroundColor: '#1e1e1e'
+  '&.Mui-disabled': { color: '#888',  backgroundColor: '#1e1e1e'
   },
-  '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
-    borderColor: '#555'
-  },
+  '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {  borderColor: '#555'  },
   svg: {
-    color: '#90A4AE'
-  }
+    color: '#90A4AE'  }
 };
 
 const labelStyles = {
@@ -72,33 +64,13 @@ const labelStyles = {
   }
 };
 
-const preheatingValveOptions = [
-  'On/Off Valve Actuator',
-  'On/Off Valve Actuator with Feedback',
-  'Proportional Valve Actuator',
-  'Proportional Valve Actuator with Feedback'
-];
+const preheatingValveOptions = ['On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback'];
 
-const heatingValveOptions = [
-  'On/Off Valve Actuator',
-  'On/Off Valve Actuator with Feedback',
-  'Proportional Valve Actuator',
-  'Proportional Valve Actuator with Feedback'
-];
+const heatingValveOptions = [ 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator','Proportional Valve Actuator with Feedback'];
 
-const coolingValveOptions = [
-  'On/Off Valve Actuator',
-  'On/Off Valve Actuator with Feedback',
-  'Proportional Valve Actuator',
-  'Proportional Valve Actuator with Feedback'
-];
+const coolingValveOptions = [ 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback'];
 
-const coolingDXOptions = [
-  '1-Staged DX Unit',
-  '2-Staged DX Unit',
-  '3-Staged DX Unit',
-  'Proportional DX Unit'
-];
+const coolingDXOptions = [ '1-Staged DX Unit', '2-Staged DX Unit', '3-Staged DX Unit', 'Proportional DX Unit'];
 
 export default function AhuPage() {
   const navigate = useNavigate();
@@ -157,10 +129,10 @@ export default function AhuPage() {
   const [recuperatorFilter, setRecuperatorFilter] = useState('');
   const [supplyFlow, setSupplyFlow] = useState('');
   const [returnFlow, setReturnFlow] = useState('');
+  const [runAroundPumpControl, setRunAroundPumpControl] = useState('');
+  const [runAroundPumpPieces, setRunAroundPumpPieces] = useState('');
 
 
-  const [pumpControl, setPumpControl] = useState('');
-  const [pumpPieces, setPumpPieces] = useState('');
   const [pumpPower, setPumpPower] = useState('');
   const [pumpVoltage, setPumpVoltage] = useState('');
   const [runAroundTemperature, setRunAroundTemperature] = useState('');
@@ -186,15 +158,13 @@ export default function AhuPage() {
 
 const isPreheatingTemperatureDisabled = () => {
     return (
-      preheatingFunction === 'none' ||
-      preheatingFunction.includes('Electrical Heater')
+      preheatingFunction === 'none' || preheatingFunction.includes('Electrical Heater')
     );
   };
 
   React.useEffect(() => {
   if (
-    preheatingFunction === 'none' ||
-    preheatingFunction.includes('Electrical Heater')
+    preheatingFunction === 'none' || preheatingFunction.includes('Electrical Heater')
   ) {
     setPreheatingTemperature('');
   }
@@ -202,15 +172,13 @@ const isPreheatingTemperatureDisabled = () => {
 
   const isHeatingTemperatureDisabled = () => {
     return (
-      heatingFunction === 'none' ||
-      heatingFunction.includes('Electrical Heater')
+      heatingFunction === 'none' || heatingFunction.includes('Electrical Heater')
     );
   };
 
 React.useEffect(() => {
   if (
-    heatingFunction === 'none' ||
-    heatingFunction.includes('Electrical Heater')
+    heatingFunction === 'none' || heatingFunction.includes('Electrical Heater')
   ) {
     setHeatingTemperature('');
   }
@@ -222,8 +190,7 @@ React.useEffect(() => {
 
 React.useEffect(() => {
   if (
-    coolingFunction === 'none' ||
-    coolingDXOptions.includes(coolingFunction)
+    coolingFunction === 'none' || coolingDXOptions.includes(coolingFunction)
   ) {
     setCoolingTemperature('');
   }
@@ -233,6 +200,16 @@ React.useEffect(() => {
     navigate('/');
   };
 
+React.useEffect(() => {
+  if (runAroundPumpControl === 'none') {
+    setRunAroundPumpPieces('');
+    setPumpPower('');
+    setPumpVoltage('');
+    setRunAroundTemperature('');
+  }
+}, [runAroundPumpControl]);
+
+  
   
   const renderDropdown = (
     label: string,
@@ -325,20 +302,20 @@ const handleCoolingFunctionChange = (e: SelectChangeEvent) => {
     const suffix = vantpieces > 1 ? ` ${i}` : '';
     dolRows.forEach((row) => {
       vantrows.push({
-  projectCode,
-  description,
-  location,
-  point: `${row.point}${suffix}`,
-  ai: row.ai,
-  ao: row.ao,
-  di: row.di,
-  do: row.do,
-  modbusRtu: 0,
-  modbusTcp: 0,
-  bacnetMstp: 0,
-  bacnetIp: 0,
-  mbus: 0
-});
+      projectCode,
+      description,
+      location,
+      point: `${row.point}${suffix}`,
+      ai: row.ai,
+      ao: row.ao,
+      di: row.di,
+      do: row.do,
+      modbusRtu: 0,
+      modbusTcp: 0,
+      bacnetMstp: 0,
+      bacnetIp: 0,
+      mbus: 0
+      });
     });
   }
 }
@@ -357,19 +334,19 @@ const handleCoolingFunctionChange = (e: SelectChangeEvent) => {
     const suffix = vantpieces > 1 ? ` ${i}` : '';
     vfdRows.forEach((row) => {
       vantrows.push({
-  projectCode,
-  description,
-  location,
-  point: `${row.point}${suffix}`,
-  ai: row.ai,
-  ao: row.ao,
-  di: row.di,
-  do: row.do,
-  modbusRtu: 0,
-  modbusTcp: 0,
-  bacnetMstp: 0,
-  bacnetIp: 0,
-  mbus: 0
+      projectCode,
+      description,
+      location,
+      point: `${row.point}${suffix}`,
+      ai: row.ai,
+      ao: row.ao,
+      di: row.di,
+      do: row.do,
+      modbusRtu: 0,
+      modbusTcp: 0,
+      bacnetMstp: 0,
+      bacnetIp: 0,
+      mbus: 0
 });
     });
   }
@@ -421,19 +398,19 @@ if (vantControl === 'Soft Starter') {
     const suffix = vantpieces > 1 ? ` ${i}` : '';
     softStarterRows.forEach((row) => {
       vantrows.push({
-  projectCode,
-  description,
-  location,
-  point: `${row.point}${suffix}`,
-  ai: row.ai,
-  ao: row.ao,
-  di: row.di,
-  do: row.do,
-  modbusRtu: 0,
-  modbusTcp: 0,
-  bacnetMstp: 0,
-  bacnetIp: 0,
-  mbus: 0
+      projectCode,
+      description,
+      location,
+      point: `${row.point}${suffix}`,
+      ai: row.ai,
+      ao: row.ao,
+      di: row.di,
+      do: row.do,
+      modbusRtu: 0,
+      modbusTcp: 0,
+      bacnetMstp: 0,
+      bacnetIp: 0,
+      mbus: 0
 });
     });
   }
@@ -2925,6 +2902,211 @@ if (returnFlow === 'Belt, Pressure and Volume') {returnFlowRows.push( { point: '
   );
 }
 
+const pumpPieces = Number(runAroundPumpPieces) || 1;
+let runAroundPumpRows: any[] = [];
+
+if (runAroundPumpControl === 'DOL' || runAroundPumpControl === 'Star-Delta') {
+  const dolRows = [
+    { point: 'Run Around Pump Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Command', ai: 0, ao: 0, di: 0, do: 1 }
+  ];
+
+  for (let i = 1; i <= pumpPieces; i++) {
+    const suffix = pumpPieces > 1 ? ` ${i}` : '';
+    dolRows.forEach(row => {
+      runAroundPumpRows.push({
+        projectCode,
+        description,
+        location,
+        point: `${row.point}${suffix}`,
+        ai: row.ai,
+        ao: row.ao,
+        di: row.di,
+        do: row.do,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
+    });
+  }
+}
+
+if (runAroundPumpControl === 'VFD') {
+  const vfdRows = [
+    { point: 'Run Around Pump Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+    { point: 'Run Around Pump Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
+    { point: 'Run Around Pump Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
+  ];
+
+  for (let i = 1; i <= pumpPieces; i++) {
+    const suffix = pumpPieces > 1 ? ` ${i}` : '';
+    vfdRows.forEach(row => {
+      runAroundPumpRows.push({
+        projectCode,
+        description,
+        location,
+        point: `${row.point}${suffix}`,
+        ai: row.ai,
+        ao: row.ao,
+        di: row.di,
+        do: row.do,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
+    });
+  }
+}
+
+
+
+
+if (runAroundPumpControl === 'Power Supply Only ( Smart Pump)') {
+  const vfdRows = [
+    { point: 'Run Around Pump Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+    { point: 'Run Around Pump Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
+    { point: 'Run Around Pump Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
+  ];
+
+  for (let i = 1; i <= pumpPieces; i++) {
+    const suffix = pumpPieces > 1 ? ` ${i}` : '';
+    vfdRows.forEach(row => {
+      runAroundPumpRows.push({
+        projectCode,
+        description,
+        location,
+        point: `${row.point}${suffix}`,
+        ai: row.ai,
+        ao: row.ao,
+        di: row.di,
+        do: row.do,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
+    });
+  }
+}
+
+
+
+
+
+if (runAroundPumpControl === 'VFD with By Pass Circuit' || runAroundPumpControl === 'VFD with By Pass Circuit + Star-Delta') {
+  const vfdBypassRows = [
+    { point: 'Run Around Pump Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump By/Pass Switch', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+    { point: 'Run Around Pump Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
+    { point: 'Run Around Pump Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 }
+  ];
+
+  for (let i = 1; i <= pumpPieces; i++) {
+    const suffix = pumpPieces > 1 ? ` ${i}` : '';
+    vfdBypassRows.forEach(row => {
+      runAroundPumpRows.push({
+        projectCode,
+        description,
+        location,
+        point: `${row.point}${suffix}`,
+        ai: row.ai,
+        ao: row.ao,
+        di: row.di,
+        do: row.do,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
+    });
+  }
+}
+
+if (runAroundPumpControl === 'Soft Starter') {
+  const softRows = [
+    { point: 'Run Around Pump Soft Starter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Soft Starter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Soft Starter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
+  ];
+
+  for (let i = 1; i <= pumpPieces; i++) {
+    const suffix = pumpPieces > 1 ? ` ${i}` : '';
+    softRows.forEach(row => {
+      runAroundPumpRows.push({
+        projectCode,
+        description,
+        location,
+        point: `${row.point}${suffix}`,
+        ai: row.ai,
+        ao: row.ao,
+        di: row.di,
+        do: row.do,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
+    });
+  }
+}
+
+if (runAroundPumpControl === 'Soft Starter with By Pass Circuit' || runAroundPumpControl === 'Soft Starter with By Pass Circuit + Star-Delta') {
+  const softBypassRows = [
+    { point: 'Run Around Pump Soft Starter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Soft Starter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Soft Starter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump By Pass Switch Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Run Around Pump Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
+  ];
+
+  for (let i = 1; i <= pumpPieces; i++) {
+    const suffix = pumpPieces > 1 ? ` ${i}` : '';
+    softBypassRows.forEach(row => {
+      runAroundPumpRows.push({
+        projectCode,
+        description,
+        location,
+        point: `${row.point}${suffix}`,
+        ai: row.ai,
+        ao: row.ao,
+        di: row.di,
+        do: row.do,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
+    });
+  }
+}
+
+
+
+
+
 
 
 setTableRows([
@@ -2961,7 +3143,8 @@ setTableRows([
   ...exhaustFilterRows,
   ...recuperatorFilterRows,
   ...supplyFlowRows,
-  ...returnFlowRows
+  ...returnFlowRows,
+  ...runAroundPumpRows
 ]);
 
 
@@ -3045,12 +3228,12 @@ setShowTable(true);
               {renderDropdown('Recuperator Filter', recuperatorFilter, (e) => setRecuperatorFilter(e.target.value), [ 'none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
               {renderDropdown('Supply Flow', supplyFlow, (e) => setSupplyFlow(e.target.value), [ 'none', 'Belt', 'Pressure', 'Volume', 'Belt and Pressure', 'Belt and Volume', 'Pressure and Volume', 'Belt, Pressure and Volume'])}
               {renderDropdown('Return Flow', returnFlow, (e) => setReturnFlow(e.target.value), [ 'none', 'Belt', 'Pressure', 'Volume', 'Belt and Pressure', 'Belt and Volume', 'Pressure and Volume', 'Belt, Pressure and Volume'])}
+              {renderDropdown('Run Around Pump Control', runAroundPumpControl, (e) => setRunAroundPumpControl(e.target.value), [ 'none', 'DOL', 'Power Supply Only ( Smart Pump)', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta' ])}
+              {renderDropdown('Run Around Pump Pieces', runAroundPumpPieces, (e) => setRunAroundPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], runAroundPumpControl === 'none')}
+              {renderDropdown('Run Around Pump Power', pumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], runAroundPumpControl === 'none')}
+              {renderDropdown( 'Run Around Pump Voltage', pumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], runAroundPumpControl === 'none')}
 
-              {renderDropdown('Run Around Pump Control', pumpControl, (e) => setPumpControl(e.target.value), ['none', 'DOL', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
-              {renderDropdown('Run Around Pump Pieces', pumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], pumpControl === 'none')}
-              {renderDropdown('Run Around Pump Power', pumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], pumpControl === 'none')}
-              {renderDropdown('Run Around Pump Voltage', pumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], pumpControl === 'none')}
-              {renderDropdown('Run Around Coil Temperature', runAroundTemperature, (e) => setRunAroundTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], pumpControl === 'none')}
+              {renderDropdown( 'Run Around Coil Temperature', runAroundTemperature,  (e) => setRunAroundTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], runAroundPumpControl === 'none')}
               {renderDropdown('Heat Recovery Control', heatRecoveryControl, (e) => setHeatRecoveryControl(e.target.value), ['none', 'Heat Wheel with MCC', 'Heat Wheel with Packaged', 'Plate Recuperator'])}
               {renderDropdown('Heat Recovery Power', heatRecoveryPower, (e) => setHeatRecoveryPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11'], heatRecoveryControl === 'none')}
               {renderDropdown('Heat Recovery Voltage', heatRecoveryVoltage, (e) => setHeatRecoveryVoltage(e.target.value), ['230', '380'], heatRecoveryControl === 'none')}
@@ -3156,35 +3339,23 @@ setShowTable(true);
 
                     <td
   style={{
-    border: '1px solid #e0e0e0',
-    padding: '8px',
-    fontSize: '0.82rem',
-    color: '#424242'
-  }}
+    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
 >
   {row.description}
 </td>
 
 
-                    <td
-  style={{
-    border: '1px solid #e0e0e0',
-    padding: '8px',
-    fontSize: '0.82rem',
-    color: '#424242'
-  }}
->
-  {row.location}
-</td>
+  <td
+    style={{
+      border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
+      >
+      {row.location}
+  </td>
 
 
                     <td
   style={{
-    border: '1px solid #e0e0e0',
-    padding: '8px',
-    fontSize: '0.82rem',
-    color: '#424242'
-  }}
+    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
 >
   {row.point}
 </td>
@@ -3192,11 +3363,7 @@ setShowTable(true);
 
                    <td
   style={{
-    border: '1px solid #e0e0e0',
-    padding: '8px',
-    fontSize: '0.82rem',
-    color: '#424242'
-  }}
+    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
 >
   {row.ai}
 </td>
@@ -3204,11 +3371,7 @@ setShowTable(true);
 
                   <td
   style={{
-    border: '1px solid #e0e0e0',
-    padding: '8px',
-    fontSize: '0.82rem',
-    color: '#424242'
-  }}
+    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
 >
   {row.ao}
 </td>
@@ -3216,11 +3379,7 @@ setShowTable(true);
 
                    <td
   style={{
-    border: '1px solid #e0e0e0',
-    padding: '8px',
-    fontSize: '0.82rem',
-    color: '#424242'
-  }}
+    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
 >
   {row.di}
 </td>
@@ -3228,11 +3387,7 @@ setShowTable(true);
 
                    <td
   style={{
-    border: '1px solid #e0e0e0',
-    padding: '8px',
-    fontSize: '0.82rem',
-    color: '#424242'
-  }}
+    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
 >
   {row.do}
 </td>
@@ -3240,11 +3395,7 @@ setShowTable(true);
 
                     <td
   style={{
-    border: '1px solid #e0e0e0',
-    padding: '8px',
-    fontSize: '0.82rem',
-    color: '#424242'
-  }}
+    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
 >
   {row.modbusRtu}
 </td>
@@ -3252,11 +3403,7 @@ setShowTable(true);
 
                     <td
   style={{
-    border: '1px solid #e0e0e0',
-    padding: '8px',
-    fontSize: '0.82rem',
-    color: '#424242'
-  }}
+    border: '1px solid #e0e0e0',  padding: '8px', fontSize: '0.82rem',  color: '#424242'  }}
 >
   {row.modbusTcp}
 </td>
@@ -3264,11 +3411,7 @@ setShowTable(true);
 
                     <td
   style={{
-    border: '1px solid #e0e0e0',
-    padding: '8px',
-    fontSize: '0.82rem',
-    color: '#424242'
-  }}
+    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
 >
   {row.bacnetMstp}
 </td>
@@ -3276,23 +3419,14 @@ setShowTable(true);
 
                    <td
   style={{
-    border: '1px solid #e0e0e0',
-    padding: '8px',
-    fontSize: '0.82rem',
-    color: '#424242'
-  }}
+    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242' }}
 >
   {row.bacnetIp}
 </td>
 
 
                    <td
-  style={{
-    border: '1px solid #e0e0e0',
-    padding: '8px',
-    fontSize: '0.82rem',
-    color: '#424242'
-  }}
+  style={{  border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242' }}
 >
   {row.mbus}
 </td>
