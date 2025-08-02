@@ -131,14 +131,14 @@ export default function AhuPage() {
   const [returnFlow, setReturnFlow] = useState('');
   const [runAroundPumpControl, setRunAroundPumpControl] = useState('');
   const [runAroundPumpPieces, setRunAroundPumpPieces] = useState('');
-
-
   const [pumpPower, setPumpPower] = useState('');
   const [pumpVoltage, setPumpVoltage] = useState('');
   const [runAroundTemperature, setRunAroundTemperature] = useState('');
+
   const [heatRecoveryControl, setHeatRecoveryControl] = useState('');
   const [heatRecoveryPower, setHeatRecoveryPower] = useState('');
   const [heatRecoveryVoltage, setHeatRecoveryVoltage] = useState('');
+
   const [humidificationFunction, setHumidificationFunction] = useState('');
   const [humidificationPieces, setHumidificationPieces] = useState('');
   const [humidificationPower, setHumidificationPower] = useState('');
@@ -209,7 +209,12 @@ React.useEffect(() => {
   }
 }, [runAroundPumpControl]);
 
-  
+  React.useEffect(() => {
+  if (heatRecoveryControl === 'none') {
+    setHeatRecoveryPower('');
+    setHeatRecoveryVoltage('');
+  }
+}, [heatRecoveryControl]);
   
   const renderDropdown = (
     label: string,
@@ -279,6 +284,9 @@ const handleCoolingFunctionChange = (e: SelectChangeEvent) => {
     setCoolingTemperature('');
   }
 };
+
+
+
 
   const handleSaveAhu = () => {
     if (ahuControl !== 'MCC') {
@@ -1601,7 +1609,7 @@ if (dehumidificationAirSensor === 'Temperature') {
 
 const heatExchangerAirRows: any[] = [];
 
-if (heatExchangerAirSensor === 'Inlet Temperature') {
+if (heatExchangerAirSensor === 'Fresh Side Temperature') {
   heatExchangerAirRows.push(
     ...[
       {
@@ -1620,7 +1628,7 @@ if (heatExchangerAirSensor === 'Inlet Temperature') {
       }
     ]
   );
-} else if (heatExchangerAirSensor === 'Outlet Temperature') {
+} else if (heatExchangerAirSensor === 'Return Side Temperature') {
   heatExchangerAirRows.push(
     ...[
       {
@@ -1639,7 +1647,7 @@ if (heatExchangerAirSensor === 'Inlet Temperature') {
       }
     ]
   );
-} else if (heatExchangerAirSensor === 'Inlet and Outlet Temperature') {
+} else if (heatExchangerAirSensor === 'Fresh and Return Side Temperature') {
   heatExchangerAirRows.push(
     ...[
       {
@@ -2327,48 +2335,48 @@ if (reCirculationDamperActuator === '2x Proportional Damper Actuator with Feedba
 
 const recuperatorDamperRows: any[] = [];
 
-if (recuperatorDamperActuator === 'On/Off Damper Actuator') { recuperatorDamperRows.push({   point: 'Recuperator On/Off Damper Actuator Command',   ai: 0, ao: 0, di: 0, do: 1,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+if (recuperatorDamperActuator === 'On/Off Damper Actuator') { recuperatorDamperRows.push({   point: 'Heat Exchanger On/Off Damper Actuator Command',   ai: 0, ao: 0, di: 0, do: 1,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
   });
 }
 
-if (recuperatorDamperActuator === 'On/Off Damper Actuator with Feedback') { recuperatorDamperRows.push(   {  point: 'Recuperator On/Off Damper Actuator Command',     ai: 0, ao: 0, di: 0, do: 1,     projectCode, description, location,     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+if (recuperatorDamperActuator === 'On/Off Damper Actuator with Feedback') { recuperatorDamperRows.push(   {  point: 'Heat Exchanger On/Off Damper Actuator Command',     ai: 0, ao: 0, di: 0, do: 1,     projectCode, description, location,     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     },
     {
-      point: 'Recuperator On/Off Damper Actuator Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      point: 'Heat Exchanger On/Off Damper Actuator Status',   ai: 0, ao: 0, di: 1, do: 0,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     }
   );
 }
 
-if (recuperatorDamperActuator === 'Floating Damper Actuator') {recuperatorDamperRows.push(  {   point: 'Recuperator Floating Damper Actuator Open Command',    ai: 0, ao: 0, di: 0, do: 1,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+if (recuperatorDamperActuator === 'Floating Damper Actuator') {recuperatorDamperRows.push(  {   point: 'Heat Exchanger Floating Damper Actuator Open Command',    ai: 0, ao: 0, di: 0, do: 1,   projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     },
     {
-      point: 'Recuperator Floating Damper Actuator Close Command',    ai: 0, ao: 0, di: 0, do: 1,    projectCode, description, location,    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      point: 'Heat Exchanger Floating Damper Actuator Close Command',    ai: 0, ao: 0, di: 0, do: 1,    projectCode, description, location,    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     }
   );
 }
 
-if (recuperatorDamperActuator === 'Floating Damper Actuator with Feedback') { recuperatorDamperRows.push(  {   point: 'Recuperator Floating Damper Actuator Open Command',     ai: 0, ao: 0, di: 0, do: 1,     projectCode, description, location,     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+if (recuperatorDamperActuator === 'Floating Damper Actuator with Feedback') { recuperatorDamperRows.push(  {   point: 'Heat Exchanger Floating Damper Actuator Open Command',     ai: 0, ao: 0, di: 0, do: 1,     projectCode, description, location,     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     },
     {
-      point: 'Recuperator Floating Damper Actuator Close Command',   ai: 0, ao: 0, di: 0, do: 1,  projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      point: 'Heat Exchanger Floating Damper Actuator Close Command',   ai: 0, ao: 0, di: 0, do: 1,  projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     },
     {
-      point: 'Recuperator Floating Damper Actuator Open Status',   ai: 0, ao: 0, di: 1, do: 0,  projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      point: 'Heat Exchanger Floating Damper Actuator Open Status',   ai: 0, ao: 0, di: 1, do: 0,  projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     },
     {
-      point: 'Recuperator Floating Damper Actuator Close Status',  ai: 0, ao: 0, di: 1, do: 0,  projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      point: 'Heat Exchanger Floating Damper Actuator Close Status',  ai: 0, ao: 0, di: 1, do: 0,  projectCode, description, location,   modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     }
   );
 }
 
-if (recuperatorDamperActuator === 'Proportional Damper Actuator') {recuperatorDamperRows.push({  point: 'Recuperator Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+if (recuperatorDamperActuator === 'Proportional Damper Actuator') {recuperatorDamperRows.push({  point: 'Heat Exchanger Proportional Damper Actuator Command', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
   });
 }
 
-if (recuperatorDamperActuator === 'Proportional Damper Actuator with Feedback') { recuperatorDamperRows.push( { point: 'Recuperator Proportional Damper Actuator Command',  ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location,  modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+if (recuperatorDamperActuator === 'Proportional Damper Actuator with Feedback') { recuperatorDamperRows.push( { point: 'Heat Exchanger Proportional Damper Actuator Command',  ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location,  modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     },
     {
-      point: 'Recuperator Proportional Damper Actuator Feedback',  ai: 1, ao: 0, di: 0, do: 0,  projectCode, description, location,  modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      point: 'Heat Exchanger Proportional Damper Actuator Feedback',  ai: 1, ao: 0, di: 0, do: 0,  projectCode, description, location,  modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     }
   );
 }
@@ -2376,13 +2384,13 @@ if (recuperatorDamperActuator === 'Proportional Damper Actuator with Feedback') 
 if (recuperatorDamperActuator === '2x On/Off Damper Actuator') {
   recuperatorDamperRows.push(
     {
-      point: 'Recuperator On/Off Damper Actuator Command-1',
+      point: 'Heat Exchanger On/Off Damper Actuator Command-1',
       ai: 0, ao: 0, di: 0, do: 1,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     },
     {
-      point: 'Recuperator On/Off Damper Actuator Command-2',
+      point: 'Heat Exchanger On/Off Damper Actuator Command-2',
       ai: 0, ao: 0, di: 0, do: 1,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
@@ -2393,55 +2401,55 @@ if (recuperatorDamperActuator === '2x On/Off Damper Actuator') {
 if (recuperatorDamperActuator === '2x On/Off Damper Actuator with Feedback') {
   recuperatorDamperRows.push(
     {
-      point: 'Recuperator On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+      point: 'Heat Exchanger On/Off Damper Actuator Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
     {
-      point: 'Recuperator On/Off Damper Actuator Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+      point: 'Heat Exchanger On/Off Damper Actuator Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
     {
-      point: 'Recuperator On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+      point: 'Heat Exchanger On/Off Damper Actuator Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
     {
-      point: 'Recuperator On/Off Damper Actuator Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+      point: 'Heat Exchanger On/Off Damper Actuator Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
   );
 }
 
 if (recuperatorDamperActuator === '2x Floating Damper Actuator') {
   recuperatorDamperRows.push(
     {
-      point: 'Recuperator Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+      point: 'Heat Exchanger Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
     {
-      point: 'Recuperator Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+      point: 'Heat Exchanger Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
     {
-      point: 'Recuperator Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+      point: 'Heat Exchanger Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
     {
-      point: 'Recuperator Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+      point: 'Heat Exchanger Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
   );
 }
 
 if (recuperatorDamperActuator === '2x Floating Damper Actuator with Feedback') {
   recuperatorDamperRows.push(
-    { point: 'Recuperator Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Recuperator Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Recuperator Floating Damper Actuator Open Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Recuperator Floating Damper Actuator Close Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Recuperator Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Recuperator Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Recuperator Floating Damper Actuator Open Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Recuperator Floating Damper Actuator Close Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+    { point: 'Heat Exchanger Floating Damper Actuator Open Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Floating Damper Actuator Close Command-1', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Floating Damper Actuator Open Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Floating Damper Actuator Close Status-1', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Floating Damper Actuator Open Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Floating Damper Actuator Close Command-2', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Floating Damper Actuator Open Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Floating Damper Actuator Close Status-2', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
   );
 }
 
 if (recuperatorDamperActuator === '2x Proportional Damper Actuator') {
   recuperatorDamperRows.push(
-    { point: 'Recuperator Proportional Damper Actuator Proportional Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Recuperator Proportional Damper Actuator Proportional Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+    { point: 'Heat Exchanger Proportional Damper Actuator Proportional Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Proportional Damper Actuator Proportional Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
   );
 }
 
 if (recuperatorDamperActuator === '2x Proportional Damper Actuator with Feedback') {
   recuperatorDamperRows.push(
-    { point: 'Recuperator Proportional Damper Actuator Proportional Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Recuperator Proportional Damper Actuator Feedback-1', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Recuperator Proportional Damper Actuator Proportional Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Recuperator Proportional Damper Actuator Feedback-2', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+    { point: 'Heat Exchanger Proportional Damper Actuator Proportional Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Proportional Damper Actuator Feedback-1', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Proportional Damper Actuator Proportional Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Proportional Damper Actuator Feedback-2', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
   );
 }
 
@@ -2761,46 +2769,46 @@ if (exhaustFilter === 'Digital H14') {exhaustFilterRows.push({ point: 'Exhaust F
 
 const recuperatorFilterRows: any[] = [];
 
-if (recuperatorFilter === 'Analog G4') {recuperatorFilterRows.push({ point: 'Recuperator Filter G4 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+if (recuperatorFilter === 'Analog G4') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter G4 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
   });
 }
-if (recuperatorFilter === 'Digital G4') {recuperatorFilterRows.push({ point: 'Recuperator Filter G4 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+if (recuperatorFilter === 'Digital G4') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter G4 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
   });
 }
 
-if (recuperatorFilter === 'Analog F5') {recuperatorFilterRows.push({ point: 'Recuperator Filter F5 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+if (recuperatorFilter === 'Analog F5') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter F5 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
 }
-if (recuperatorFilter === 'Digital F5') {recuperatorFilterRows.push({ point: 'Recuperator Filter F5 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
-}
-
-if (recuperatorFilter === 'Analog F6') {recuperatorFilterRows.push({ point: 'Recuperator Filter F6 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
-}
-if (recuperatorFilter === 'Digital F6') {recuperatorFilterRows.push({ point: 'Recuperator Filter F6 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+if (recuperatorFilter === 'Digital F5') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter F5 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
 }
 
-if (recuperatorFilter === 'Analog F7') {recuperatorFilterRows.push({ point: 'Recuperator Filter F7 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+if (recuperatorFilter === 'Analog F6') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter F6 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
 }
-if (recuperatorFilter === 'Digital F7') {recuperatorFilterRows.push({ point: 'Recuperator Filter F7 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
-}
-
-if (recuperatorFilter === 'Analog F8') {recuperatorFilterRows.push({ point: 'Recuperator Filter F8 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
-}
-if (recuperatorFilter === 'Digital F8') {recuperatorFilterRows.push({ point: 'Recuperator Filter F8 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+if (recuperatorFilter === 'Digital F6') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter F6 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
 }
 
-if (recuperatorFilter === 'Analog F9') {recuperatorFilterRows.push({ point: 'Recuperator Filter F9 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+if (recuperatorFilter === 'Analog F7') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter F7 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
 }
-if (recuperatorFilter === 'Digital F9') {recuperatorFilterRows.push({ point: 'Recuperator Filter F9 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
-}
-
-if (recuperatorFilter === 'Analog H13') {recuperatorFilterRows.push({ point: 'Recuperator Filter H13 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
-}
-if (recuperatorFilter === 'Digital H13') {recuperatorFilterRows.push({ point: 'Recuperator Filter H13 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+if (recuperatorFilter === 'Digital F7') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter F7 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
 }
 
-if (recuperatorFilter === 'Analog H14') {recuperatorFilterRows.push({ point: 'Recuperator Filter H14 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+if (recuperatorFilter === 'Analog F8') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter F8 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
 }
-if (recuperatorFilter === 'Digital H14') {recuperatorFilterRows.push({ point: 'Recuperator Filter H14 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+if (recuperatorFilter === 'Digital F8') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter F8 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (recuperatorFilter === 'Analog F9') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter F9 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (recuperatorFilter === 'Digital F9') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter F9 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (recuperatorFilter === 'Analog H13') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter H13 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (recuperatorFilter === 'Digital H13') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter H13 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+
+if (recuperatorFilter === 'Analog H14') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter H14 Pressure', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
+}
+if (recuperatorFilter === 'Digital H14') {recuperatorFilterRows.push({ point: 'Heat Exchanger Filter H14 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 });
 }
 
 
@@ -3103,9 +3111,153 @@ if (runAroundPumpControl === 'Soft Starter with By Pass Circuit' || runAroundPum
   }
 }
 
+let runaroundCoilTemperatureRows: any[] = [];
 
+if (runAroundTemperature === 'Inlet Temperature') {
+  runaroundCoilTemperatureRows.push({
+    projectCode,
+    description,
+    location,
+    point: 'Run Around Coil Inlet Temperature',
+    ai: 1,
+    ao: 0,
+    di: 0,
+    do: 0,
+    modbusRtu: 0,
+    modbusTcp: 0,
+    bacnetMstp: 0,
+    bacnetIp: 0,
+    mbus: 0
+  });
+}
 
+if (runAroundTemperature === 'Outlet Temperature') {
+  runaroundCoilTemperatureRows.push({
+    projectCode,
+    description,
+    location,
+    point: 'Run Around Coil Outlet Temperature',
+    ai: 1,
+    ao: 0,
+    di: 0,
+    do: 0,
+    modbusRtu: 0,
+    modbusTcp: 0,
+    bacnetMstp: 0,
+    bacnetIp: 0,
+    mbus: 0
+  });
+}
 
+if (runAroundTemperature === 'Inlet and Outlet Temperature') {
+  runaroundCoilTemperatureRows.push(
+    {
+      projectCode,
+      description,
+      location,
+      point: 'Run Around Coil Inlet Temperature',
+      ai: 1,
+      ao: 0,
+      di: 0,
+      do: 0,
+      modbusRtu: 0,
+      modbusTcp: 0,
+      bacnetMstp: 0,
+      bacnetIp: 0,
+      mbus: 0
+    },
+    {
+      projectCode,
+      description,
+      location,
+      point: 'Run Around Coil Outlet Temperature',
+      ai: 1,
+      ao: 0,
+      di: 0,
+      do: 0,
+      modbusRtu: 0,
+      modbusTcp: 0,
+      bacnetMstp: 0,
+      bacnetIp: 0,
+      mbus: 0
+    }
+  );
+}
+
+let heatExchangerRows: any[] = [];
+
+if (heatRecoveryControl === 'Heat Wheel with MCC (DOL)') {
+  const rows = [
+    { point: 'Heat Exchanger Wheel Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Heat Exchanger Wheel Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Heat Exchanger Wheel Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Heat Exchanger Wheel Command', ai: 0, ao: 0, di: 0, do: 1 },
+  ];
+  heatExchangerRows = rows.map(row => ({
+    projectCode,
+    description,
+    location,
+    point: row.point,
+    ai: row.ai,
+    ao: row.ao,
+    di: row.di,
+    do: row.do,
+    modbusRtu: 0,
+    modbusTcp: 0,
+    bacnetMstp: 0,
+    bacnetIp: 0,
+    mbus: 0
+  }));
+}
+
+if (heatRecoveryControl === 'Heat Wheel with MCC (VFD)') {
+  const rows = [
+    { point: 'Heat Exchanger Wheel Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Heat Exchanger Wheel Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Heat Exchanger Wheel Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Heat Exchanger Wheel Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+    { point: 'Heat Exchanger Wheel Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
+    { point: 'Heat Exchanger Wheel Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 },
+  ];
+  heatExchangerRows = rows.map(row => ({
+    projectCode,
+    description,
+    location,
+    point: row.point,
+    ai: row.ai,
+    ao: row.ao,
+    di: row.di,
+    do: row.do,
+    modbusRtu: 0,
+    modbusTcp: 0,
+    bacnetMstp: 0,
+    bacnetIp: 0,
+    mbus: 0
+  }));
+}
+
+if (heatRecoveryControl === 'Heat Wheel with Packaged') {
+  const rows = [
+    { point: 'Heat Exchanger Wheel Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Heat Exchanger Wheel Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Heat Exchanger Wheel Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+  ];
+  heatExchangerRows = rows.map(row => ({
+    projectCode,
+    description,
+    location,
+    point: row.point,
+    ai: row.ai,
+    ao: row.ao,
+    di: row.di,
+    do: row.do,
+    modbusRtu: 0,
+    modbusTcp: 0,
+    bacnetMstp: 0,
+    bacnetIp: 0,
+    mbus: 0
+  }));
+}
 
 
 
@@ -3144,7 +3296,9 @@ setTableRows([
   ...recuperatorFilterRows,
   ...supplyFlowRows,
   ...returnFlowRows,
-  ...runAroundPumpRows
+  ...runAroundPumpRows,
+  ...runaroundCoilTemperatureRows,
+  ...heatExchangerRows
 ]);
 
 
@@ -3213,30 +3367,29 @@ setShowTable(true);
               {renderDropdown('Exhaust Air', exhaustAirSensor, (e) => setExhaustAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
               {renderDropdown('Mixed Air', mixedAirSensor, (e) => setMixedAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
               {renderDropdown('Dehumidification Air', dehumidificationAirSensor, (e) => setDehumidificationAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
-              {renderDropdown('Heat Exchanger Air', heatExchangerAirSensor, (e) => setHeatExchangerAirSensor(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
+              {renderDropdown('Heat Exchanger Air', heatExchangerAirSensor, (e) => setHeatExchangerAirSensor(e.target.value), ['none', 'Fresh Side Temperature', 'Return Side Temperature', 'Fresh and Return Side Temperature'])}
               {renderDropdown('Fresh Damper Actuator', freshDamperActuator, (e) => setFreshDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
               {renderDropdown('Supply Damper Actuator', supplyDamperActuator, (e) => setSupplyDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ])}
               {renderDropdown('Return Damper Actuator', returnDamperActuator, (e) => setReturnDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ])}
               {renderDropdown('Exhaust Damper Actuator',exhaustDamperActuator, (e) => setExhaustDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ])}
               {renderDropdown('Mixed Damper Actuator', mixedDamperActuator, (e) => setMixedDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
               {renderDropdown('Re Circulation Damper Actuator', reCirculationDamperActuator, (e) => setReCirculationDamperActuator(e.target.value), ['none','On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
-              {renderDropdown('Recuperator Damper Actuator', recuperatorDamperActuator, (e) => setRecuperatorDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback', 'Floating Damper Actuator', 'Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
+              {renderDropdown('Heat Exchanger Damper Actuator', recuperatorDamperActuator, (e) => setRecuperatorDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback', 'Floating Damper Actuator', 'Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
               {renderDropdown('Supply Filter', supplyFilter, (e) => setSupplyFilter(e.target.value), ['none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14'])}
               {renderDropdown('Fresh Filter', freshFilter, (e) => setFreshFilter(e.target.value), ['none','Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
               {renderDropdown('Return Filter', returnFilter, (e) => setReturnFilter(e.target.value), ['none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
               {renderDropdown('Exhaust Filter', exhaustFilter, (e) => setExhaustFilter(e.target.value), ['none','Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
-              {renderDropdown('Recuperator Filter', recuperatorFilter, (e) => setRecuperatorFilter(e.target.value), [ 'none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
+              {renderDropdown('Heat Exchanger Filter', recuperatorFilter, (e) => setRecuperatorFilter(e.target.value), [ 'none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
               {renderDropdown('Supply Flow', supplyFlow, (e) => setSupplyFlow(e.target.value), [ 'none', 'Belt', 'Pressure', 'Volume', 'Belt and Pressure', 'Belt and Volume', 'Pressure and Volume', 'Belt, Pressure and Volume'])}
               {renderDropdown('Return Flow', returnFlow, (e) => setReturnFlow(e.target.value), [ 'none', 'Belt', 'Pressure', 'Volume', 'Belt and Pressure', 'Belt and Volume', 'Pressure and Volume', 'Belt, Pressure and Volume'])}
               {renderDropdown('Run Around Pump Control', runAroundPumpControl, (e) => setRunAroundPumpControl(e.target.value), [ 'none', 'DOL', 'Power Supply Only ( Smart Pump)', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta' ])}
               {renderDropdown('Run Around Pump Pieces', runAroundPumpPieces, (e) => setRunAroundPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], runAroundPumpControl === 'none')}
               {renderDropdown('Run Around Pump Power', pumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], runAroundPumpControl === 'none')}
-              {renderDropdown( 'Run Around Pump Voltage', pumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], runAroundPumpControl === 'none')}
-
-              {renderDropdown( 'Run Around Coil Temperature', runAroundTemperature,  (e) => setRunAroundTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], runAroundPumpControl === 'none')}
-              {renderDropdown('Heat Recovery Control', heatRecoveryControl, (e) => setHeatRecoveryControl(e.target.value), ['none', 'Heat Wheel with MCC', 'Heat Wheel with Packaged', 'Plate Recuperator'])}
-              {renderDropdown('Heat Recovery Power', heatRecoveryPower, (e) => setHeatRecoveryPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11'], heatRecoveryControl === 'none')}
-              {renderDropdown('Heat Recovery Voltage', heatRecoveryVoltage, (e) => setHeatRecoveryVoltage(e.target.value), ['230', '380'], heatRecoveryControl === 'none')}
+              {renderDropdown('Run Around Pump Voltage', pumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], runAroundPumpControl === 'none')}
+              {renderDropdown('Run Around Coil Temperature', runAroundTemperature,  (e) => setRunAroundTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], runAroundPumpControl === 'none')}
+              {renderDropdown('Heat Exchanger Control', heatRecoveryControl, (e) => setHeatRecoveryControl(e.target.value), ['none', 'Heat Wheel with MCC (DOL)', 'Heat Wheel with MCC (VFD)','Heat Wheel with Packaged', 'Plate Recuperator'])}
+              {renderDropdown('Heat Exchanger Power',  heatRecoveryPower,  (e) => setHeatRecoveryPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11'], heatRecoveryControl === 'none' )}
+              {renderDropdown('Heat Exchanger Voltage', heatRecoveryVoltage, (e) => setHeatRecoveryVoltage(e.target.value), ['230', '380'], heatRecoveryControl === 'none' )}
               {renderDropdown('Humidification Function', humidificationFunction, (e) => setHumidificationFunction(e.target.value), ['none', 'Evaporative Humidifier', 'Staged Humidifier', 'Steam Humidifier'])}
               {renderDropdown('Humidification Pieces', humidificationPieces, (e) => setHumidificationPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], humidificationFunction === 'none')}
               {renderDropdown('Humidification Power', humidificationPower, (e) => setHumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], humidificationFunction === 'none')}
