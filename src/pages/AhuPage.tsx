@@ -140,11 +140,11 @@ export default function AhuPage() {
   const [heatRecoveryVoltage, setHeatRecoveryVoltage] = useState('');
 
   const [humidificationFunction, setHumidificationFunction] = useState('');
-  const [humidificationPieces, setHumidificationPieces] = useState('');
+ 
   const [humidificationPower, setHumidificationPower] = useState('');
   const [humidificationVoltage, setHumidificationVoltage] = useState('');
   const [dehumidificationFunction, setDehumidificationFunction] = useState('');
-  const [dehumidificationPieces, setDehumidificationPieces] = useState('');
+ 
   const [dehumidificationPower, setDehumidificationPower] = useState('');
   const [dehumidificationVoltage, setDehumidificationVoltage] = useState('');
 
@@ -1579,10 +1579,10 @@ if (mixedAirSensor === 'Temperature') {
   });
 }
 
-const dehumidificationRows: any[] = [];
+const dehumidificationAirRows: any[] = [];
 
 if (dehumidificationAirSensor === 'Temperature') {
-  dehumidificationRows.push({
+  dehumidificationAirRows.push({
     point: 'Dehumidification Temperature',
     ai: 1, ao: 0, di: 0, do: 0,
     projectCode, description, location,
@@ -1590,7 +1590,7 @@ if (dehumidificationAirSensor === 'Temperature') {
     bacnetMstp: 0, bacnetIp: 0, mbus: 0
   });
 } else if (dehumidificationAirSensor === 'Humidity') {
-  dehumidificationRows.push({
+  dehumidificationAirRows.push({
     point: 'Dehumidification Humidity',
     ai: 1, ao: 0, di: 0, do: 0,
     projectCode, description, location,
@@ -1598,7 +1598,7 @@ if (dehumidificationAirSensor === 'Temperature') {
     bacnetMstp: 0, bacnetIp: 0, mbus: 0
   });
 } else if (dehumidificationAirSensor === 'Temperature and Humidity') {
-  dehumidificationRows.push({
+  dehumidificationAirRows.push({
     point: 'Dehumidification Temperature and Humidity',
     ai: 2, ao: 0, di: 0, do: 0,
     projectCode, description, location,
@@ -3259,6 +3259,105 @@ if (heatRecoveryControl === 'Heat Wheel with Packaged') {
   }));
 }
 
+const humidificationRows: any[] = [];
+
+
+if (humidificationFunction === 'Proportional Humidification') {
+  humidificationRows.push(
+    { point: 'On/Off Humidification Unit Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit Proportional Control', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit Feedback', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+
+if (humidificationFunction === '1-Staged Humidification') {
+  humidificationRows.push(
+    { point: 'On/Off Humidification Unit Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    
+
+  );
+}
+
+if (humidificationFunction === '2-Staged Humidification') {
+  humidificationRows.push(
+    { point: 'On/Off Humidification Unit-1 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit-1 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit-1 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit-2 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit-2 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit-2 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+  );
+}
+
+if (humidificationFunction === '3-Staged Humidification') {
+  humidificationRows.push(
+    { point: 'On/Off Humidification Unit-1 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit-1 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit-1 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit-2 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit-2 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit-2 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit-3 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit-3 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Humidification Unit-3 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+  );
+}
+
+const dehumidificationRows: any[] = [];
+
+
+if (dehumidificationFunction === 'Proportional Dehumidification') {
+  dehumidificationRows.push(
+    { point: 'On/Off Dehumidification Unit Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit Proportional Control', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit Feedback', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+  );
+}
+
+
+if (dehumidificationFunction === '1-Staged Dehumidification') {
+  dehumidificationRows.push(
+    { point: 'On/Off Dehumidification Unit Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    
+
+  );
+}
+
+if (dehumidificationFunction === '2-Staged Dehumidification') {
+  dehumidificationRows.push(
+    { point: 'On/Off Dehumidification Unit-1 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit-1 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit-1 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit-2 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit-2 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit-2 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+  );
+}
+
+if (dehumidificationFunction === '3-Staged Dehumidification') {
+  dehumidificationRows.push(
+    { point: 'On/Off Dehumidification Unit-1 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit-1 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit-1 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit-2 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit-2 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit-2 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit-3 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit-3 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'On/Off Dehumidification Unit-3 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+  );
+}
+
+
 
 
 setTableRows([
@@ -3280,7 +3379,7 @@ setTableRows([
   ...returnAirSensorRows,
   ...exhaustAirSensorRows,
   ...mixedAirSensorRows,
-  ...dehumidificationRows,
+  ...dehumidificationAirRows,
   ...heatExchangerAirRows,
   ...freshDamperRows,
   ...supplyDamperRows,
@@ -3298,7 +3397,9 @@ setTableRows([
   ...returnFlowRows,
   ...runAroundPumpRows,
   ...runaroundCoilTemperatureRows,
-  ...heatExchangerRows
+  ...heatExchangerRows,
+  ...humidificationRows,
+  ...dehumidificationRows
 ]);
 
 
@@ -3335,7 +3436,7 @@ setShowTable(true);
               <TextField fullWidth variant="outlined" placeholder="AHU Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               <TextField fullWidth variant="outlined" placeholder="AHU Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               <TextField fullWidth variant="outlined" placeholder="AHU Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              {renderDropdown('AHU Control Type', ahuControl, (e) => setAhuControl(e.target.value), ['MCC', 'Own Panel'])}
+              {renderDropdown('AHU Control Type', ahuControl, (e) => setAhuControl(e.target.value), ['MCC', 'Packaged'])}
               {renderDropdown('Vantilator Control', vantControl, (e) => setVantControl(e.target.value), ['DOL', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
               {renderDropdown('Vantilator Pieces', vantPieces, (e) => setVantPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
               {renderDropdown('Vantilator Power', fanPower, (e) => setFanPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
@@ -3388,19 +3489,14 @@ setShowTable(true);
               {renderDropdown('Run Around Pump Voltage', pumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], runAroundPumpControl === 'none')}
               {renderDropdown('Run Around Coil Temperature', runAroundTemperature,  (e) => setRunAroundTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], runAroundPumpControl === 'none')}
               {renderDropdown('Heat Exchanger Control', heatRecoveryControl, (e) => setHeatRecoveryControl(e.target.value), ['none', 'Heat Wheel with MCC (DOL)', 'Heat Wheel with MCC (VFD)','Heat Wheel with Packaged', 'Plate Recuperator'])}
-              {renderDropdown('Heat Exchanger Power',  heatRecoveryPower,  (e) => setHeatRecoveryPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11'], heatRecoveryControl === 'none' )}
-              {renderDropdown('Heat Exchanger Voltage', heatRecoveryVoltage, (e) => setHeatRecoveryVoltage(e.target.value), ['230', '380'], heatRecoveryControl === 'none' )}
-              {renderDropdown('Humidification Function', humidificationFunction, (e) => setHumidificationFunction(e.target.value), ['none', 'Evaporative Humidifier', 'Staged Humidifier', 'Steam Humidifier'])}
-              {renderDropdown('Humidification Pieces', humidificationPieces, (e) => setHumidificationPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], humidificationFunction === 'none')}
+              {renderDropdown('Heat Exchanger Control Unit Power',  heatRecoveryPower,  (e) => setHeatRecoveryPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11'], heatRecoveryControl === 'none' )}
+              {renderDropdown('Heat Exchanger Control Unit Voltage', heatRecoveryVoltage, (e) => setHeatRecoveryVoltage(e.target.value), ['230', '380'], heatRecoveryControl === 'none' )}
+              {renderDropdown('Humidification Function', humidificationFunction, (e) => setHumidificationFunction(e.target.value), ['none', 'Proportional Humidification', '1-Staged Humidification', '2-Staged Humidification', '3-Staged Humidification'])}
               {renderDropdown('Humidification Power', humidificationPower, (e) => setHumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], humidificationFunction === 'none')}
               {renderDropdown('Humidification Voltage', humidificationVoltage, (e) => setHumidificationVoltage(e.target.value), ['230', '380'], humidificationFunction === 'none')}
-              {renderDropdown('Dehumidification Function', dehumidificationFunction, (e) => setDehumidificationFunction(e.target.value), ['none', 'Dehumidification'])}
-              {renderDropdown('Dehumidification Pieces', dehumidificationPieces, (e) => setDehumidificationPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], dehumidificationFunction === 'none')}
-              {renderDropdown('Dehumidification Power', dehumidificationPower, (e) => setDehumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], dehumidificationFunction === 'none')}
-              {renderDropdown('Dehumidification Voltage', dehumidificationVoltage, (e) => setDehumidificationVoltage(e.target.value), ['230', '380'], dehumidificationFunction === 'none')}
-              
-              
-              
+              {renderDropdown('Dehumidification Function', dehumidificationFunction, (e) => setDehumidificationFunction(e.target.value), ['none', 'Proportional Dehumidification', '1-Staged Dehumidification', '2-Staged Dehumidification', '3-Staged Dehumidification'])}
+              {renderDropdown('Dehumidification Control Unit Power', dehumidificationPower, (e) => setDehumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], dehumidificationFunction === 'none')}
+              {renderDropdown('Dehumidification Control Unit Voltage', dehumidificationVoltage, (e) => setDehumidificationVoltage(e.target.value), ['230', '380'], dehumidificationFunction === 'none')}
               {renderDropdown('System Integration', systemIntegration, (e) => setSystemIntegration(e.target.value), ['none', 'Package', 'VFD'])}
               {renderDropdown('Protocol Integration', protocolIntegration, (e) => setProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], systemIntegration === 'none')}
               
@@ -3423,7 +3519,7 @@ setShowTable(true);
                   }
                 }}
               />
-              <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveAhu}>Save Ahu</PrimaryButton>
+              <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveAhu}>Send to Table</PrimaryButton>
               <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
             </Stack>
           </Box>

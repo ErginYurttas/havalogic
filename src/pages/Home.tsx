@@ -383,36 +383,30 @@ export default function Home() {
   }}
 >
   <DialogTitle sx={{ color: '#1976d2', fontWeight: 600, borderBottom: '1px solid rgba(25, 118, 210, 0.1)' }}>
-    Learn More
-  </DialogTitle>
-  <DialogContent sx={{ py: 4 }}>
+  Learn More
+</DialogTitle>
+<DialogContent sx={{ py: 4 }}>
   <Stack spacing={2}>
     <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 600 }}>
       Designed with Vision, Built for the Future
     </Typography>
 
     <Typography variant="body2" sx={{ color: '#333' }}>
-      HavaLogic is an original platform developed through the collaboration between a visionary Turk and artificial intelligence.  
-      Our goal was to create a tool that is both simple and powerful — starting with the HVAC industry, where we've taken our first step.  
-      We're planning to expand soon into the fields of energy, KNX, and other low-current systems.
+      Havalogic is a unique platform developed through the collaboration between a visionary Turk and artificial intelligence. Our goal was to create a tool that is both simple and powerful — starting with the HVAC industry, where we've taken our first step. We're planning to expand soon into the fields of energy, KNX, and other low-current systems.
     </Typography>
 
     <Typography variant="body2" sx={{ color: '#333' }}>
-      Today, building automation, energy efficiency, and system integration are no longer luxuries — they are necessities.  
-      Accessing information is easier than ever, but in real-life projects, finding the right knowledge, filtering it, and applying it effectively is still a major challenge.  
-      The industry is overwhelmed by noise and information pollution, which slows down progress.
+      Today, building automation, energy efficiency, and system integration are no longer luxuries — they are necessities. Accessing information is easier than ever, but in real-life projects, finding the right knowledge, filtering it, and applying it effectively is still a major challenge. The industry is overwhelmed by noise and information pollution, which slows down progress.
     </Typography>
 
     <Typography variant="body2" sx={{ color: '#333' }}>
-      That’s exactly where HavaLogic steps in.  
-      It simplifies complexity, accelerates workflows, and offers an intuitive interface for everyone involved.  
-      The questions we ask are simple — but the answers you provide lead to meaningful, measurable results in the field.
+      That’s exactly where Havalogic steps in. It simplifies complexity, accelerates workflows, and offers an intuitive interface for everyone involved. The questions we ask are simple — but the answers received lead to meaningful, measurable results in the field.
     </Typography>
 
     <Typography variant="body2" sx={{ color: '#333' }}>
       This tool isn’t just for design teams at automation firms.  
-      Sales teams can also benefit from it. Even contractors — as long as they know the answers — can easily use the system.  
-      HavaLogic is designed to support everyone in the process.  
+      It is also designed for sales teams. Even contractors — as long as they know the answers — can easily use the system.  
+      Havalogic is designed to support everyone in the process.  
       <strong>So where do you fit in?</strong>
     </Typography>
 
@@ -432,11 +426,9 @@ export default function Home() {
     </Typography>
 
     <Typography variant="body2" sx={{ color: '#333' }}>
-    If this journey resonates with you, please consider sharing HavaLogic with your colleagues.  
-     We might truly need that support — and it would mean a lot to us.
+      If this journey resonates with you, please consider sharing HavaLogic with your colleagues.  
+      We might truly need that support — and it would mean a lot to us.
     </Typography>
-
-
   </Stack>
 </DialogContent>
 
