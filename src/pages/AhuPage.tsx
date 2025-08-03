@@ -63,11 +63,11 @@ const labelStyles = {
   }
 };
 
-const preheatingValveOptions = ['On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback'];
+const preheatingValveOptions = ['On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Floating Valve Actuator', 'Floating Valve Actuator with Feedback','Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback'];
 
-const heatingValveOptions = [ 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator','Proportional Valve Actuator with Feedback'];
+const heatingValveOptions = [ 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Floating Valve Actuator', 'Floating Valve Actuator with Feedback','Proportional Valve Actuator','Proportional Valve Actuator with Feedback'];
 
-const coolingValveOptions = [ 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback'];
+const coolingValveOptions = [ 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Floating Valve Actuator', 'Floating Valve Actuator with Feedback','Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback'];
 
 const coolingDXOptions = [ '1-Staged DX Unit', '2-Staged DX Unit', '3-Staged DX Unit', 'Proportional DX Unit'];
 
@@ -164,6 +164,8 @@ export default function AhuPage() {
 
   const [showTable, setShowTable] = useState(false);
   const [tableRows, setTableRows] = useState<any[]>([]);
+
+  const [isPackaged, setIsPackaged] = useState(false);
 
   const isPreheatingTemperatureDisabled = () => {
     return (
@@ -419,6 +421,92 @@ const handleCoolingFunctionChange = (e: SelectChangeEvent) => {
   }
 };
 
+
+const handleAhuControlChange = (event: SelectChangeEvent<string>) => {
+  const selectedValue = event.target.value;
+  setAhuControl(selectedValue);
+
+  const packagedSelected = selectedValue === "Packaged";
+  setIsPackaged(packagedSelected);
+
+  if (packagedSelected) {
+    setVantControl('');
+    setVantPieces('');
+    setFanPower('');
+    setFanVoltage('');
+    setAspControl('');
+    setAspPieces('');
+    setAspPower('');
+    setAspVoltage('');
+    setMaintenanceSafety('');
+    setEmergencySafety('');
+    setDoorSafety('');
+    setFireSafety('');
+    setFrostSafety('');
+    setPreheatingFunction('');
+    setPreheatingPower('');
+    setPreheatingVoltage('');
+    setPreheatingTemperature('');
+    setHeatingFunction('');
+    setHeatingPower('');
+    setHeatingVoltage('');
+    setHeatingTemperature('');
+    setCoolingFunction('');
+    setCoolingPower('');
+    setCoolingVoltage('');
+    setCoolingTemperature('');
+    setSupplyAirSensor('');
+    setFreshAirSensor('');
+    setReturnAirSensor('');
+    setExhaustAirSensor('');
+    setMixedAirSensor('');
+    setDehumidificationAirSensor('');
+    setHeatExchangerAirSensor('');
+    setFreshDamperActuator('');
+    setSupplyDamperActuator('');
+    setReturnDamperActuator('');
+    setExhaustDamperActuator('');
+    setMixedDamperActuator('');
+    setReCirculationDamperActuator('');
+    setRecuperatorDamperActuator('');
+    setSupplyFilter('');
+    setFreshFilter('');
+    setReturnFilter('');
+    setExhaustFilter('');
+    setRecuperatorFilter('');
+    setSupplyFlow('');
+    setReturnFlow('');
+    setRunAroundPumpControl('');
+    setRunAroundPumpPieces('');
+    setPumpPower('');
+    setPumpVoltage('');
+    setRunAroundTemperature('');
+    setHeatRecoveryControl('');
+    setHeatRecoveryPower('');
+    setHeatRecoveryVoltage('');
+    setHumidificationFunction('');
+    setHumidificationPower('');
+    setHumidificationVoltage('');
+    setDehumidificationFunction('');
+    setDehumidificationPower('');
+    setDehumidificationVoltage('');
+    setFanIntegration('');
+    setFanProtocolIntegration('');
+    setFanIntegrationPoints('');
+    setRunAroundPumpIntegration('');
+    setRunAroundPumpProtocolIntegration('');
+    setRunAroundPumpIntegrationPoints('');
+    setHeatExchangerIntegration('');
+    setHeatExchangerProtocolIntegration('');
+    setHeatExchangerIntegrationPoints('');
+    setHumidificationIntegration('');
+    setHumidificationProtocolIntegration('');
+    setHumidificationIntegrationPoints('');
+    setDehumidificationIntegration('');
+    setDehumidificationProtocolIntegration('');
+    setDehumidificationIntegrationPoints('');
+  }
+};
 
 
 
@@ -3570,70 +3658,71 @@ setShowTable(true);
               <TextField fullWidth variant="outlined" placeholder="AHU Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               <TextField fullWidth variant="outlined" placeholder="AHU Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               <TextField fullWidth variant="outlined" placeholder="AHU Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              {renderDropdown('AHU Control Type', ahuControl, (e) => setAhuControl(e.target.value), ['MCC', 'Packaged'])}
-              {renderDropdown('Vantilator Control', vantControl, (e) => setVantControl(e.target.value), ['DOL', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
-              {renderDropdown('Vantilator Pieces', vantPieces, (e) => setVantPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'])}
-              {renderDropdown('Vantilator Power', fanPower, (e) => setFanPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'])}
-              {renderDropdown('Vantilator Voltage', fanVoltage, (e) => setFanVoltage(e.target.value), ['230', '380'])}
-              {renderDropdown('Aspirator Control', aspControl, handleAspControlChange, ['none', 'DOL', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta','Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'])}
-              {renderDropdown('Aspirator Pieces', aspPieces, (e) => setAspPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], aspControl === 'none')}
-              {renderDropdown('Aspirator Power', aspPower, (e) => setAspPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], aspControl === 'none')}
-              {renderDropdown('Aspirator Voltage', aspVoltage, (e) => setAspVoltage(e.target.value), ['230', '380'], aspControl === 'none')}
-              {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
-              {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
-              {renderDropdown('Door Safety Contacts', doorSafety, (e) => setDoorSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'])}
-              {renderDropdown('Fire Safety Contacts', fireSafety, (e) => setFireSafety(e.target.value), ['none', 'only Viewing', 'Viewing and Control'])}
-              {renderDropdown('Frost Safety Contacts', frostSafety, (e) => setFrostSafety(e.target.value), ['none', 'Automatic Reset', 'Manual Reset'])}
-              {renderDropdown('Preheating Function', preheatingFunction, handlePreheatingFunctionChange, ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Floating Valve Actuator', 'Floating Valve Actuator with Feedback','Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'])}
-              {renderDropdown('Preheating Power', preheatingPower, (e) => setPreheatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], preheatingFunction === 'none' || preheatingValveOptions.includes(preheatingFunction))}
-              {renderDropdown('Preheating Voltage', preheatingVoltage, (e) => setPreheatingVoltage(e.target.value), ['230', '380'], preheatingFunction === 'none' || preheatingValveOptions.includes(preheatingFunction))}
-              {renderDropdown('Preheating Coil Temperature', preheatingTemperature, (e) => setPreheatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], isPreheatingTemperatureDisabled())}
-              {renderDropdown('Heating Function', heatingFunction, handleHeatingFunctionChange, ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Floating Valve Actuator', 'Floating Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'])}
-              {renderDropdown('Heating Power', heatingPower, (e) => setHeatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], heatingFunction === 'none' || heatingValveOptions.includes(heatingFunction))}
-              {renderDropdown('Heating Voltage', heatingVoltage, (e) => setHeatingVoltage(e.target.value), ['230', '380'], heatingFunction === 'none' || heatingValveOptions.includes(heatingFunction))}
-              {renderDropdown('Heating Coil Temperature', heatingTemperature, (e) => setHeatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'],isHeatingTemperatureDisabled())}
-              {renderDropdown('Cooling Function', coolingFunction, (e) => setCoolingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Floating Valve Actuator', 'Floating Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged DX Unit', '2-Staged DX Unit', '3-Staged DX Unit', 'Proportional DX Unit'])}
-              {renderDropdown('Cooling Power', coolingPower, (e) => setCoolingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15','18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], coolingFunction === 'none' || coolingValveOptions.includes(coolingFunction))}
-              {renderDropdown('Cooling Voltage', coolingVoltage, (e) => setCoolingVoltage(e.target.value), ['230', '380'], coolingFunction === 'none' || coolingValveOptions.includes(coolingFunction))}
-              {renderDropdown('Cooling Coil Temperature', coolingTemperature, (e) => setCoolingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], coolingFunction === 'none' || coolingDXOptions.includes(coolingFunction))}
-              {renderDropdown('Supply Air', supplyAirSensor, (e) => setSupplyAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
-              {renderDropdown('Fresh Air', freshAirSensor, (e) => setFreshAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
-              {renderDropdown('Return Air', returnAirSensor, (e) => setReturnAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity', 'Co2', 'Temperature, Humidity and Co2'])}
-              {renderDropdown('Exhaust Air', exhaustAirSensor, (e) => setExhaustAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
-              {renderDropdown('Mixed Air', mixedAirSensor, (e) => setMixedAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
-              {renderDropdown('Dehumidification Air', dehumidificationAirSensor, (e) => setDehumidificationAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'])}
-              {renderDropdown('Heat Exchanger Air', heatExchangerAirSensor, (e) => setHeatExchangerAirSensor(e.target.value), ['none', 'Fresh Side Temperature', 'Return Side Temperature', 'Fresh and Return Side Temperature'])}
-              {renderDropdown('Fresh Damper Actuator', freshDamperActuator, (e) => setFreshDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
-              {renderDropdown('Supply Damper Actuator', supplyDamperActuator, (e) => setSupplyDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ])}
-              {renderDropdown('Return Damper Actuator', returnDamperActuator, (e) => setReturnDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ])}
-              {renderDropdown('Exhaust Damper Actuator',exhaustDamperActuator, (e) => setExhaustDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ])}
-              {renderDropdown('Mixed Damper Actuator', mixedDamperActuator, (e) => setMixedDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
-              {renderDropdown('Re Circulation Damper Actuator', reCirculationDamperActuator, (e) => setReCirculationDamperActuator(e.target.value), ['none','On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
-              {renderDropdown('Heat Exchanger Damper Actuator', recuperatorDamperActuator, (e) => setRecuperatorDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback', 'Floating Damper Actuator', 'Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ])}
-              {renderDropdown('Supply Filter', supplyFilter, (e) => setSupplyFilter(e.target.value), ['none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14'])}
-              {renderDropdown('Fresh Filter', freshFilter, (e) => setFreshFilter(e.target.value), ['none','Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
-              {renderDropdown('Return Filter', returnFilter, (e) => setReturnFilter(e.target.value), ['none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
-              {renderDropdown('Exhaust Filter', exhaustFilter, (e) => setExhaustFilter(e.target.value), ['none','Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
-              {renderDropdown('Heat Exchanger Filter', recuperatorFilter, (e) => setRecuperatorFilter(e.target.value), [ 'none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ])}
-              {renderDropdown('Supply Flow', supplyFlow, (e) => setSupplyFlow(e.target.value), [ 'none', 'Belt', 'Pressure', 'Volume', 'Belt and Pressure', 'Belt and Volume', 'Pressure and Volume', 'Belt, Pressure and Volume'])}
-              {renderDropdown('Return Flow', returnFlow, (e) => setReturnFlow(e.target.value), [ 'none', 'Belt', 'Pressure', 'Volume', 'Belt and Pressure', 'Belt and Volume', 'Pressure and Volume', 'Belt, Pressure and Volume'])}
-              {renderDropdown('Run Around Pump Control', runAroundPumpControl, (e) => setRunAroundPumpControl(e.target.value), [ 'none', 'DOL', 'Power Supply Only ( Smart Pump)', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta' ])}
-              {renderDropdown('Run Around Pump Pieces', runAroundPumpPieces, (e) => setRunAroundPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], runAroundPumpControl === 'none')}
-              {renderDropdown('Run Around Pump Power', pumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], runAroundPumpControl === 'none')}
-              {renderDropdown('Run Around Pump Voltage', pumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], runAroundPumpControl === 'none')}
-              {renderDropdown('Run Around Coil Temperature', runAroundTemperature,  (e) => setRunAroundTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], runAroundPumpControl === 'none')}
-              {renderDropdown('Heat Exchanger Control', heatRecoveryControl, (e) => setHeatRecoveryControl(e.target.value), ['none', 'Heat Wheel with MCC (DOL)', 'Heat Wheel with MCC (VFD)','Heat Wheel with Packaged', 'Plate Recuperator'])}
-              {renderDropdown('Heat Exchanger Control Unit Power',  heatRecoveryPower,  (e) => setHeatRecoveryPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11'], heatRecoveryControl === 'none' )}
-              {renderDropdown('Heat Exchanger Control Unit Voltage', heatRecoveryVoltage, (e) => setHeatRecoveryVoltage(e.target.value), ['230', '380'], heatRecoveryControl === 'none' )}
-              {renderDropdown('Humidification Function', humidificationFunction, (e) => setHumidificationFunction(e.target.value), ['none', 'Proportional Humidification', '1-Staged Humidification', '2-Staged Humidification', '3-Staged Humidification'])}
-              {renderDropdown('Humidification Power', humidificationPower, (e) => setHumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], humidificationFunction === 'none')}
-              {renderDropdown('Humidification Voltage', humidificationVoltage, (e) => setHumidificationVoltage(e.target.value), ['230', '380'], humidificationFunction === 'none')}
-              {renderDropdown('Dehumidification Function', dehumidificationFunction, (e) => setDehumidificationFunction(e.target.value), ['none', 'Proportional Dehumidification', '1-Staged Dehumidification', '2-Staged Dehumidification', '3-Staged Dehumidification'])}
-              {renderDropdown('Dehumidification Control Unit Power', dehumidificationPower, (e) => setDehumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], dehumidificationFunction === 'none')}
-              {renderDropdown('Dehumidification Control Unit Voltage', dehumidificationVoltage, (e) => setDehumidificationVoltage(e.target.value), ['230', '380'], dehumidificationFunction === 'none')}
+              {renderDropdown('AHU Control Type', ahuControl, handleAhuControlChange, ['MCC', 'Packaged'])}
+              {renderDropdown('Vantilator Control', vantControl, (e) => setVantControl(e.target.value), ['DOL', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'], isPackaged)}
+              {renderDropdown('Vantilator Pieces', vantPieces, (e) => setVantPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], isPackaged)}
+              {renderDropdown('Vantilator Power', fanPower, (e) => setFanPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], isPackaged)}
+              {renderDropdown('Vantilator Voltage', fanVoltage, (e) => setFanVoltage(e.target.value), ['230', '380'], isPackaged)}
+              {renderDropdown('Aspirator Control', aspControl, handleAspControlChange, ['none', 'DOL', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta','Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'], isPackaged)}
+              {renderDropdown('Aspirator Pieces', aspPieces, (e) => setAspPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], aspControl === 'none'|| isPackaged)}
+              {renderDropdown('Aspirator Power', aspPower, (e) => setAspPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], aspControl === 'none'|| isPackaged)}
+              {renderDropdown('Aspirator Voltage', aspVoltage, (e) => setAspVoltage(e.target.value), ['230', '380'], aspControl === 'none'|| isPackaged)}
+              {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'], isPackaged)}
+              {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'], isPackaged)}
+              {renderDropdown('Door Safety Contacts', doorSafety, (e) => setDoorSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'], isPackaged)}
+              {renderDropdown('Fire Safety Contacts', fireSafety, (e) => setFireSafety(e.target.value), ['none', 'only Viewing', 'Viewing and Control'], isPackaged)}
+              {renderDropdown('Frost Safety Contacts', frostSafety, (e) => setFrostSafety(e.target.value), ['none', 'Automatic Reset', 'Manual Reset'], isPackaged)}
+              {renderDropdown('Preheating Function', preheatingFunction, handlePreheatingFunctionChange, ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Floating Valve Actuator', 'Floating Valve Actuator with Feedback','Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'], isPackaged)}
+              {renderDropdown('Preheating Power', preheatingPower, (e) => setPreheatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], preheatingFunction === 'none' || preheatingValveOptions.includes(preheatingFunction)|| isPackaged)}
+              {renderDropdown('Preheating Voltage', preheatingVoltage, (e) => setPreheatingVoltage(e.target.value), ['230', '380'], preheatingFunction === 'none' || preheatingValveOptions.includes(preheatingFunction)|| isPackaged)}
+              {renderDropdown('Preheating Coil Temperature', preheatingTemperature, (e) => setPreheatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], isPreheatingTemperatureDisabled() || isPackaged)}
+              {renderDropdown('Heating Function', heatingFunction, handleHeatingFunctionChange, ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Floating Valve Actuator', 'Floating Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged Electrical Heater', '2-Staged Electrical Heater', '3-Staged Electrical Heater', 'Proportional Electrical Heater'], isPackaged)}
+              {renderDropdown('Heating Power', heatingPower, (e) => setHeatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], heatingFunction === 'none' || heatingValveOptions.includes(heatingFunction)|| isPackaged)}
+              {renderDropdown('Heating Voltage', heatingVoltage, (e) => setHeatingVoltage(e.target.value), ['230', '380'], heatingFunction === 'none' || heatingValveOptions.includes(heatingFunction)|| isPackaged)}
+              {renderDropdown('Heating Coil Temperature', heatingTemperature, (e) => setHeatingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], isHeatingTemperatureDisabled() || isPackaged)}
+              {renderDropdown('Cooling Function', coolingFunction, (e) => setCoolingFunction(e.target.value), ['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback', 'Floating Valve Actuator', 'Floating Valve Actuator with Feedback', 'Proportional Valve Actuator', 'Proportional Valve Actuator with Feedback', '1-Staged DX Unit', '2-Staged DX Unit', '3-Staged DX Unit', 'Proportional DX Unit'], isPackaged)}
+              {renderDropdown('Cooling Power', coolingPower, (e) => setCoolingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15','18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], coolingFunction === 'none' || coolingValveOptions.includes(coolingFunction)|| isPackaged)}
+              {renderDropdown('Cooling Voltage', coolingVoltage, (e) => setCoolingVoltage(e.target.value), ['230', '380'], coolingFunction === 'none' || coolingValveOptions.includes(coolingFunction)|| isPackaged)}
+              {renderDropdown('Cooling Coil Temperature', coolingTemperature, (e) => setCoolingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], coolingFunction === 'none' || coolingDXOptions.includes(coolingFunction) || isPackaged)}
+
+              {renderDropdown('Supply Air', supplyAirSensor, (e) => setSupplyAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
+              {renderDropdown('Fresh Air', freshAirSensor, (e) => setFreshAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
+              {renderDropdown('Return Air', returnAirSensor, (e) => setReturnAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity', 'Co2', 'Temperature, Humidity and Co2'], isPackaged)}
+              {renderDropdown('Exhaust Air', exhaustAirSensor, (e) => setExhaustAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
+              {renderDropdown('Mixed Air', mixedAirSensor, (e) => setMixedAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
+              {renderDropdown('Dehumidification Air', dehumidificationAirSensor, (e) => setDehumidificationAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
+              {renderDropdown('Heat Exchanger Air', heatExchangerAirSensor, (e) => setHeatExchangerAirSensor(e.target.value), ['none', 'Fresh Side Temperature', 'Return Side Temperature', 'Fresh and Return Side Temperature'], isPackaged)}
+              {renderDropdown('Fresh Damper Actuator', freshDamperActuator, (e) => setFreshDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ], isPackaged)}
+              {renderDropdown('Supply Damper Actuator', supplyDamperActuator, (e) => setSupplyDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ], isPackaged)}
+              {renderDropdown('Return Damper Actuator', returnDamperActuator, (e) => setReturnDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ], isPackaged)}
+              {renderDropdown('Exhaust Damper Actuator',exhaustDamperActuator, (e) => setExhaustDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ], isPackaged)}
+              {renderDropdown('Mixed Damper Actuator', mixedDamperActuator, (e) => setMixedDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ], isPackaged)}
+              {renderDropdown('Re Circulation Damper Actuator', reCirculationDamperActuator, (e) => setReCirculationDamperActuator(e.target.value), ['none','On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ], isPackaged)}
+              {renderDropdown('Heat Exchanger Damper Actuator', recuperatorDamperActuator, (e) => setRecuperatorDamperActuator(e.target.value), ['none', 'On/Off Damper Actuator', 'On/Off Damper Actuator with Feedback', 'Floating Damper Actuator', 'Floating Damper Actuator with Feedback', 'Proportional Damper Actuator', 'Proportional Damper Actuator with Feedback', '2x On/Off Damper Actuator', '2x On/Off Damper Actuator with Feedback', '2x Floating Damper Actuator', '2x Floating Damper Actuator with Feedback', '2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ], isPackaged)}
+              {renderDropdown('Supply Filter', supplyFilter, (e) => setSupplyFilter(e.target.value), ['none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14'], isPackaged)}
+              {renderDropdown('Fresh Filter', freshFilter, (e) => setFreshFilter(e.target.value), ['none','Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ], isPackaged)}
+              {renderDropdown('Return Filter', returnFilter, (e) => setReturnFilter(e.target.value), ['none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ], isPackaged)}
+              {renderDropdown('Exhaust Filter', exhaustFilter, (e) => setExhaustFilter(e.target.value), ['none','Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ], isPackaged)}
+              {renderDropdown('Heat Exchanger Filter', recuperatorFilter, (e) => setRecuperatorFilter(e.target.value), [ 'none', 'Analog G4', 'Digital G4', 'Analog F5', 'Digital F5', 'Analog F6', 'Digital F6', 'Analog F7', 'Digital F7', 'Analog F8', 'Digital F8', 'Analog F9', 'Digital F9', 'Analog H13', 'Digital H13', 'Analog H14', 'Digital H14' ], isPackaged)}
+              {renderDropdown('Supply Flow', supplyFlow, (e) => setSupplyFlow(e.target.value), [ 'none', 'Belt', 'Pressure', 'Volume', 'Belt and Pressure', 'Belt and Volume', 'Pressure and Volume', 'Belt, Pressure and Volume'], isPackaged)}
+              {renderDropdown('Return Flow', returnFlow, (e) => setReturnFlow(e.target.value), [ 'none', 'Belt', 'Pressure', 'Volume', 'Belt and Pressure', 'Belt and Volume', 'Pressure and Volume', 'Belt, Pressure and Volume'], isPackaged)}
+              {renderDropdown('Run Around Pump Control', runAroundPumpControl, (e) => setRunAroundPumpControl(e.target.value), [ 'none', 'DOL', 'Power Supply Only ( Smart Pump)', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta' ], isPackaged)}
+              {renderDropdown('Run Around Pump Pieces', runAroundPumpPieces, (e) => setRunAroundPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], runAroundPumpControl === 'none'|| isPackaged)}
+              {renderDropdown('Run Around Pump Power', pumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], runAroundPumpControl === 'none'|| isPackaged)}
+              {renderDropdown('Run Around Pump Voltage', pumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], runAroundPumpControl === 'none'|| isPackaged)}
+              {renderDropdown('Run Around Coil Temperature', runAroundTemperature,  (e) => setRunAroundTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], runAroundPumpControl === 'none'|| isPackaged)}
+              {renderDropdown('Heat Exchanger Control', heatRecoveryControl, (e) => setHeatRecoveryControl(e.target.value), ['none', 'Heat Wheel with MCC (DOL)', 'Heat Wheel with MCC (VFD)','Heat Wheel with Packaged', 'Plate Recuperator'], isPackaged)}
+              {renderDropdown('Heat Exchanger Control Unit Power',  heatRecoveryPower,  (e) => setHeatRecoveryPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11'], heatRecoveryControl === 'none' || isPackaged)}
+              {renderDropdown('Heat Exchanger Control Unit Voltage', heatRecoveryVoltage, (e) => setHeatRecoveryVoltage(e.target.value), ['230', '380'], heatRecoveryControl === 'none' || isPackaged)}
+              {renderDropdown('Humidification Function', humidificationFunction, (e) => setHumidificationFunction(e.target.value), ['none', 'Proportional Humidification', '1-Staged Humidification', '2-Staged Humidification', '3-Staged Humidification'], isPackaged)}
+              {renderDropdown('Humidification Power', humidificationPower, (e) => setHumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], humidificationFunction === 'none'|| isPackaged)}
+              {renderDropdown('Humidification Voltage', humidificationVoltage, (e) => setHumidificationVoltage(e.target.value), ['230', '380'], humidificationFunction === 'none'|| isPackaged)}
+              {renderDropdown('Dehumidification Function', dehumidificationFunction, (e) => setDehumidificationFunction(e.target.value), ['none', 'Proportional Dehumidification', '1-Staged Dehumidification', '2-Staged Dehumidification', '3-Staged Dehumidification'], isPackaged)}
+              {renderDropdown('Dehumidification Control Unit Power', dehumidificationPower, (e) => setDehumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], dehumidificationFunction === 'none'|| isPackaged)}
+              {renderDropdown('Dehumidification Control Unit Voltage', dehumidificationVoltage, (e) => setDehumidificationVoltage(e.target.value), ['230', '380'], dehumidificationFunction === 'none'|| isPackaged)}
               
-              {renderDropdown('Fan Integration', fanIntegration, (e) => setFanIntegration(e.target.value), ['none', 'EC', 'VFD'])}
-              {renderDropdown('Fan Protocol Integration', fanprotocolIntegration, (e) => setFanProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], fanIntegration === 'none')}
+              {renderDropdown('Fan Integration', fanIntegration, (e) => setFanIntegration(e.target.value), ['none', 'EC', 'VFD'], isPackaged)}
+              {renderDropdown('Fan Protocol Integration', fanprotocolIntegration, (e) => setFanProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], fanIntegration === 'none'|| isPackaged)}
 
             
               <TextField  fullWidth
@@ -3641,7 +3730,7 @@ setShowTable(true);
                           placeholder="Fan Integration Points"
                           value={fanIntegrationPoints}
                           onChange={(e) => setFanIntegrationPoints(e.target.value)}
-                          disabled={fanIntegration === 'none'}
+                          disabled={fanIntegration === 'none'|| isPackaged}
                           InputProps={{
                           style: {
                           color: fanIntegration === 'none' ? '#888' : 'white',
@@ -3653,8 +3742,8 @@ setShowTable(true);
                                 }}
                               />
 
-              {renderDropdown('Run Around Pump Integration', runaroundpumpIntegration, (e) => setRunAroundPumpIntegration(e.target.value), ['none', 'own Panel', 'VFD'])}
-              {renderDropdown('Run Around Pump Protocol Integration', runaroundpumpprotocolIntegration, (e) => setRunAroundPumpProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], runaroundpumpIntegration === 'none')}
+              {renderDropdown('Run Around Pump Integration', runaroundpumpIntegration, (e) => setRunAroundPumpIntegration(e.target.value), ['none', 'own Panel', 'VFD'], isPackaged)}
+              {renderDropdown('Run Around Pump Protocol Integration', runaroundpumpprotocolIntegration, (e) => setRunAroundPumpProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], runaroundpumpIntegration === 'none'|| isPackaged)}
 
 
               <TextField  fullWidth
@@ -3662,7 +3751,7 @@ setShowTable(true);
                           placeholder="Run Around Pump Integration Points"
                           value={runaroundpumpIntegrationPoints}
                           onChange={(e) => setRunAroundPumpIntegrationPoints(e.target.value)}
-                          disabled={runaroundpumpIntegration === 'none'}
+                          disabled={runaroundpumpIntegration === 'none'|| isPackaged}
                           InputProps={{
                           style: {
                           color: runaroundpumpIntegration === 'none' ? '#888' : 'white',
@@ -3676,8 +3765,8 @@ setShowTable(true);
 
 
 
-              {renderDropdown('Heat Exchanger Integration', heatexchangerIntegration, (e) => setHeatExchangerIntegration(e.target.value), ['none', 'own Panel'])}
-              {renderDropdown('Heat Exchanger Protocol Integration', heatexchangerprotocolIntegration, (e) => setHeatExchangerProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], heatexchangerIntegration === 'none')}
+              {renderDropdown('Heat Exchanger Integration', heatexchangerIntegration, (e) => setHeatExchangerIntegration(e.target.value), ['none', 'own Panel'], isPackaged)}
+              {renderDropdown('Heat Exchanger Protocol Integration', heatexchangerprotocolIntegration, (e) => setHeatExchangerProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], heatexchangerIntegration === 'none'|| isPackaged)}
 
 
               <TextField  fullWidth
@@ -3685,7 +3774,7 @@ setShowTable(true);
                           placeholder="Heat Exchanger Integration Points"
                           value={heatexchangerIntegrationPoints}
                           onChange={(e) => setHeatExchangerIntegrationPoints(e.target.value)}
-                          disabled={heatexchangerIntegration === 'none'}
+                          disabled={heatexchangerIntegration === 'none'|| isPackaged}
                           InputProps={{
                           style: {
                           color: heatexchangerIntegration === 'none' ? '#888' : 'white',
@@ -3698,8 +3787,8 @@ setShowTable(true);
                               />
 
 
-              {renderDropdown('Humidification Integration', humidificationIntegration, (e) => setHumidificationIntegration(e.target.value), ['none', 'own Panel'])}
-              {renderDropdown('Humidification Protocol Integration', humidificationprotocolIntegration, (e) => setHumidificationProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], humidificationIntegration === 'none')}
+              {renderDropdown('Humidification Integration', humidificationIntegration, (e) => setHumidificationIntegration(e.target.value), ['none', 'own Panel'], isPackaged)}
+              {renderDropdown('Humidification Protocol Integration', humidificationprotocolIntegration, (e) => setHumidificationProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], humidificationIntegration === 'none'|| isPackaged)}
 
 
               <TextField  fullWidth
@@ -3707,7 +3796,7 @@ setShowTable(true);
                           placeholder="Humidification Integration Points"
                           value={humidificationIntegrationPoints}
                           onChange={(e) => setHumidificationIntegrationPoints(e.target.value)}
-                          disabled={humidificationIntegration === 'none'}
+                          disabled={humidificationIntegration === 'none'|| isPackaged}
                           InputProps={{
                           style: {
                           color: humidificationIntegration === 'none' ? '#888' : 'white',
@@ -3721,8 +3810,8 @@ setShowTable(true);
 
 
 
-              {renderDropdown('Dehumidification Integration', dehumidificationIntegration, (e) => setDehumidificationIntegration(e.target.value), ['none', 'own Panel'])}
-              {renderDropdown('Dehumidification Protocol Integration', dehumidificationprotocolIntegration, (e) => setDehumidificationProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], dehumidificationIntegration === 'none')}
+              {renderDropdown('Dehumidification Integration', dehumidificationIntegration, (e) => setDehumidificationIntegration(e.target.value), ['none', 'own Panel'], isPackaged)}
+              {renderDropdown('Dehumidification Protocol Integration', dehumidificationprotocolIntegration, (e) => setDehumidificationProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], dehumidificationIntegration === 'none'|| isPackaged)}
 
 
               <TextField  fullWidth
@@ -3730,7 +3819,7 @@ setShowTable(true);
                           placeholder="Dehumidification Integration Points"
                           value={dehumidificationIntegrationPoints}
                           onChange={(e) => setDehumidificationIntegrationPoints(e.target.value)}
-                          disabled={dehumidificationIntegration === 'none'}
+                          disabled={dehumidificationIntegration === 'none'|| isPackaged}
                           InputProps={{
                           style: {
                           color: dehumidificationIntegration === 'none' ? '#888' : 'white',
