@@ -426,7 +426,7 @@ export default function Home() {
     </Typography>
 
     <Typography variant="body2" sx={{ color: '#333' }}>
-      If this journey resonates with you, please consider sharing HavaLogic with your colleagues.  
+      If this journey resonates with you, please consider sharing Havalogic with your colleagues.  
       We might truly need that support — and it would mean a lot to us.
     </Typography>
   </Stack>

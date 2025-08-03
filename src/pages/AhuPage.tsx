@@ -41,7 +41,6 @@ const PrimaryButton = styled(ModernButton)({
   }
 });
 
-// Yeni Select stilleri
 const selectStyles = {
   color: '#ECEFF1',
   '.MuiOutlinedInput-notchedOutline': {   borderColor: '#B0BEC5'
@@ -134,33 +133,128 @@ export default function AhuPage() {
   const [pumpPower, setPumpPower] = useState('');
   const [pumpVoltage, setPumpVoltage] = useState('');
   const [runAroundTemperature, setRunAroundTemperature] = useState('');
-
   const [heatRecoveryControl, setHeatRecoveryControl] = useState('');
   const [heatRecoveryPower, setHeatRecoveryPower] = useState('');
   const [heatRecoveryVoltage, setHeatRecoveryVoltage] = useState('');
-
   const [humidificationFunction, setHumidificationFunction] = useState('');
- 
   const [humidificationPower, setHumidificationPower] = useState('');
   const [humidificationVoltage, setHumidificationVoltage] = useState('');
   const [dehumidificationFunction, setDehumidificationFunction] = useState('');
- 
   const [dehumidificationPower, setDehumidificationPower] = useState('');
   const [dehumidificationVoltage, setDehumidificationVoltage] = useState('');
+  const [fanIntegration, setFanIntegration] = useState('');
+  const [fanprotocolIntegration, setFanProtocolIntegration] = useState('');
+  const [fanIntegrationPoints, setFanIntegrationPoints] = useState('');
 
-  
-  
-  const [systemIntegration, setSystemIntegration] = useState('');
-  const [protocolIntegration, setProtocolIntegration] = useState('');
-  const [totalIntegrationPoints, setTotalIntegrationPoints] = useState('');
+  const [runaroundpumpIntegration, setRunAroundPumpIntegration] = useState('');
+  const [runaroundpumpprotocolIntegration, setRunAroundPumpProtocolIntegration] = useState('');
+  const [runaroundpumpIntegrationPoints, setRunAroundPumpIntegrationPoints] = useState('');
+
+  const [heatexchangerIntegration, setHeatExchangerIntegration] = useState('');
+  const [heatexchangerprotocolIntegration, setHeatExchangerProtocolIntegration] = useState('');
+  const [heatexchangerIntegrationPoints, setHeatExchangerIntegrationPoints] = useState('');
+
+  const [humidificationIntegration, setHumidificationIntegration] = useState('');
+  const [humidificationprotocolIntegration, setHumidificationProtocolIntegration] = useState('');
+  const [humidificationIntegrationPoints, setHumidificationIntegrationPoints] = useState('');
+
+  const [dehumidificationIntegration, setDehumidificationIntegration] = useState('');
+  const [dehumidificationprotocolIntegration, setDehumidificationProtocolIntegration] = useState('');
+  const [dehumidificationIntegrationPoints, setDehumidificationIntegrationPoints] = useState('');
+
   const [showTable, setShowTable] = useState(false);
   const [tableRows, setTableRows] = useState<any[]>([]);
 
-const isPreheatingTemperatureDisabled = () => {
+  const isPreheatingTemperatureDisabled = () => {
     return (
       preheatingFunction === 'none' || preheatingFunction.includes('Electrical Heater')
     );
   };
+
+
+
+React.useEffect(() => {
+  if (ahuControl === 'Packaged') {
+    setVantControl('');
+    setVantPieces('');
+    setFanPower('');
+    setFanVoltage('');
+    setAspControl('');
+    setAspPieces('');
+    setAspPower('');
+    setAspVoltage('');
+    setMaintenanceSafety('');
+    setEmergencySafety('');
+    setDoorSafety('');
+    setFireSafety('');
+    setFrostSafety('');
+    setPreheatingFunction('');
+    setPreheatingPower('');
+    setPreheatingVoltage('');
+    setPreheatingTemperature('');
+    setHeatingFunction('');
+    setHeatingPower('');
+    setHeatingVoltage('');
+    setHeatingTemperature('');
+    setCoolingFunction('');
+    setCoolingPower('');
+    setCoolingVoltage('');
+    setCoolingTemperature('');
+    setSupplyAirSensor('');
+    setFreshAirSensor('');
+    setReturnAirSensor('');
+    setExhaustAirSensor('');
+    setMixedAirSensor('');
+    setDehumidificationAirSensor('');
+    setHeatExchangerAirSensor('');
+    setFreshDamperActuator('');
+    setSupplyDamperActuator('');
+    setReturnDamperActuator('');
+    setExhaustDamperActuator('');
+    setMixedDamperActuator('');
+    setReCirculationDamperActuator('');
+    setRecuperatorDamperActuator('');
+    setSupplyFilter('');
+    setFreshFilter('');
+    setReturnFilter('');
+    setExhaustFilter('');
+    setRecuperatorFilter('');
+    setSupplyFlow('');
+    setReturnFlow('');
+    setRunAroundPumpControl('');
+    setRunAroundPumpPieces('');
+    setPumpPower('');
+    setPumpVoltage('');
+    setRunAroundTemperature('');
+    setHeatRecoveryControl('');
+    setHeatRecoveryPower('');
+    setHeatRecoveryVoltage('');
+    setHumidificationFunction('');
+    setHumidificationPower('');
+    setHumidificationVoltage('');
+    setDehumidificationFunction('');
+    setDehumidificationPower('');
+    setDehumidificationVoltage('');
+    setFanIntegration('');
+    setFanProtocolIntegration('');
+    setFanIntegrationPoints('');
+    setRunAroundPumpIntegration('');
+    setRunAroundPumpProtocolIntegration('');
+    setRunAroundPumpIntegrationPoints('');
+    setHeatExchangerIntegration('');
+    setHeatExchangerProtocolIntegration('');
+    setHeatExchangerIntegrationPoints('');
+    setHumidificationIntegration('');
+    setHumidificationProtocolIntegration('');
+    setHumidificationIntegrationPoints('');
+    setDehumidificationIntegration('');
+    setDehumidificationProtocolIntegration('');
+    setDehumidificationIntegrationPoints('');
+  }
+}, [ahuControl]);
+
+
+
 
   React.useEffect(() => {
   if (
@@ -215,7 +309,47 @@ React.useEffect(() => {
     setHeatRecoveryVoltage('');
   }
 }, [heatRecoveryControl]);
-  
+
+
+React.useEffect(() => {
+  if (fanIntegration === 'none') {
+    setFanProtocolIntegration('');
+    setFanIntegrationPoints('');
+  }
+}, [fanIntegration]);
+
+
+React.useEffect(() => {
+  if (runaroundpumpIntegration === 'none') {
+    setRunAroundPumpProtocolIntegration('');
+    setRunAroundPumpIntegrationPoints('');
+  }
+}, [runaroundpumpIntegration]);
+
+
+
+React.useEffect(() => {
+  if (heatexchangerIntegration === 'none') {
+    setHeatExchangerProtocolIntegration('');
+    setHeatExchangerIntegrationPoints('');
+  }
+}, [heatexchangerIntegration]);
+
+React.useEffect(() => {
+  if (humidificationIntegration === 'none') {
+    setHumidificationProtocolIntegration('');
+    setHumidificationIntegrationPoints('');
+  }
+}, [humidificationIntegration]);
+
+React.useEffect(() => {
+  if (dehumidificationIntegration === 'none') {
+    setDehumidificationProtocolIntegration('');
+    setDehumidificationIntegrationPoints('');
+  }
+}, [dehumidificationIntegration]);
+
+
   const renderDropdown = (
     label: string,
     value: string,
@@ -3497,196 +3631,333 @@ setShowTable(true);
               {renderDropdown('Dehumidification Function', dehumidificationFunction, (e) => setDehumidificationFunction(e.target.value), ['none', 'Proportional Dehumidification', '1-Staged Dehumidification', '2-Staged Dehumidification', '3-Staged Dehumidification'])}
               {renderDropdown('Dehumidification Control Unit Power', dehumidificationPower, (e) => setDehumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], dehumidificationFunction === 'none')}
               {renderDropdown('Dehumidification Control Unit Voltage', dehumidificationVoltage, (e) => setDehumidificationVoltage(e.target.value), ['230', '380'], dehumidificationFunction === 'none')}
-              {renderDropdown('System Integration', systemIntegration, (e) => setSystemIntegration(e.target.value), ['none', 'Package', 'VFD'])}
-              {renderDropdown('Protocol Integration', protocolIntegration, (e) => setProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], systemIntegration === 'none')}
               
-              <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Total Integration Points"
-                value={totalIntegrationPoints}
-                onChange={(e) => setTotalIntegrationPoints(e.target.value)}
-                disabled={systemIntegration === 'none'}
-                InputProps={{
-                  style: {
-                    color: systemIntegration === 'none' ? '#888' : 'white',
-                    backgroundColor: systemIntegration === 'none' ? '#1e1e1e' : 'transparent'
-                  }
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: systemIntegration === 'none' ? '#555' : '#B0BEC5'
-                  }
-                }}
-              />
-              <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveAhu}>Send to Table</PrimaryButton>
-              <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
-            </Stack>
-          </Box>
-        </Container>
+              {renderDropdown('Fan Integration', fanIntegration, (e) => setFanIntegration(e.target.value), ['none', 'EC', 'VFD'])}
+              {renderDropdown('Fan Protocol Integration', fanprotocolIntegration, (e) => setFanProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], fanIntegration === 'none')}
 
-        {/* Tablo */}
-        <Box sx={{ flex: 1, p: 4, backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '12px', mr: 1, ml: 0, mt: 6, maxHeight: '85vh', overflowY: 'auto', color: 'white' }}>
-          <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-          {projectCode ? `${projectCode} Output Table` : 'AHU Output Table'}
-          </Typography>
+            
+              <TextField  fullWidth
+                          variant="outlined"
+                          placeholder="Fan Integration Points"
+                          value={fanIntegrationPoints}
+                          onChange={(e) => setFanIntegrationPoints(e.target.value)}
+                          disabled={fanIntegration === 'none'}
+                          InputProps={{
+                          style: {
+                          color: fanIntegration === 'none' ? '#888' : 'white',
+                          backgroundColor: fanIntegration === 'none' ? '#1e1e1e' : 'transparent'
+                                  }
+                            }}
+                          sx={{'& .MuiOutlinedInput-notchedOutline': { borderColor: fanIntegration === 'none' ? '#555' : '#B0BEC5'
+                                  }
+                                }}
+                              />
 
-          {showTable && tableRows.length > 0 && (
-            <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#ffffff',
-    fontSize: '0.875rem',
-    fontFamily: `'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif'`,
+              {renderDropdown('Run Around Pump Integration', runaroundpumpIntegration, (e) => setRunAroundPumpIntegration(e.target.value), ['none', 'own Panel', 'VFD'])}
+              {renderDropdown('Run Around Pump Protocol Integration', runaroundpumpprotocolIntegration, (e) => setRunAroundPumpProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], runaroundpumpIntegration === 'none')}
+
+
+              <TextField  fullWidth
+                          variant="outlined"
+                          placeholder="Run Around Pump Integration Points"
+                          value={runaroundpumpIntegrationPoints}
+                          onChange={(e) => setRunAroundPumpIntegrationPoints(e.target.value)}
+                          disabled={runaroundpumpIntegration === 'none'}
+                          InputProps={{
+                          style: {
+                          color: runaroundpumpIntegration === 'none' ? '#888' : 'white',
+                          backgroundColor: runaroundpumpIntegration === 'none' ? '#1e1e1e' : 'transparent'
+                                  }
+                            }}
+                          sx={{'& .MuiOutlinedInput-notchedOutline': { borderColor: runaroundpumpIntegration === 'none' ? '#555' : '#B0BEC5'
+                                  }
+                                }}
+                              />
+
+
+
+              {renderDropdown('Heat Exchanger Integration', heatexchangerIntegration, (e) => setHeatExchangerIntegration(e.target.value), ['none', 'own Panel'])}
+              {renderDropdown('Heat Exchanger Protocol Integration', heatexchangerprotocolIntegration, (e) => setHeatExchangerProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], heatexchangerIntegration === 'none')}
+
+
+              <TextField  fullWidth
+                          variant="outlined"
+                          placeholder="Heat Exchanger Integration Points"
+                          value={heatexchangerIntegrationPoints}
+                          onChange={(e) => setHeatExchangerIntegrationPoints(e.target.value)}
+                          disabled={heatexchangerIntegration === 'none'}
+                          InputProps={{
+                          style: {
+                          color: heatexchangerIntegration === 'none' ? '#888' : 'white',
+                          backgroundColor: heatexchangerIntegration === 'none' ? '#1e1e1e' : 'transparent'
+                                  }
+                            }}
+                          sx={{'& .MuiOutlinedInput-notchedOutline': { borderColor: heatexchangerIntegration === 'none' ? '#555' : '#B0BEC5'
+                                  }
+                                }}
+                              />
+
+
+              {renderDropdown('Humidification Integration', humidificationIntegration, (e) => setHumidificationIntegration(e.target.value), ['none', 'own Panel'])}
+              {renderDropdown('Humidification Protocol Integration', humidificationprotocolIntegration, (e) => setHumidificationProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], humidificationIntegration === 'none')}
+
+
+              <TextField  fullWidth
+                          variant="outlined"
+                          placeholder="Humidification Integration Points"
+                          value={humidificationIntegrationPoints}
+                          onChange={(e) => setHumidificationIntegrationPoints(e.target.value)}
+                          disabled={humidificationIntegration === 'none'}
+                          InputProps={{
+                          style: {
+                          color: humidificationIntegration === 'none' ? '#888' : 'white',
+                          backgroundColor: humidificationIntegration === 'none' ? '#1e1e1e' : 'transparent'
+                                  }
+                            }}
+                          sx={{'& .MuiOutlinedInput-notchedOutline': { borderColor: humidificationIntegration === 'none' ? '#555' : '#B0BEC5'
+                                  }
+                                }}
+                              />
+
+
+
+              {renderDropdown('Dehumidification Integration', dehumidificationIntegration, (e) => setDehumidificationIntegration(e.target.value), ['none', 'own Panel'])}
+              {renderDropdown('Dehumidification Protocol Integration', dehumidificationprotocolIntegration, (e) => setDehumidificationProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], dehumidificationIntegration === 'none')}
+
+
+              <TextField  fullWidth
+                          variant="outlined"
+                          placeholder="Dehumidification Integration Points"
+                          value={dehumidificationIntegrationPoints}
+                          onChange={(e) => setDehumidificationIntegrationPoints(e.target.value)}
+                          disabled={dehumidificationIntegration === 'none'}
+                          InputProps={{
+                          style: {
+                          color: dehumidificationIntegration === 'none' ? '#888' : 'white',
+                          backgroundColor: dehumidificationIntegration === 'none' ? '#1e1e1e' : 'transparent'
+                                  }
+                            }}
+                          sx={{'& .MuiOutlinedInput-notchedOutline': { borderColor: dehumidificationIntegration === 'none' ? '#555' : '#B0BEC5'
+                                  }
+                                }}
+                              />
+
+<PrimaryButton sx={{ width: '100%' }} onClick={handleSaveAhu}>Send to Table</PrimaryButton>
+<PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
+</Stack>
+</Box>
+</Container>
+
+{/* Tablo */}
+<Box
+  sx={{
+    flex: 1,
+    p: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: '12px',
-    overflow: 'hidden',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-    border: '1px solid #e0e0e0',
-    color: '#333'
+    mr: 1,
+    ml: 0,
+    mt: 6,
+    maxHeight: '85vh',
+    overflowY: 'auto',
+    color: 'white'
   }}
 >
-              <thead>
-               <tr style={{ backgroundColor: '#1976d2', color: 'white' }}>
-                  {['Project Code', 'Description', 'Located', 'Point Name', 'AI', 'AO', 'DI', 'DO', 'Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP', 'Mbus'].map((header, i) => (
-                    <th
-  key={i}
-  style={{
-    border: '1px solid #e0e0e0',
-    padding: '10px',
-    fontWeight: 500,
-    fontSize: '0.85rem',
-    textAlign: 'left'
-  }}
->
-  {header}
-</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {tableRows.map((row, index) => (
+  <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
+    {projectCode ? `${projectCode} Output Table` : 'AHU Output Table'}
+  </Typography>
 
-                  <tr
-  key={index}
-  style={{
-    backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#f0f4f8',
-    transition: 'background 0.3s',
-    cursor: 'default'
-  }}
->
+  {showTable && tableRows.length > 0 && (
+    <table
+      style={{
+        width: '100%',
+        borderCollapse: 'collapse',
+        backgroundColor: '#ffffff',
+        fontSize: '0.875rem',
+        fontFamily: `'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif'`,
+        borderRadius: '12px',
+        overflow: 'hidden',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+        border: '1px solid #e0e0e0',
+        color: '#333'
+      }}
+    >
+      <thead>
+        <tr style={{ backgroundColor: '#1976d2', color: 'white' }}>
+          {['Project Code', 'Description', 'Located', 'Point Name', 'AI', 'AO', 'DI', 'DO', 'Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP', 'Mbus'].map((header, i) => (
+            <th
+              key={i}
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '10px',
+                fontWeight: 500,
+                fontSize: '0.85rem',
+                textAlign: 'left'
+              }}
+            >
+              {header}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {tableRows.map((row, index) => (
+          <tr
+            key={index}
+            style={{
+              backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#f0f4f8',
+              transition: 'background 0.3s',
+              cursor: 'default'
+            }}
+          >
+            <td
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '8px',
+                fontSize: '0.82rem',
+                color: '#424242'
+              }}
+            >
+              {row.projectCode}
+            </td>
 
-                   
-                    
-                    <td
-  style={{
-    border: '1px solid #e0e0e0',
-    padding: '8px',
-    fontSize: '0.82rem',
-    color: '#424242'
-  }}
->
-  {row.projectCode}
-</td>
+            <td
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '8px',
+                fontSize: '0.82rem',
+                color: '#424242'
+              }}
+            >
+              {row.description}
+            </td>
 
+            <td
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '8px',
+                fontSize: '0.82rem',
+                color: '#424242'
+              }}
+            >
+              {row.location}
+            </td>
 
-                    <td
-  style={{
-    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
->
-  {row.description}
-</td>
+            <td
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '8px',
+                fontSize: '0.82rem',
+                color: '#424242'
+              }}
+            >
+              {row.point}
+            </td>
 
+            <td
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '8px',
+                fontSize: '0.82rem',
+                color: '#424242'
+              }}
+            >
+              {row.ai}
+            </td>
 
-  <td
-    style={{
-      border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
-      >
-      {row.location}
-  </td>
+            <td
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '8px',
+                fontSize: '0.82rem',
+                color: '#424242'
+              }}
+            >
+              {row.ao}
+            </td>
 
+            <td
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '8px',
+                fontSize: '0.82rem',
+                color: '#424242'
+              }}
+            >
+              {row.di}
+            </td>
 
-                    <td
-  style={{
-    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
->
-  {row.point}
-</td>
+            <td
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '8px',
+                fontSize: '0.82rem',
+                color: '#424242'
+              }}
+            >
+              {row.do}
+            </td>
 
+            <td
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '8px',
+                fontSize: '0.82rem',
+                color: '#424242'
+              }}
+            >
+              {row.modbusRtu}
+            </td>
 
-                   <td
-  style={{
-    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
->
-  {row.ai}
-</td>
+            <td
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '8px',
+                fontSize: '0.82rem',
+                color: '#424242'
+              }}
+            >
+              {row.modbusTcp}
+            </td>
 
+            <td
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '8px',
+                fontSize: '0.82rem',
+                color: '#424242'
+              }}
+            >
+              {row.bacnetMstp}
+            </td>
 
-                  <td
-  style={{
-    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
->
-  {row.ao}
-</td>
+            <td
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '8px',
+                fontSize: '0.82rem',
+                color: '#424242'
+              }}
+            >
+              {row.bacnetIp}
+            </td>
 
-
-                   <td
-  style={{
-    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
->
-  {row.di}
-</td>
-
-
-                   <td
-  style={{
-    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
->
-  {row.do}
-</td>
-
-
-                    <td
-  style={{
-    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
->
-  {row.modbusRtu}
-</td>
-
-
-                    <td
-  style={{
-    border: '1px solid #e0e0e0',  padding: '8px', fontSize: '0.82rem',  color: '#424242'  }}
->
-  {row.modbusTcp}
-</td>
-
-
-                    <td
-  style={{
-    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242'  }}
->
-  {row.bacnetMstp}
-</td>
-
-
-                   <td
-  style={{
-    border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242' }}
->
-  {row.bacnetIp}
-</td>
-
-
-                   <td
-  style={{  border: '1px solid #e0e0e0',  padding: '8px',  fontSize: '0.82rem',  color: '#424242' }}
->
-  {row.mbus}
-</td>
-
-
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </Box>
+            <td
+              style={{
+                border: '1px solid #e0e0e0',
+                padding: '8px',
+                fontSize: '0.82rem',
+                color: '#424242'
+              }}
+            >
+              {row.mbus}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+</Box>
       </Box>
     </Box>
   );
