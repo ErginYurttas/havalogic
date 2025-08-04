@@ -906,21 +906,8 @@ if (aspControl === 'EC') {
     });
   }
   
-  
 }
 
-    // Protokol kolonlarını ve diğer bilgileri her satıra ekle
-    asprows = asprows.map(row => ({
-      projectCode,
-      description,
-      location,
-      ...row,
-      modbusRtu: 0,
-      modbusTcp: 0,
-      bacnetMstp: 0,
-      bacnetIp: 0,
-      mbus: 0
-    }));
 
 
 const maintenanceRows: any[] = [];
