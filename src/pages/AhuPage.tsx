@@ -511,8 +511,9 @@ const handleAhuControlChange = (event: SelectChangeEvent<string>) => {
 
 
   const handleSaveAhu = () => {
+
+       setTableRows([]);
     if (ahuControl !== 'MCC') {
-      
 
       return;
     }
@@ -3565,9 +3566,191 @@ if (dehumidificationFunction === '3-Staged Dehumidification') {
     { point: 'On/Off Dehumidification Unit-3 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
   );
 }
+const fanIntegrationRows: any[] = [];
+
+if (
+  fanIntegration !== 'none' &&
+  fanprotocolIntegration &&
+  fanIntegrationPoints &&
+  !isPackaged
+) {
+  const pointName = `Fan General ${fanIntegration} Integration Points`;
+
+  const protocolValues = {
+    'Modbus RTU': { modbusRtu: fanIntegrationPoints, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0 },
+    'Modbus TCP IP': { modbusRtu: 0, modbusTcp: fanIntegrationPoints, bacnetMstp: 0, bacnetIp: 0 },
+    'Bacnet MSTP': { modbusRtu: 0, modbusTcp: 0, bacnetMstp: fanIntegrationPoints, bacnetIp: 0 },
+    'Bacnet IP': { modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: fanIntegrationPoints },
+  };
+
+  const protocol = protocolValues[fanprotocolIntegration as keyof typeof protocolValues] || {
+    modbusRtu: 0,
+    modbusTcp: 0,
+    bacnetMstp: 0,
+    bacnetIp: 0
+  };
+
+  fanIntegrationRows.push({
+    point: pointName,
+    description,
+    location,
+    ai: 0,
+    ao: 0,
+    di: 0,
+    do: 0,
+    modbusRtu: protocol.modbusRtu,
+    modbusTcp: protocol.modbusTcp,
+    bacnetMstp: protocol.bacnetMstp,
+    bacnetIp: protocol.bacnetIp,
+    mbus: 0,
+    projectCode
+  });
+}
+const runaroundPumpIntegrationRows: any[] = [];
+
+if (
+  runaroundpumpIntegration !== 'none' &&
+  runaroundpumpprotocolIntegration &&
+  runaroundpumpIntegrationPoints &&
+  !isPackaged
+) {
+  const pointName = `Runaround Pump General ${runaroundpumpIntegration} Integration Points`;
+
+  const pointValue = parseInt(runaroundpumpIntegrationPoints) || 0;
+
+  const protocol = {
+    modbusRtu: runaroundpumpprotocolIntegration === 'Modbus RTU' ? pointValue : 0,
+    modbusTcp: runaroundpumpprotocolIntegration === 'Modbus TCP IP' ? pointValue : 0,
+    bacnetMstp: runaroundpumpprotocolIntegration === 'Bacnet MSTP' ? pointValue : 0,
+    bacnetIp: runaroundpumpprotocolIntegration === 'Bacnet IP' ? pointValue : 0
+  };
+
+  runaroundPumpIntegrationRows.push({
+    point: pointName,
+    description,
+    location,
+    ai: 0,
+    ao: 0,
+    di: 0,
+    do: 0,
+    modbusRtu: protocol.modbusRtu,
+    modbusTcp: protocol.modbusTcp,
+    bacnetMstp: protocol.bacnetMstp,
+    bacnetIp: protocol.bacnetIp,
+    mbus: 0,
+    projectCode
+  });
+}
+const heatExchangerIntegrationRows: any[] = [];
+
+if (
+  heatexchangerIntegration !== 'none' &&
+  heatexchangerprotocolIntegration &&
+  heatexchangerIntegrationPoints &&
+  !isPackaged
+) {
+  const pointName = `Heat Exchanger ${heatexchangerIntegration} Integration Points`;
+
+  const pointValue = parseInt(heatexchangerIntegrationPoints) || 0;
+
+  const protocol = {
+    modbusRtu: heatexchangerprotocolIntegration === 'Modbus RTU' ? pointValue : 0,
+    modbusTcp: heatexchangerprotocolIntegration === 'Modbus TCP IP' ? pointValue : 0,
+    bacnetMstp: heatexchangerprotocolIntegration === 'Bacnet MSTP' ? pointValue : 0,
+    bacnetIp: heatexchangerprotocolIntegration === 'Bacnet IP' ? pointValue : 0
+  };
+
+  heatExchangerIntegrationRows.push({
+    point: pointName,
+    description,
+    location,
+    ai: 0,
+    ao: 0,
+    di: 0,
+    do: 0,
+    modbusRtu: protocol.modbusRtu,
+    modbusTcp: protocol.modbusTcp,
+    bacnetMstp: protocol.bacnetMstp,
+    bacnetIp: protocol.bacnetIp,
+    mbus: 0,
+    projectCode
+  });
+}
+
+const humidificationIntegrationRows: any[] = [];
+
+if (
+  humidificationIntegration !== 'none' &&
+  humidificationprotocolIntegration &&
+  humidificationIntegrationPoints &&
+  !isPackaged
+) {
+  const pointName = `Humidification General ${humidificationIntegration} Integration Points`;
+
+  const pointValue = parseInt(humidificationIntegrationPoints) || 0;
+
+  const protocol = {
+    modbusRtu: humidificationprotocolIntegration === 'Modbus RTU' ? pointValue : 0,
+    modbusTcp: humidificationprotocolIntegration === 'Modbus TCP IP' ? pointValue : 0,
+    bacnetMstp: humidificationprotocolIntegration === 'Bacnet MSTP' ? pointValue : 0,
+    bacnetIp: humidificationprotocolIntegration === 'Bacnet IP' ? pointValue : 0
+  };
+
+  humidificationIntegrationRows.push({
+    point: pointName,
+    description,
+    location,
+    ai: 0,
+    ao: 0,
+    di: 0,
+    do: 0,
+    modbusRtu: protocol.modbusRtu,
+    modbusTcp: protocol.modbusTcp,
+    bacnetMstp: protocol.bacnetMstp,
+    bacnetIp: protocol.bacnetIp,
+    mbus: 0,
+    projectCode
+  });
+}
+
+const dehumidificationIntegrationRows: any[] = [];
+
+if (
+  dehumidificationIntegration !== 'none' &&
+  dehumidificationprotocolIntegration &&
+  dehumidificationIntegrationPoints &&
+  !isPackaged
+) {
+  const pointName = `Dehumidification General ${dehumidificationIntegration} Integration Points`;
+
+  const pointValue = parseInt(dehumidificationIntegrationPoints) || 0;
+
+  const protocol = {
+    modbusRtu: dehumidificationprotocolIntegration === 'Modbus RTU' ? pointValue : 0,
+    modbusTcp: dehumidificationprotocolIntegration === 'Modbus TCP IP' ? pointValue : 0,
+    bacnetMstp: dehumidificationprotocolIntegration === 'Bacnet MSTP' ? pointValue : 0,
+    bacnetIp: dehumidificationprotocolIntegration === 'Bacnet IP' ? pointValue : 0
+  };
+
+  dehumidificationIntegrationRows.push({
+    point: pointName,
+    description,
+    location,
+    ai: 0,
+    ao: 0,
+    di: 0,
+    do: 0,
+    modbusRtu: protocol.modbusRtu,
+    modbusTcp: protocol.modbusTcp,
+    bacnetMstp: protocol.bacnetMstp,
+    bacnetIp: protocol.bacnetIp,
+    mbus: 0,
+    projectCode
+  });
+}
 
 
-
+setTableRows([]);
 
 setTableRows([
   ...vantrows,
@@ -3608,7 +3791,12 @@ setTableRows([
   ...runaroundCoilTemperatureRows,
   ...heatExchangerRows,
   ...humidificationRows,
-  ...dehumidificationRows
+  ...dehumidificationRows,
+  ...fanIntegrationRows,
+  ...runaroundPumpIntegrationRows,
+  ...heatExchangerIntegrationRows,
+  ...humidificationIntegrationRows,
+  ...dehumidificationIntegrationRows
 ]);
 
 
@@ -3709,7 +3897,7 @@ setShowTable(true);
               {renderDropdown('Dehumidification Control Unit Voltage', dehumidificationVoltage, (e) => setDehumidificationVoltage(e.target.value), ['230', '380'], dehumidificationFunction === 'none'|| isPackaged)}
               
               {renderDropdown('Fan Integration', fanIntegration, (e) => setFanIntegration(e.target.value), ['none', 'EC', 'VFD'], isPackaged)}
-              {renderDropdown('Fan Protocol Integration', fanprotocolIntegration, (e) => setFanProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], fanIntegration === 'none'|| isPackaged)}
+              {renderDropdown('Fan Protocol Integration', fanprotocolIntegration, (e) => setFanProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], fanIntegration === 'none'|| isPackaged)}
 
             
               <TextField  fullWidth
@@ -3730,7 +3918,7 @@ setShowTable(true);
                               />
 
               {renderDropdown('Run Around Pump Integration', runaroundpumpIntegration, (e) => setRunAroundPumpIntegration(e.target.value), ['none', 'own Panel', 'VFD'], isPackaged)}
-              {renderDropdown('Run Around Pump Protocol Integration', runaroundpumpprotocolIntegration, (e) => setRunAroundPumpProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], runaroundpumpIntegration === 'none'|| isPackaged)}
+              {renderDropdown('Run Around Pump Protocol Integration', runaroundpumpprotocolIntegration, (e) => setRunAroundPumpProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], runaroundpumpIntegration === 'none'|| isPackaged)}
 
 
               <TextField  fullWidth
@@ -3753,7 +3941,7 @@ setShowTable(true);
 
 
               {renderDropdown('Heat Exchanger Integration', heatexchangerIntegration, (e) => setHeatExchangerIntegration(e.target.value), ['none', 'own Panel'], isPackaged)}
-              {renderDropdown('Heat Exchanger Protocol Integration', heatexchangerprotocolIntegration, (e) => setHeatExchangerProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], heatexchangerIntegration === 'none'|| isPackaged)}
+              {renderDropdown('Heat Exchanger Protocol Integration', heatexchangerprotocolIntegration, (e) => setHeatExchangerProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], heatexchangerIntegration === 'none'|| isPackaged)}
 
 
               <TextField  fullWidth
@@ -3775,7 +3963,7 @@ setShowTable(true);
 
 
               {renderDropdown('Humidification Integration', humidificationIntegration, (e) => setHumidificationIntegration(e.target.value), ['none', 'own Panel'], isPackaged)}
-              {renderDropdown('Humidification Protocol Integration', humidificationprotocolIntegration, (e) => setHumidificationProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], humidificationIntegration === 'none'|| isPackaged)}
+              {renderDropdown('Humidification Protocol Integration', humidificationprotocolIntegration, (e) => setHumidificationProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], humidificationIntegration === 'none'|| isPackaged)}
 
 
               <TextField  fullWidth
@@ -3798,7 +3986,7 @@ setShowTable(true);
 
 
               {renderDropdown('Dehumidification Integration', dehumidificationIntegration, (e) => setDehumidificationIntegration(e.target.value), ['none', 'own Panel'], isPackaged)}
-              {renderDropdown('Dehumidification Protocol Integration', dehumidificationprotocolIntegration, (e) => setDehumidificationProtocolIntegration(e.target.value), ['none', 'Modbus RTU', 'Modbus TCP', 'Bacnet MSTP', 'Bacnet IP'], dehumidificationIntegration === 'none'|| isPackaged)}
+              {renderDropdown('Dehumidification Protocol Integration', dehumidificationprotocolIntegration, (e) => setDehumidificationProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], dehumidificationIntegration === 'none'|| isPackaged)}
 
 
               <TextField  fullWidth
