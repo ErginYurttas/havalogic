@@ -79,7 +79,9 @@ export default function AhuPage() {
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
   const [ahuControl, setAhuControl] = useState('');
-  const [ahuBrand, setAhuBrand] = useState('');
+  const [ahucontrolpackagedprotocolIntegration, setAhuControlPackagedProtocolIntegration] = useState('');
+  const [ahuControlPackagedPoints, setAhuControlPackagedPoints] = useState('');
+  const [ahucontrolpackagedhardpoints, setAhuControlPackagedHardPoints] = useState('');
   const [vantControl, setVantControl] = useState('');
   const [vantPieces, setVantPieces] = useState('');
   const [fanPower, setFanPower] = useState('');
@@ -352,6 +354,14 @@ React.useEffect(() => {
 }, [dehumidificationIntegration]);
 
 
+React.useEffect(() => {
+  if (ahuControl === 'MCC') {
+    setAhuControlPackagedProtocolIntegration('');
+    setAhuControlPackagedHardPoints('');
+    setAhuControlPackagedPoints('');
+  }
+}, [ahuControl]);
+
   const renderDropdown = (
     label: string,
     value: string,
@@ -513,13 +523,93 @@ const handleAhuControlChange = (event: SelectChangeEvent<string>) => {
   const handleSaveAhu = () => {
 
        setTableRows([]);
-    if (ahuControl !== 'MCC') {
+    
 
-      return;
+const ahuControlPackagedRows: any[] = [];
+
+// 1. Statuses / Command satırları
+if (
+  ahucontrolpackagedhardpoints === 'Statuses' ||
+  ahucontrolpackagedhardpoints === 'Statuses and Command'
+) {
+  ahuControlPackagedRows.push(
+    {
+      point: 'Ahu Packaged System General Status',
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0,
+      mbus: 0
+    },
+    {
+      point: 'Ahu Packaged System General Fault',
+      ai: 0, ao: 0, di: 1, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0,
+      mbus: 0
     }
+  );
+}
 
-    const vantpieces = Number(vantPieces) || 1;
+if (
+  ahucontrolpackagedhardpoints === 'Command' ||
+  ahucontrolpackagedhardpoints === 'Statuses and Command'
+) {
+  ahuControlPackagedRows.push({
+    point: 'Ahu Packaged System General Command',
+    ai: 0, ao: 0, di: 0, do: 1,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0,
+    mbus: 0
+  });
+}
+
+// 2. Protokol satırı yalnızca doluysa eklenmeli ✅
+if (
+  ahucontrolpackagedprotocolIntegration !== '' &&
+  ahuControlPackagedPoints !== ''
+) {
+  const parsedPoints = parseInt(ahuControlPackagedPoints) || 0;
+
+  const protocol = {
+    modbusRtu: 0,
+    modbusTcp: 0,
+    bacnetMstp: 0,
+    bacnetIp: 0
+  };
+
+  switch (ahucontrolpackagedprotocolIntegration) {
+    case 'Modbus RTU':
+      protocol.modbusRtu = parsedPoints;
+      break;
+    case 'Modbus TCP IP':
+      protocol.modbusTcp = parsedPoints;
+      break;
+    case 'Bacnet MSTP':
+      protocol.bacnetMstp = parsedPoints;
+      break;
+    case 'Bacnet IP':
+      protocol.bacnetIp = parsedPoints;
+      break;
+  }
+
+  ahuControlPackagedRows.push({
+    point: 'Ahu Packaged System Integration Points',
+    ai: 0, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: protocol.modbusRtu,
+    modbusTcp: protocol.modbusTcp,
+    bacnetMstp: protocol.bacnetMstp,
+    bacnetIp: protocol.bacnetIp,
+    mbus: 0
+  });
+}
+
     let vantrows: any[] = [];
+const vantpieces = Number(vantPieces);
+
+if (!(ahuControl === 'MCC' && vantControl && vantpieces)) {
+  vantrows = [];
+} else {}
 
     if (vantControl === 'DOL' || vantControl === 'Star-Delta') {
   const dolRows = [
@@ -713,8 +803,12 @@ if (vantControl === 'EC') {
 
 
 
-const asppieces = Number(aspPieces) || 1;
 let asprows: any[] = [];
+const asppieces = Number(aspPieces);
+
+if (!(ahuControl === 'MCC' && aspControl && asppieces)) {
+  asprows = [];
+} else {}
 
 if (aspControl === 'DOL' || aspControl === 'Star-Delta') {
   const dolRows = [
@@ -3796,7 +3890,8 @@ setTableRows([
   ...runaroundPumpIntegrationRows,
   ...heatExchangerIntegrationRows,
   ...humidificationIntegrationRows,
-  ...dehumidificationIntegrationRows
+  ...dehumidificationIntegrationRows,
+  ...ahuControlPackagedRows
 ]);
 
 
@@ -3834,6 +3929,24 @@ setShowTable(true);
               <TextField fullWidth variant="outlined" placeholder="AHU Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               <TextField fullWidth variant="outlined" placeholder="AHU Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               {renderDropdown('AHU Control Type', ahuControl, handleAhuControlChange, ['MCC', 'Packaged'])}
+              {renderDropdown('AHU Control Protocol Integration', ahucontrolpackagedprotocolIntegration, (e) => setAhuControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], ahuControl === 'MCC')}
+              
+              <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="AHU Control Packaged Integration Points"
+              value={ahuControlPackagedPoints}
+              onChange={(e) => setAhuControlPackagedPoints(e.target.value)}
+              disabled={ahuControl === 'MCC'}
+              InputProps={{
+              style: {
+              color: ahuControl === 'MCC' ? '#888' : 'white'
+              }
+              }}
+              />
+              
+              {renderDropdown('AHU Control Packaged Hard Points', ahucontrolpackagedhardpoints, (e) => setAhuControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], ahuControl === 'MCC')}
+
               {renderDropdown('Vantilator Control', vantControl, (e) => setVantControl(e.target.value), ['DOL', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'], isPackaged)}
               {renderDropdown('Vantilator Pieces', vantPieces, (e) => setVantPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], isPackaged)}
               {renderDropdown('Vantilator Power', fanPower, (e) => setFanPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], isPackaged)}
