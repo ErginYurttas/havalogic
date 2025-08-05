@@ -4137,6 +4137,7 @@ setShowTable(true);
     mt: 6,
     maxHeight: '85vh',
     overflowY: 'auto',
+    
     color: 'white'
   }}
 >
@@ -4144,21 +4145,33 @@ setShowTable(true);
     {projectCode ? `${projectCode} Output Table` : 'AHU Output Table'}
   </Typography>
 
+
+
+
+  <Box
+    sx={{
+      overflowX: 'auto',
+      overflowY: 'auto',
+      maxWidth: '100%',
+    }}
+  ></Box>
+
+
   {showTable && tableRows.length > 0 && (
-    <table
-      style={{
-        width: '100%',
-        borderCollapse: 'collapse',
-        backgroundColor: '#ffffff',
-        fontSize: '0.875rem',
-        fontFamily: `'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif'`,
-        borderRadius: '12px',
-        overflow: 'hidden',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-        border: '1px solid #e0e0e0',
-        color: '#333'
-      }}
-    >
+      <table
+        style={{
+          minWidth: '1200px',
+          borderCollapse: 'collapse',
+          backgroundColor: '#ffffff',
+          fontSize: '0.875rem',
+          fontFamily: `'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif'`,
+          borderRadius: '12px',
+          overflow: 'hidden',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+          border: '1px solid #e0e0e0',
+          color: '#333',
+        }}
+      >
       <thead>
         <tr style={{ backgroundColor: '#1976d2', color: 'white' }}>
           {['Project Code', 'Description', 'Located', 'Point Name', 'AI', 'AO', 'DI', 'DO', 'Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP', 'Mbus'].map((header, i) => (
