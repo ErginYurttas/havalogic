@@ -75,10 +75,7 @@ export default function FanPage() {
   const [fancontrolpackagedprotocolIntegration, setFanControlPackagedProtocolIntegration] = useState('');
   const [fanControlPackagedPoints, setFanControlPackagedPoints] = useState('');
   const [fancontrolpackagedhardpoints, setFanControlPackagedHardPoints] = useState('');
-  //const [vantControl, setVantControl] = useState('');
-  //const [vantPieces, setVantPieces] = useState('');
-  //const [fanPower, setFanPower] = useState('');
-  //const [fanVoltage, setFanVoltage] = useState('');
+
   const [aspControl, setAspControl] = useState('');
   const [aspPieces, setAspPieces] = useState('');
   const [aspPower, setAspPower] = useState('');
@@ -87,56 +84,24 @@ export default function FanPage() {
   const [emergencySafety, setEmergencySafety] = useState('');
   const [doorSafety, setDoorSafety] = useState('');
   const [fireSafety, setFireSafety] = useState('');
-  //const [frostSafety, setFrostSafety] = useState('');
-  //const [preheatingFunction, setPreheatingFunction] = useState('');
-  //const [preheatingPower, setPreheatingPower] = useState('');
-  //const [preheatingVoltage, setPreheatingVoltage] = useState('');
-  //const [preheatingTemperature, setPreheatingTemperature] = useState('');
-  //const [heatingFunction, setHeatingFunction] = useState('');
-  //const [heatingPieces, setHeatingPieces] = useState('');
-  //const [heatingPower, setHeatingPower] = useState('');
-  //const [heatingVoltage, setHeatingVoltage] = useState('');
-  //const [heatingTemperature, setHeatingTemperature] = useState('');
-  //const [coolingFunction, setCoolingFunction] = useState('');
-  //const [coolingPieces, setCoolingPieces] = useState('');
-  //const [coolingPower, setCoolingPower] = useState('');
-  //const [coolingVoltage, setCoolingVoltage] = useState('');
-  //const [coolingTemperature, setCoolingTemperature] = useState('');
-  //const [supplyAirSensor, setSupplyAirSensor] = useState('');
-  //const [freshAirSensor, setFreshAirSensor] = useState('');
+
   const [returnAirSensor, setReturnAirSensor] = useState('');
   const [exhaustAirSensor, setExhaustAirSensor] = useState('');
-  //const [mixedAirSensor, setMixedAirSensor] = useState('');
-  //const [dehumidificationAirSensor, setDehumidificationAirSensor] = useState('');
-  //const [heatExchangerAirSensor, setHeatExchangerAirSensor] = useState('');
-  //const [freshDamperActuator, setFreshDamperActuator] = useState('');
-  //const [supplyDamperActuator, setSupplyDamperActuator] = useState('');
+
   const [returnDamperActuator, setReturnDamperActuator] = useState('');
   const [exhaustDamperActuator, setExhaustDamperActuator] = useState('');
-  //const [mixedDamperActuator, setMixedDamperActuator] = useState('');
-  //const [reCirculationDamperActuator, setReCirculationDamperActuator] = useState('');
-  //const [recuperatorDamperActuator, setRecuperatorDamperActuator] = useState('');
-  //const [supplyFilter, setSupplyFilter] = useState('');
-  //const [freshFilter, setFreshFilter] = useState('');
+
   const [returnFilter, setReturnFilter] = useState('');
   const [exhaustFilter, setExhaustFilter] = useState('');
-  //const [recuperatorFilter, setRecuperatorFilter] = useState('');
-  //const [supplyFlow, setSupplyFlow] = useState('');
+
   const [returnFlow, setReturnFlow] = useState('');
   const [runAroundPumpControl, setRunAroundPumpControl] = useState('');
   const [runAroundPumpPieces, setRunAroundPumpPieces] = useState('');
   const [pumpPower, setPumpPower] = useState('');
   const [pumpVoltage, setPumpVoltage] = useState('');
   const [runAroundTemperature, setRunAroundTemperature] = useState('');
-  //const [heatRecoveryControl, setHeatRecoveryControl] = useState('');
-  //const [heatRecoveryPower, setHeatRecoveryPower] = useState('');
-  //const [heatRecoveryVoltage, setHeatRecoveryVoltage] = useState('');
-  //const [humidificationFunction, setHumidificationFunction] = useState('');
-  //const [humidificationPower, setHumidificationPower] = useState('');
-  //const [humidificationVoltage, setHumidificationVoltage] = useState('');
-  //const [dehumidificationFunction, setDehumidificationFunction] = useState('');
-  //const [dehumidificationPower, setDehumidificationPower] = useState('');
-  //const [dehumidificationVoltage, setDehumidificationVoltage] = useState('');
+
+
   const [fanIntegration, setFanIntegration] = useState('');
   const [fanprotocolIntegration, setFanProtocolIntegration] = useState('');
   const [fanIntegrationPoints, setFanIntegrationPoints] = useState('');
@@ -145,17 +110,7 @@ export default function FanPage() {
   const [runaroundpumpprotocolIntegration, setRunAroundPumpProtocolIntegration] = useState('');
   const [runaroundpumpIntegrationPoints, setRunAroundPumpIntegrationPoints] = useState('');
 
-  //const [heatexchangerIntegration, setHeatExchangerIntegration] = useState('');
-  //const [heatexchangerprotocolIntegration, setHeatExchangerProtocolIntegration] = useState('');
-  //const [heatexchangerIntegrationPoints, setHeatExchangerIntegrationPoints] = useState('');
 
-  //const [humidificationIntegration, setHumidificationIntegration] = useState('');
-  //const [humidificationprotocolIntegration, setHumidificationProtocolIntegration] = useState('');
-  //const [humidificationIntegrationPoints, setHumidificationIntegrationPoints] = useState('');
-
-  //const [dehumidificationIntegration, setDehumidificationIntegration] = useState('');
-  //const [dehumidificationprotocolIntegration, setDehumidificationProtocolIntegration] = useState('');
-  //const [dehumidificationIntegrationPoints, setDehumidificationIntegrationPoints] = useState('');
 
   const [showTable, setShowTable] = useState(false);
   const [tableRows, setTableRows] = useState<any[]>([]);
@@ -175,10 +130,7 @@ export default function FanPage() {
 
 React.useEffect(() => {
   if (fanControl === 'Packaged') {
-    //setVantControl('');
-    //setVantPieces('');
-    //setFanPower('');
-    //setFanVoltage('');
+
     setAspControl('');
     setAspPieces('');
     setAspPower('');
@@ -187,69 +139,30 @@ React.useEffect(() => {
     setEmergencySafety('');
     setDoorSafety('');
     setFireSafety('');
-    //setFrostSafety('');
-    //setPreheatingFunction('');
-    //setPreheatingPower('');
-    //setPreheatingVoltage('');
-    //setPreheatingTemperature('');
-    //setHeatingFunction('');
-    //setHeatingPower('');
-    //setHeatingVoltage('');
-    //setHeatingTemperature('');
-    //setCoolingFunction('');
-    //setCoolingPower('');
-    //setCoolingVoltage('');
-    //setCoolingTemperature('');
-    //setSupplyAirSensor('');
-    //setFreshAirSensor('');
+
     setReturnAirSensor('');
     setExhaustAirSensor('');
-    //setMixedAirSensor('');
-    //setDehumidificationAirSensor('');
-    //setHeatExchangerAirSensor('');
-    //setFreshDamperActuator('');
-    //setSupplyDamperActuator('');
+
     setReturnDamperActuator('');
     setExhaustDamperActuator('');
-    //setMixedDamperActuator('');
-    //setReCirculationDamperActuator('');
-    //setRecuperatorDamperActuator('');
-    //setSupplyFilter('');
-    //setFreshFilter('');
+
     setReturnFilter('');
     setExhaustFilter('');
-    //setRecuperatorFilter('');
-    //setSupplyFlow('');
+
     setReturnFlow('');
     setRunAroundPumpControl('');
     setRunAroundPumpPieces('');
     setPumpPower('');
     setPumpVoltage('');
     setRunAroundTemperature('');
-    //setHeatRecoveryControl('');
-    //setHeatRecoveryPower('');
-    //setHeatRecoveryVoltage('');
-    //setHumidificationFunction('');
-    //setHumidificationPower('');
-    //setHumidificationVoltage('');
-    //setDehumidificationFunction('');
-    //setDehumidificationPower('');
-    //setDehumidificationVoltage('');
+
     setFanIntegration('');
     setFanProtocolIntegration('');
     setFanIntegrationPoints('');
     setRunAroundPumpIntegration('');
     setRunAroundPumpProtocolIntegration('');
     setRunAroundPumpIntegrationPoints('');
-    //setHeatExchangerIntegration('');
-    //setHeatExchangerProtocolIntegration('');
-    //setHeatExchangerIntegrationPoints('');
-    //setHumidificationIntegration('');
-    //setHumidificationProtocolIntegration('');
-    //setHumidificationIntegrationPoints('');
-    //setDehumidificationIntegration('');
-    //setDehumidificationProtocolIntegration('');
-    //setDehumidificationIntegrationPoints('');
+
   }
 }, [fanControl]);
 
@@ -344,10 +257,7 @@ const handleFanControlChange = (event: SelectChangeEvent<string>) => {
   setIsPackaged(packagedSelected);
 
   if (packagedSelected) {
-    //setVantControl('');
-    //setVantPieces('');
-    //setFanPower('');
-    //setFanVoltage('');
+
     setAspControl('');
     setAspPieces('');
     setAspPower('');
@@ -356,69 +266,30 @@ const handleFanControlChange = (event: SelectChangeEvent<string>) => {
     setEmergencySafety('');
     setDoorSafety('');
     setFireSafety('');
-    //setFrostSafety('');
-    //setPreheatingFunction('');
-    //setPreheatingPower('');
-    //setPreheatingVoltage('');
-    //setPreheatingTemperature('');
-    //setHeatingFunction('');
-    //setHeatingPower('');
-    //setHeatingVoltage('');
-    //setHeatingTemperature('');
-    //setCoolingFunction('');
-    //setCoolingPower('');
-    //setCoolingVoltage('');
-    //setCoolingTemperature('');
-    //setSupplyAirSensor('');
-    //setFreshAirSensor('');
+
     setReturnAirSensor('');
     setExhaustAirSensor('');
-    //setMixedAirSensor('');
-    //setDehumidificationAirSensor('');
-    //setHeatExchangerAirSensor('');
-    //setFreshDamperActuator('');
-    //setSupplyDamperActuator('');
+
     setReturnDamperActuator('');
     setExhaustDamperActuator('');
-    //setMixedDamperActuator('');
-    //setReCirculationDamperActuator('');
-    //setRecuperatorDamperActuator('');
-    //setSupplyFilter('');
-    //setFreshFilter('');
+
     setReturnFilter('');
     setExhaustFilter('');
-    //setRecuperatorFilter('');
-    //setSupplyFlow('');
+
     setReturnFlow('');
     setRunAroundPumpControl('');
     setRunAroundPumpPieces('');
     setPumpPower('');
     setPumpVoltage('');
     setRunAroundTemperature('');
-    //setHeatRecoveryControl('');
-    //setHeatRecoveryPower('');
-    //setHeatRecoveryVoltage('');
-    //setHumidificationFunction('');
-    //setHumidificationPower('');
-    //setHumidificationVoltage('');
-    //setDehumidificationFunction('');
-    //setDehumidificationPower('');
-    //setDehumidificationVoltage('');
+
     setFanIntegration('');
     setFanProtocolIntegration('');
     setFanIntegrationPoints('');
     setRunAroundPumpIntegration('');
     setRunAroundPumpProtocolIntegration('');
     setRunAroundPumpIntegrationPoints('');
-    //setHeatExchangerIntegration('');
-    //setHeatExchangerProtocolIntegration('');
-    //setHeatExchangerIntegrationPoints('');
-    //setHumidificationIntegration('');
-    //setHumidificationProtocolIntegration('');
-    //setHumidificationIntegrationPoints('');
-    //setDehumidificationIntegration('');
-    //setDehumidificationProtocolIntegration('');
-    //setDehumidificationIntegrationPoints('');
+
   }
 };
 
@@ -431,7 +302,6 @@ const handleFanControlChange = (event: SelectChangeEvent<string>) => {
 
 const fanControlPackagedRows: any[] = [];
 
-// 1. Statuses / Command satırları
 if (
   fancontrolpackagedhardpoints === 'Statuses' ||
   fancontrolpackagedhardpoints === 'Statuses and Command'
@@ -467,7 +337,6 @@ if (
   });
 }
 
-// 2. Protokol satırı yalnızca doluysa eklenmeli ✅
 if (
   fancontrolpackagedprotocolIntegration !== '' &&
   fanControlPackagedPoints !== ''
@@ -814,20 +683,12 @@ if (fireSafety === 'only Viewing') {
 
 if (fireSafety === 'Viewing and Control') {
   fireRows.push({
-    point: 'Vantilator Fan Fire Status',
+    point: 'Aspirator Fan Fire Status',
     ai: 0, ao: 0, di: 1, do: 0,
     projectCode, description, location,
     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
   });
 
-  if (aspControl !== 'none') {
-    fireRows.push({
-      point: 'Aspirator Fan Fire Status',
-      ai: 0, ao: 0, di: 1, do: 0,
-      projectCode, description, location,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    });
-  }
 }
 
 
@@ -1007,7 +868,6 @@ if (returnDamperActuator === '2x Proportional Damper Actuator with Feedback') {
 const exhaustDamperRows: any[] = [];
 
 if (exhaustDamperActuator === 'none') {
-  // Hiçbir işlem yapılmaz
 }
 
 if (exhaustDamperActuator === 'On/Off Damper Actuator') {
@@ -1621,51 +1481,24 @@ if (
 setTableRows([]);
 
 setTableRows([
-  //...vantrows,
+
   ...asprows,
   ...maintenanceRows,
   ...emergencyRows,
   ...doorRows,
   ...fireRows,
-  //...frostRows,
-  //...preheatingRows,
-  //...preheatingTemperatureRows,
-  //...heatingRows,
-  //...heatingTemperatureRows,
-  //...coolingRows,
-  //...coolingTemperatureRows,
-  //...supplyAirSensorRows,
-  //...freshAirSensorRows,
   ...returnAirSensorRows,
   ...exhaustAirSensorRows,
-  //...mixedAirSensorRows,
-  //...dehumidificationAirRows,
-  //...heatExchangerAirRows,
-  //...freshDamperRows,
-  //...supplyDamperRows,
   ...returnDamperRows,
   ...exhaustDamperRows,
-  //...mixedDamperRows,
-  //...reCirculationDamperRows,
-  //...recuperatorDamperRows,
-  //...supplyFilterRows,
-  //...freshFilterRows,
   ...returnFilterRows,
   ...exhaustFilterRows,
-  //...recuperatorFilterRows,
-  //...supplyFlowRows,
   ...returnFlowRows,
   ...runAroundPumpRows,
   ...runaroundCoilTemperatureRows,
-  //...heatExchangerRows,
-  //...humidificationRows,
-  //...dehumidificationRows,
   ...fanIntegrationRows,
   ...runaroundPumpIntegrationRows,
-  //...heatExchangerIntegrationRows,
-  //...humidificationIntegrationRows,
-  //...dehumidificationIntegrationRows,
-  //...ahuControlPackagedRows
+  ...fanControlPackagedRows
 ]);
 
 
@@ -1697,7 +1530,7 @@ setShowTable(true);
         {/* Form */}
         <Container maxWidth="sm" sx={{ py: 6, px: 2, maxWidth: '600px', ml: 4, mr: 2 }}>
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
-            <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>AHU System Input</Typography>
+            <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Fan System Input</Typography>
             <Stack spacing={2}>
               <TextField fullWidth variant="outlined" placeholder="Fan Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               <TextField fullWidth variant="outlined" placeholder="Fan Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
@@ -1817,7 +1650,7 @@ setShowTable(true);
   }}
 >
   <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-    {projectCode ? `${projectCode} Output Table` : 'AHU Output Table'}
+    {projectCode ? `${projectCode} Output Table` : 'Fan Output Table'}
   </Typography>
 
 
