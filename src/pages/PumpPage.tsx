@@ -87,6 +87,7 @@ export default function PumpPage() {
   const [emergencySafety, setEmergencySafety] = useState('');
 
   const [temperaturemeasurements, setTemperatureMeasurements] = useState('');
+  const [pressuremeasurements, setPressureMeasurements] = useState('');
 
   const [PumpIntegration, setPumpIntegration] = useState('');
   const [PumpprotocolIntegration, setPumpProtocolIntegration] = useState('');
@@ -565,6 +566,53 @@ if (temperaturemeasurements === 'Supply Temperature') {
 
 
 
+const PressureMeasurementsRows: any[] = [];
+
+if (pressuremeasurements === 'Supply Line Pressure') {
+  PressureMeasurementsRows.push({
+    point: 'Supply Line Pressure',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+
+} else if (pressuremeasurements === 'Return Line Pressure') {
+  PressureMeasurementsRows.push({
+    point: 'Return Line Pressure',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+
+} else if (pressuremeasurements === 'Supply and Return Line Pressure') {
+  PressureMeasurementsRows.push(
+    {
+      point: 'Supply Line Pressure',
+      ai: 1, ao: 0, di: 0, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Return Line Pressure',
+      ai: 1, ao: 0, di: 0, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+
+} else if (pressuremeasurements === 'Differential Pressure') {
+  PressureMeasurementsRows.push({
+    point: 'Differential Pressure',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+
+}
+
+
+
+
 
 const PumpIntegrationRows: any[] = [];
 
@@ -618,7 +666,8 @@ setTableRows([
   ...emergencyRows,
   ...PumpIntegrationRows,
   ...PumpControlPackagedRows,
-  ...TemperatureMeasurementsRows
+  ...TemperatureMeasurementsRows,
+  ...PressureMeasurementsRows
 ]);
 
 
@@ -682,7 +731,7 @@ setShowTable(true);
               {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Pump', 'for All Pumps'], isOwnPanel)}
              
               {renderDropdown('Temperature Measuremets', temperaturemeasurements, (e) => setTemperatureMeasurements(e.target.value), ['none', 'Supply Temperature', 'Return Temperature', 'Supply and Return Temperature'], isOwnPanel)}
-
+              {renderDropdown('Pressure Measuremets', pressuremeasurements, (e) => setPressureMeasurements(e.target.value), ['none', 'Supply Line Pressure', 'Return Line Pressure', 'Supply and Return Line Pressure','Differential Pressure'], isOwnPanel)}
 
               {renderDropdown('Pump Integration', PumpIntegration, (e) => setPumpIntegration(e.target.value), ['none', 'VFD'], isOwnPanel)}
               {renderDropdown('Pump Protocol Integration', PumpprotocolIntegration, (e) => setPumpProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], PumpIntegration === 'none'|| isOwnPanel)}
