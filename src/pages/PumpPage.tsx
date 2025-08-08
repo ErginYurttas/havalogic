@@ -71,7 +71,11 @@ export default function PumpPage() {
   const [projectCode, setProjectCode] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
-  const [PumpControl, setPumpControl] = useState('');
+
+  const [pumpControlType, setPumpControlType] = useState('');
+  const [pumpControl, setPumpControl] = useState('');
+
+
   const [PumpcontrolpackagedprotocolIntegration, setPumpControlPackagedProtocolIntegration] = useState('');
   const [PumpControlPackagedPoints, setPumpControlPackagedPoints] = useState('');
   const [Pumpcontrolpackagedhardpoints, setPumpControlPackagedHardPoints] = useState('');
@@ -82,6 +86,8 @@ export default function PumpPage() {
   const [maintenanceSafety, setMaintenanceSafety] = useState('');
   const [emergencySafety, setEmergencySafety] = useState('');
 
+  const [temperaturemeasurements, setTemperatureMeasurements] = useState('');
+
   const [PumpIntegration, setPumpIntegration] = useState('');
   const [PumpprotocolIntegration, setPumpProtocolIntegration] = useState('');
   const [PumpIntegrationPoints, setPumpIntegrationPoints] = useState('');
@@ -90,7 +96,7 @@ export default function PumpPage() {
   const [showTable, setShowTable] = useState(false);
   const [tableRows, setTableRows] = useState<any[]>([]);
 
-  const [isPackaged, setIsPackaged] = useState(false);
+  const [isOwnPanel, setIsOwnPanel] = useState(false);
 
   const handleLogout = () => {
     navigate('/');
@@ -101,23 +107,23 @@ export default function PumpPage() {
     navigate('/projects');
   };
 
-
 React.useEffect(() => {
-  if (PumpControl === 'Packaged') {
+  if (pumpControlType === 'own Panel') {
+    setPumpControl('');
     setPumpPieces('');
     setPumpPower('');
     setPumpVoltage('');
     setMaintenanceSafety('');
     setEmergencySafety('');
+    setTemperatureMeasurements('');
     setPumpIntegration('');
     setPumpProtocolIntegration('');
     setPumpIntegrationPoints('');
-    setIsPackaged(true);
+    setIsOwnPanel(true);
   } else {
-    setIsPackaged(false);
+    setIsOwnPanel(false);
   }
-}, [PumpControl]);
-
+}, [pumpControlType]);
 
 
 React.useEffect(() => {
@@ -127,14 +133,13 @@ React.useEffect(() => {
   }
 }, [PumpIntegration]);
 
-
 React.useEffect(() => {
-  if (PumpControl === 'MCC') {
+  if (pumpControlType === 'MCC') {
     setPumpControlPackagedProtocolIntegration('');
-    setPumpControlPackagedHardPoints('');
     setPumpControlPackagedPoints('');
+    setPumpControlPackagedHardPoints('');
   }
-}, [PumpControl]);
+}, [pumpControlType]);
 
   const renderDropdown = (
     label: string,
@@ -155,34 +160,30 @@ React.useEffect(() => {
 
 
 
-const handlePumpControlChange = (event: SelectChangeEvent<string>) => {
+const handlePumpControlTypeChange = (event: SelectChangeEvent<string>) => {
   const selectedValue = event.target.value;
-  setPumpControl(selectedValue);
+  setPumpControlType(selectedValue);
 
-  const packagedSelected = selectedValue === "Packaged";
-  setIsPackaged(packagedSelected);
+  if (selectedValue === 'own Panel') {
+    setPumpControl('');
 
-  if (packagedSelected) {
 
-   
     setPumpPieces('');
     setPumpPower('');
     setPumpVoltage('');
     setMaintenanceSafety('');
     setEmergencySafety('');
-
-    setPumpPower('');
-    setPumpVoltage('');
-
-
     setPumpIntegration('');
     setPumpProtocolIntegration('');
     setPumpIntegrationPoints('');
-
+  } else {
 
   }
 };
 
+const handlePumpControlChange = (event: SelectChangeEvent<string>) => {
+  setPumpControl(event.target.value);
+};
 
 
   const handleSavePump = () => {
@@ -198,14 +199,14 @@ if (
 ) {
   PumpControlPackagedRows.push(
     {
-      point: 'Pump Packaged System General Status',
+      point: 'Pump own Panel System General Status',
       ai: 0, ao: 0, di: 1, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0,
       mbus: 0
     },
     {
-      point: 'Pump Packaged System General Fault',
+      point: 'Pump own Panel System General Fault',
       ai: 0, ao: 0, di: 1, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0,
@@ -219,7 +220,7 @@ if (
   Pumpcontrolpackagedhardpoints === 'Statuses and Command'
 ) {
   PumpControlPackagedRows.push({
-    point: 'Pump Packaged System General Command',
+    point: 'Pump own Panel System General Command',
     ai: 0, ao: 0, di: 0, do: 1,
     projectCode, description, location,
     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0,
@@ -256,7 +257,7 @@ if (
   }
 
   PumpControlPackagedRows.push({
-    point: 'Pump Packaged System Integration Points',
+    point: 'Pump own Panel System Integration Points',
     ai: 0, ao: 0, di: 0, do: 0,
     projectCode, description, location,
     modbusRtu: protocol.modbusRtu,
@@ -271,16 +272,16 @@ if (
 let Pumprows: any[] = [];
 const Pumppieces = Number(PumpPieces);
 
-if (!(PumpControl === 'MCC' && PumpControl && Pumppieces)) {
+if (!(pumpControl === 'MCC' && pumpControl && Pumppieces)) {
   Pumprows = [];
 } else {}
 
-if (PumpControl === 'DOL' || PumpControl === 'Star-Delta') {
+if (pumpControl === 'DOL' || pumpControl === 'Star-Delta') {
   const dolRows = [
-    { point: 'Pump Pump Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Command', ai: 0, ao: 0, di: 0, do: 1 }
+    { point: 'Pump Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Command', ai: 0, ao: 0, di: 0, do: 1 }
   ];
 
   for (let i = 1; i <= Pumppieces; i++) {
@@ -305,14 +306,14 @@ if (PumpControl === 'DOL' || PumpControl === 'Star-Delta') {
   }
 }
 
-if (PumpControl === 'VFD') {
+if (pumpControl === 'VFD') {
   const vfdRows = [
-    { point: 'Pump Pump Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
-    { point: 'Pump Pump Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
-    { point: 'Pump Pump Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
+    { point: 'Pump Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+    { point: 'Pump Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
+    { point: 'Pump Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
   ];
 
   for (let i = 1; i <= Pumppieces; i++) {
@@ -337,17 +338,17 @@ if (PumpControl === 'VFD') {
   }
 }
 
-if (PumpControl === 'VFD with By Pass Circuit' || PumpControl === 'VFD with By Pass Circuit + Star-Delta') {
+if (pumpControl === 'VFD with By Pass Circuit' || pumpControl === 'VFD with By Pass Circuit + Star-Delta') {
   const byPassRows = [
-    { point: 'Pump Pump Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump By/Pass Switch', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
-    { point: 'Pump Pump Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
-    { point: 'Pump Pump Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 }
+    { point: 'Pump Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump By/Pass Switch', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+    { point: 'Pump Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
+    { point: 'Pump Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 }
   ];
 
   for (let i = 1; i <= Pumppieces; i++) {
@@ -371,12 +372,11 @@ if (PumpControl === 'VFD with By Pass Circuit' || PumpControl === 'VFD with By P
   }
 }
 
-if (PumpControl === 'Soft Starter') {
+if (pumpControl === 'Power Supply Only') {
   const softStarterRows = [
-    { point: 'Pump Soft Starter Pump Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Soft Starter Pump Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Soft Starter Pump Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Soft Starter Pump Command', ai: 0, ao: 0, di: 0, do: 1 }
+    { point: 'Pump own Panel Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump own Panel Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump own Panel Command', ai: 0, ao: 0, di: 0, do: 1 }
   ];
 
   for (let i = 1; i <= Pumppieces; i++) {
@@ -401,15 +401,46 @@ if (PumpControl === 'Soft Starter') {
   }
 }
 
-if (PumpControl === 'Soft Starter with By Pass Circuit' || PumpControl === 'Soft Starter with By Pass Circuit + Star-Delta') {
+
+if (pumpControl === 'Soft Starter') {
+  const softStarterRows = [
+    { point: 'Pump Soft Starter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Soft Starter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Soft Starter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
+  ];
+
+  for (let i = 1; i <= Pumppieces; i++) {
+    const suffix = Pumppieces > 1 ? ` ${i}` : '';
+    softStarterRows.forEach((row) => {
+      Pumprows.push({
+  projectCode,
+  description,
+  location,
+  point: `${row.point}${suffix}`,
+  ai: row.ai,
+  ao: row.ao,
+  di: row.di,
+  do: row.do,
+  modbusRtu: 0,
+  modbusTcp: 0,
+  bacnetMstp: 0,
+  bacnetIp: 0,
+  mbus: 0
+});
+    });
+  }
+}
+
+if (pumpControl === 'Soft Starter with By Pass Circuit' || pumpControl === 'Soft Starter with By Pass Circuit + Star-Delta') {
   const softBypassRows = [
-    { point: 'Pump Pump Soft Starter Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Soft Starter Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Soft Starter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump By Pass Switch Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump Pump Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
+    { point: 'Pump Soft Starter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Contactor Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Soft Starter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Soft Starter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump By Pass Switch Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Pump Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
   ];
 
   for (let i = 1; i <= Pumppieces; i++) {
@@ -436,49 +467,16 @@ if (PumpControl === 'Soft Starter with By Pass Circuit' || PumpControl === 'Soft
 
 
 
-if (PumpControl === 'EC') {
-  const ecRows = [
-    { point: 'Pump EC Pump Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump EC Pump Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Pump EC Pump Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
-    { point: 'Pump EC Pump Feedback', ai: 1, ao: 0, di: 0, do: 0 },
-    { point: 'Pump EC Pump Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
-  ];
-
-  for (let i = 1; i <= Pumppieces; i++) {
-    const suffix = Pumppieces > 1 ? ` ${i}` : '';
-    ecRows.forEach((row) => {
-      Pumprows.push({
-        projectCode,
-        description,
-        location,
-        point: `${row.point}${suffix}`,
-        ai: row.ai,
-        ao: row.ao,
-        di: row.di,
-        do: row.do,
-        modbusRtu: 0,
-        modbusTcp: 0,
-        bacnetMstp: 0,
-        bacnetIp: 0,
-        mbus: 0
-      });
-    });
-  }
-  
-}
-
-
 
 const maintenanceRows: any[] = [];
 
 if (maintenanceSafety === 'for Each Pump') {
   
 
-  if (PumpControl !== 'none') {
+  if (pumpControl !== 'none') {
     for (let i = 1; i <= Pumppieces; i++) {
       maintenanceRows.push({
-        point: `Pump Pump Maintenance Status${Pumppieces > 1 ? ` ${i}` : ''}`,
+        point: `Pump Maintenance Status${Pumppieces > 1 ? ` ${i}` : ''}`,
         ai: 0, ao: 0, di: 1, do: 0,
         projectCode, description, location,
         modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
@@ -490,7 +488,7 @@ if (maintenanceSafety === 'for Each Pump') {
 if (maintenanceSafety === 'for All Pumps') {
   
 
-  if (PumpControl !== 'none') {
+  if (pumpControl !== 'none') {
     maintenanceRows.push({
       point: 'Pump General Maintenance Status',
       ai: 0, ao: 0, di: 1, do: 0,
@@ -505,10 +503,10 @@ const emergencyRows: any[] = [];
 if (emergencySafety === 'for Each Pump') {
   
 
-  if (PumpControl !== 'none') {
+  if (pumpControl !== 'none') {
     for (let i = 1; i <= Pumppieces; i++) {
       emergencyRows.push({
-        point: `Pump Pump Emergency Status${Pumppieces > 1 ? ` ${i}` : ''}`,
+        point: `Pump Emergency Status${Pumppieces > 1 ? ` ${i}` : ''}`,
         ai: 0, ao: 0, di: 1, do: 0,
         projectCode, description, location,
         modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
@@ -520,7 +518,7 @@ if (emergencySafety === 'for Each Pump') {
 if (emergencySafety === 'for All Pumps') {
   
 
-  if (PumpControl !== 'none') {
+  if (pumpControl !== 'none') {
     emergencyRows.push({
       point: 'Pump General Emergency Status',
       ai: 0, ao: 0, di: 1, do: 0,
@@ -531,6 +529,38 @@ if (emergencySafety === 'for All Pumps') {
 }
 
 
+const TemperatureMeasurementsRows: any[] = [];
+
+if (temperaturemeasurements === 'Supply Temperature') {
+  TemperatureMeasurementsRows.push({
+    point: 'Supply Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (temperaturemeasurements === 'Return Temperature') {
+  TemperatureMeasurementsRows.push({
+    point: 'Return Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (temperaturemeasurements === 'Supply and Return Temperature') {
+  TemperatureMeasurementsRows.push(
+    {
+      point: 'Supply Temperature',
+      ai: 1, ao: 0, di: 0, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    },
+    {
+      point: 'Return Temperature',
+      ai: 1, ao: 0, di: 0, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    }
+  );
+}
 
 
 
@@ -542,7 +572,7 @@ if (
   PumpIntegration !== 'none' &&
   PumpprotocolIntegration &&
   PumpIntegrationPoints &&
-  !isPackaged
+  !isOwnPanel
 ) {
   const pointName = `Pump General ${PumpIntegration} Integration Points`;
 
@@ -586,10 +616,9 @@ setTableRows([
   ...Pumprows,
   ...maintenanceRows,
   ...emergencyRows,
- 
   ...PumpIntegrationRows,
-
-  ...PumpControlPackagedRows
+  ...PumpControlPackagedRows,
+  ...TemperatureMeasurementsRows
 ]);
 
 
@@ -626,35 +655,37 @@ setShowTable(true);
               <TextField fullWidth variant="outlined" placeholder="Pump Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               <TextField fullWidth variant="outlined" placeholder="Pump Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               <TextField fullWidth variant="outlined" placeholder="Pump Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              {renderDropdown('Pump Control Type', PumpControl, handlePumpControlChange, ['MCC', 'Packaged'])}
-              {renderDropdown('Pump Control Protocol Integration', PumpcontrolpackagedprotocolIntegration, (e) => setPumpControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], PumpControl === 'MCC')}
-              
+              {renderDropdown( 'Pump Control Type', pumpControlType, handlePumpControlTypeChange, ['MCC', 'own Panel'])}
+              {renderDropdown( 'Pump Control Protocol Integration', PumpcontrolpackagedprotocolIntegration, (e) => setPumpControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], pumpControlType === 'MCC' )}   
+
               <TextField
               fullWidth
               variant="outlined"
-              placeholder="Pump Control Packaged Integration Points"
+              placeholder="Pump Control Integration Points"
               value={PumpControlPackagedPoints}
               onChange={(e) => setPumpControlPackagedPoints(e.target.value)}
-              disabled={PumpControl === 'MCC'}
+              disabled={pumpControlType === 'MCC'} 
               InputProps={{
               style: {
-              color: PumpControl === 'MCC' ? '#888' : 'white'
-              }
-              }}
+              color: pumpControlType === 'MCC' ? '#888' : 'white'
+                  }
+                }}
               />
               
-              {renderDropdown('Pump Control Packaged Hard Points', Pumpcontrolpackagedhardpoints, (e) => setPumpControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], PumpControl === 'MCC')}
+              {renderDropdown('Pump Control Hard Points',  Pumpcontrolpackagedhardpoints, (e) => setPumpControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], pumpControlType === 'MCC')}
 
-              {renderDropdown('Pump Control', PumpControl, handlePumpControlChange, ['none', 'DOL', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta','Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'], isPackaged)}
-              {renderDropdown('Pump Pieces', PumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], PumpControl === 'none'|| isPackaged)}
-              {renderDropdown('Pump Power', PumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], PumpControl === 'none'|| isPackaged)}
-              {renderDropdown('Pump Voltage', PumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], PumpControl === 'none'|| isPackaged)}
-              {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value), ['none', 'for Each Pump', 'for All Pumps'], isPackaged)}
-              {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Pump', 'for All Pumps'], isPackaged)}
+              {renderDropdown('Pump Control', pumpControl, handlePumpControlChange, ['DOL', 'Power Supply Only', 'Soft Starter','Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta' ], isOwnPanel )}
+              {renderDropdown('Pump Pieces', PumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], pumpControl === 'none'|| isOwnPanel)}
+              {renderDropdown('Pump Power', PumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], pumpControl === 'none'|| isOwnPanel)}
+              {renderDropdown('Pump Voltage', PumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], pumpControl === 'none'|| isOwnPanel)}
+              {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value), ['none', 'for Each Pump', 'for All Pumps'], isOwnPanel)}
+              {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Pump', 'for All Pumps'], isOwnPanel)}
              
+              {renderDropdown('Temperature Measuremets', temperaturemeasurements, (e) => setTemperatureMeasurements(e.target.value), ['none', 'Supply Temperature', 'Return Temperature', 'Supply and Return Temperature'], isOwnPanel)}
 
-              {renderDropdown('Pump Integration', PumpIntegration, (e) => setPumpIntegration(e.target.value), ['none', 'EC', 'VFD'], isPackaged)}
-              {renderDropdown('Pump Protocol Integration', PumpprotocolIntegration, (e) => setPumpProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], PumpIntegration === 'none'|| isPackaged)}
+
+              {renderDropdown('Pump Integration', PumpIntegration, (e) => setPumpIntegration(e.target.value), ['none', 'VFD'], isOwnPanel)}
+              {renderDropdown('Pump Protocol Integration', PumpprotocolIntegration, (e) => setPumpProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], PumpIntegration === 'none'|| isOwnPanel)}
 
             
               <TextField  fullWidth
@@ -662,14 +693,15 @@ setShowTable(true);
                           placeholder="Pump Integration Points"
                           value={PumpIntegrationPoints}
                           onChange={(e) => setPumpIntegrationPoints(e.target.value)}
-                          disabled={PumpIntegration === 'none'|| isPackaged}
+                          disabled={isOwnPanel}
                           InputProps={{
                           style: {
-                          color: PumpIntegration === 'none' ? '#888' : 'white',
-                          backgroundColor: PumpIntegration === 'none' ? '#1e1e1e' : 'transparent'
+                          color: isOwnPanel ? '#888' : 'white',
+                          backgroundColor: isOwnPanel ? '#1e1e1e' : 'transparent'
                                   }
                             }}
-                          sx={{'& .MuiOutlinedInput-notchedOutline': { borderColor: PumpIntegration === 'none' ? '#555' : '#B0BEC5'
+                          sx={{'& .MuiOutlinedInput-notchedOutline': { 
+                            borderColor: isOwnPanel ? '#555' : '#B0BEC5'
                                   }
                                 }}
                               />
