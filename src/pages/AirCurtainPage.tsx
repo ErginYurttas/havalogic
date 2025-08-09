@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -119,7 +119,80 @@ export default function AirCurtainPage() {
   const [airCurtainProtocolIntegration, setAirCurtainProtocolIntegration] = useState('');
   const [airCurtainIntegrationPoints, setAirCurtainIntegrationPoints] = useState('');
 
+  const [airCurtainThermostatIntegration, setAirCurtainThermostatIntegration] = useState('');
+  const [airCurtainThermostatProtocol, setAirCurtainThermostatProtocol] = useState('');
+  const [airCurtainThermostatIntegrationPoints, setAirCurtainThermostatIntegrationPoints] = useState('');
 
+
+useEffect(() => {
+  if (airCurtainControlType === 'with DDC') {
+    setAirCurtainThermostatIntegration('');
+    setAirCurtainThermostatProtocol('');
+    setAirCurtainThermostatIntegrationPoints('');
+  }
+}, [airCurtainControlType]);
+
+useEffect(() => {
+  if (airCurtainControlType === 'Thermostat') {
+    setAirCurtainControlHardPoints('');
+    setAirCurtainPieces('');
+    setAirCurtainPower('');
+    setAirCurtainVoltage('');
+    setMaintenanceSafety('');
+    setEmergencySafety('');
+    setDoorSafety('');
+    setHeatingFunction('');
+    setHeatingPower('');
+    setHeatingVoltage('');
+    setRoomSensor('');
+    setAirCurtainIntegration('');
+    setAirCurtainProtocolIntegration('');
+    setAirCurtainIntegrationPoints('');
+  }
+}, [airCurtainControlType]);
+
+
+useEffect(() => {
+  const valveFunctions = [
+    'On/Off Valve Actuator',
+    'On/Off Valve Actuator with Feedback',
+    'Floating Valve Actuator',
+    'Floating Valve Actuator with Feedback',
+    'Proportional Valve Actuator',
+    'Proportional Valve Actuator with Feedback'
+  ];
+
+  // Valf türlerinden biri SEÇİLİRSE veya 'none' seçilirse ➜ ikisini de temizle
+  const shouldClear = valveFunctions.includes(heatingFunction) || heatingFunction === 'none';
+
+  if (shouldClear) {
+    setHeatingPower('');
+    setHeatingVoltage('');
+  }
+}, [heatingFunction]);
+// 4) renderDropdown fonksiyonu burada başlıyor
+const renderDropdown = (
+  label: string,
+  value: string,
+  onChange: (event: SelectChangeEvent) => void,
+  options: string[],
+  disabled: boolean = false
+) => (
+  <FormControl fullWidth sx={{ mt: 2 }} disabled={disabled}>
+    <InputLabel>{label}</InputLabel>
+    <Select value={value} label={label} onChange={onChange}>
+      {options.map((option) => (
+        <MenuItem key={option} value={option}>
+          {option}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+);
+
+
+  
+  
   const [tableRows, setTableRows] = useState<any[]>([]);
   const [showTable, setShowTable] = useState(false);
 
@@ -133,7 +206,7 @@ export default function AirCurtainPage() {
 
  const handleSaveAirCurtain = () => {
   const pieces = parseInt(airCurtainPieces) || 1;
-
+  const isMultiple = pieces > 1;
   const airCurtainControlRows: any[] = [];
   const maintenanceRows: any[] = [];
   const emergencyRows: any[] = [];
@@ -141,6 +214,7 @@ export default function AirCurtainPage() {
   const roomSensorRows: any[] = [];
   const integrationRows: any[] = [];
   const controlHardPointRows: any[] = [];
+  const thermostatIntegrationRows: any[] = [];
 
 
   if (airCurtainControlType === 'with DDC') {
@@ -178,43 +252,66 @@ export default function AirCurtainPage() {
 }
 
 
-
-  if (maintenanceSafety === 'for Each Curtain') {
-    for (let i = 1; i <= pieces; i++) {
-      maintenanceRows.push({
-        projectCode, description, location,
-        point: `Air Curtain Maintenance Safety ${i}`,
-        ai: 0, ao: 0, di: 1, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      });
-    }
-  } else if (maintenanceSafety === 'for All Curtains') {
+if (maintenanceSafety === 'for Each Curtain') {
+  const isMultiple = pieces > 1;
+  for (let i = 1; i <= pieces; i++) {
+    const suffix = isMultiple ? ` ${i}` : '';
     maintenanceRows.push({
       projectCode, description, location,
-      point: 'Air Curtains Group Maintenance Safety',
+      point: `Air Curtain Maintenance Safety${suffix}`,
       ai: 0, ao: 0, di: 1, do: 0,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     });
   }
+} else if (maintenanceSafety === 'for All Curtains') {
+  maintenanceRows.push({
+    projectCode, description, location,
+    point: 'Air Curtains Group Maintenance Safety',
+    ai: 0, ao: 0, di: 1, do: 0,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
 
-  
+
   if (emergencySafety === 'for Each Curtain') {
-    for (let i = 1; i <= pieces; i++) {
-      emergencyRows.push({
-        projectCode, description, location,
-        point: `Air Curtain Emergency Safety ${i}`,
-        ai: 0, ao: 0, di: 1, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      });
-    }
-  } else if (emergencySafety === 'for All Curtains') {
+  const isMultiple = pieces > 1;
+  for (let i = 1; i <= pieces; i++) {
+    const suffix = isMultiple ? ` ${i}` : '';
     emergencyRows.push({
       projectCode, description, location,
-      point: 'Air Curtains Group Emergency Safety',
+      point: `Air Curtain Emergency Safety${suffix}`,
       ai: 0, ao: 0, di: 1, do: 0,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     });
   }
+} else if (emergencySafety === 'for All Curtains') {
+  emergencyRows.push({
+    projectCode, description, location,
+    point: 'Air Curtains Group Emergency Safety',
+    ai: 0, ao: 0, di: 1, do: 0,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+if (doorSafety === 'for Each Curtain') {
+  const isMultiple = pieces > 1;
+  for (let i = 1; i <= pieces; i++) {
+    const suffix = isMultiple ? ` ${i}` : '';
+    doorRows.push({
+      projectCode, description, location,
+      point: `Air Curtain Door Safety${suffix}`,
+      ai: 0, ao: 0, di: 1, do: 0,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    });
+  }
+} else if (doorSafety === 'for All Curtains') {
+  doorRows.push({
+    projectCode, description, location,
+    point: 'Air Curtains Group Door Safety',
+    ai: 0, ao: 0, di: 1, do: 0,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
 
   
 const heatingRows: any[] = [];
@@ -371,24 +468,6 @@ if (heatingFunction === 'Proportional Electrical Heater') {
 }
 
 
-  if (doorSafety === 'for Each Curtain') {
-    for (let i = 1; i <= pieces; i++) {
-      doorRows.push({
-        projectCode, description, location,
-        point: `Air Curtain Door Safety ${i}`,
-        ai: 0, ao: 0, di: 1, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      });
-    }
-  } else if (doorSafety === 'for All Curtains') {
-    doorRows.push({
-      projectCode, description, location,
-      point: 'Air Curtains Group Door Safety',
-      ai: 0, ao: 0, di: 1, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    });
-  }
-
 
   if (roomSensor === 'Temperature') {
     roomSensorRows.push({
@@ -412,7 +491,83 @@ if (heatingFunction === 'Proportional Electrical Heater') {
     });
   }
 
+if (
+  airCurtainIntegration === 'own Panel' &&
+  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'].includes(airCurtainProtocolIntegration) &&
+  airCurtainIntegrationPoints.trim() !== '' &&
+  !isNaN(Number(airCurtainIntegrationPoints))
+) {
+  const pointValue = Number(airCurtainIntegrationPoints);
 
+  const row: any = {
+    projectCode,
+    description,
+    location,
+    point: 'Air Curtain own Panel Integration Points',
+    ai: 0,
+    ao: 0,
+    di: 0,
+    do: 0,
+    modbusRtu: 0,
+    modbusTcp: 0,
+    bacnetMstp: 0,
+    bacnetIp: 0,
+    mbus: 0
+  };
+
+  switch (airCurtainProtocolIntegration) {
+    case 'Modbus RTU':
+      row.modbusRtu = pointValue;
+      break;
+    case 'Modbus TCP IP':
+      row.modbusTcp = pointValue;
+      break;
+    case 'Bacnet MSTP':
+      row.bacnetMstp = pointValue;
+      break;
+    case 'Bacnet IP':
+      row.bacnetIp = pointValue;
+      break;
+    default:
+      break;
+  }
+
+  integrationRows.push(row);
+}
+
+if (
+  airCurtainThermostatIntegration === 'Thermostat' &&
+  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'].includes(airCurtainThermostatProtocol) &&
+  airCurtainThermostatIntegrationPoints.trim() !== ''
+) {
+  const protocolColumnMap: any = {
+    'Modbus RTU': 'modbusRtu',
+    'Modbus TCP IP': 'modbusTcp',
+    'Bacnet MSTP': 'bacnetMstp',
+    'Bacnet IP': 'bacnetIp'
+  };
+
+  const row: any = {
+    projectCode,
+    description,
+    location,
+    point: 'Air Curtain Thermostat Integration Points',
+    ai: 0,
+    ao: 0,
+    di: 0,
+    do: 0,
+    modbusRtu: 0,
+    modbusTcp: 0,
+    bacnetMstp: 0,
+    bacnetIp: 0,
+    mbus: 0
+  };
+
+  const selectedColumn = protocolColumnMap[airCurtainThermostatProtocol];
+  row[selectedColumn] = parseInt(airCurtainThermostatIntegrationPoints) || 0;
+
+  thermostatIntegrationRows.push(row);
+}
 
 
   setTableRows([
@@ -423,7 +578,8 @@ if (heatingFunction === 'Proportional Electrical Heater') {
     ...doorRows,
     ...heatingRows,
     ...roomSensorRows,
-    ...integrationRows
+    ...integrationRows,
+    ...thermostatIntegrationRows
   ]);
   setShowTable(true);
 };
@@ -455,24 +611,38 @@ if (heatingFunction === 'Proportional Electrical Heater') {
               <TextField fullWidth variant="outlined" placeholder="Air Curtain Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
 
 {renderDropdown('Air Curtain Control Type', airCurtainControlType, (e) => setAirCurtainControlType(e.target.value), ['with DDC', 'Thermostat'], false)}
-{renderDropdown('Air Curtain Control Hard Points', airCurtainControlHardPoints, (e) => setAirCurtainControlHardPoints(e.target.value), ['Statuses', 'Command', 'Statuses and Command'], false)}
 
-{renderDropdown('Air Curtain Pieces', airCurtainPieces, (e) => setAirCurtainPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], false)}
-{renderDropdown('Air Curtain Power', airCurtainPower, (e) => setAirCurtainPower(e.target.value), [ '0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5','11', '15', '18,5', '22', '30', '37', '45', '55','75', '90', '110', '132', '160'], false)}
-{renderDropdown('Air Curtain Voltage', airCurtainVoltage, (e) => setAirCurtainVoltage(e.target.value), ['230', '380'], false)}
+{renderDropdown('Air Curtain Thermostat Integration', airCurtainThermostatIntegration, (e: SelectChangeEvent) => setAirCurtainThermostatIntegration(e.target.value), ['none', 'Thermostat'], airCurtainControlType === 'with DDC')}
 
-{renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value),['none', 'for Each Curtain', 'for All Curtains'], false)}
-{renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Curtain', 'for All Curtains'], false)}
-{renderDropdown('Door Safety Contacts', doorSafety, (e) => setDoorSafety(e.target.value), ['none', 'for Each Curtain', 'for All Curtains'], false)}
+{renderDropdown('Air Curtain Thermostat Protocol',  airCurtainThermostatProtocol,  (e: SelectChangeEvent) => setAirCurtainThermostatProtocol(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], airCurtainControlType === 'with DDC')}
+<TextField
+  label="Air Curtain Thermostat Integration Points"
+  value={airCurtainThermostatIntegrationPoints}
+  onChange={(e) => setAirCurtainThermostatIntegrationPoints(e.target.value)}
+  fullWidth
+  sx={{ mt: 2 }}
+  disabled={airCurtainControlType === 'with DDC'}
+/>
 
-{renderDropdown('Heating Function',heatingFunction,(e) => setHeatingFunction(e.target.value),['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback','Floating Valve Actuator', 'Floating Valve Actuator with Feedback','Proportional Valve Actuator','Proportional Valve Actuator with Feedback','1-Staged Electrical Heater','2-Staged Electrical Heater','3-Staged Electrical Heater','Proportional Electrical Heater'], false)}
-{renderDropdown('Heating Power', heatingPower,(e) => setHeatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5','11', '15', '18,5', '22', '30', '37', '45', '55','75', '90', '110', '132', '160' ], false)}
-{renderDropdown('Heating Voltage', heatingVoltage, (e) => setHeatingVoltage(e.target.value), ['230', '380'],false)}
 
-{renderDropdown('Room Sensor', roomSensor, (e) => setRoomSensor(e.target.value), ['none', 'Temperature', 'Temperature and Humidity'], false)}
 
-{renderDropdown('Air Curtain Integration', airCurtainIntegration, (e) => setAirCurtainIntegration(e.target.value), ['none', 'Thermostat', 'own Panel'], false)}
-{renderDropdown('Air Curtain Protocol Integration', airCurtainProtocolIntegration, (e) => setAirCurtainProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], false)}
+{renderDropdown('Air Curtain Control Hard Points', airCurtainControlHardPoints, (e) => setAirCurtainControlHardPoints(e.target.value), ['Statuses', 'Command', 'Statuses and Command'], airCurtainControlType === 'Thermostat')}
+
+{renderDropdown('Air Curtain Pieces', airCurtainPieces, (e) => setAirCurtainPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], airCurtainControlType === 'Thermostat')}
+{renderDropdown('Air Curtain Power', airCurtainPower, (e) => setAirCurtainPower(e.target.value), [ '0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5','11', '15', '18,5', '22', '30', '37', '45', '55','75', '90', '110', '132', '160'], airCurtainControlType === 'Thermostat')}
+{renderDropdown('Air Curtain Voltage', airCurtainVoltage, (e) => setAirCurtainVoltage(e.target.value),['230', '380'], airCurtainControlType === 'Thermostat')}
+{renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value),['none', 'for Each Curtain', 'for All Curtains'], airCurtainControlType === 'Thermostat')}
+{renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Curtain', 'for All Curtains'], airCurtainControlType === 'Thermostat')}
+{renderDropdown('Door Safety Contacts', doorSafety, (e) => setDoorSafety(e.target.value), ['none', 'for Each Curtain', 'for All Curtains'], airCurtainControlType === 'Thermostat')}
+
+{renderDropdown('Heating Function',heatingFunction,(e) => setHeatingFunction(e.target.value),['none', 'On/Off Valve Actuator', 'On/Off Valve Actuator with Feedback','Floating Valve Actuator', 'Floating Valve Actuator with Feedback','Proportional Valve Actuator','Proportional Valve Actuator with Feedback','1-Staged Electrical Heater','2-Staged Electrical Heater','3-Staged Electrical Heater','Proportional Electrical Heater'], airCurtainControlType === 'Thermostat')}
+{renderDropdown('Heating Power', heatingPower, (e) => setHeatingPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5','11', '15', '18,5', '22', '30', '37', '45', '55','75', '90', '110', '132', '160' ], airCurtainControlType === 'Thermostat' || heatingFunction === 'none' || ['On/Off Valve Actuator','On/Off Valve Actuator with Feedback','Floating Valve Actuator','Floating Valve Actuator with Feedback','Proportional Valve Actuator','Proportional Valve Actuator with Feedback'].includes(heatingFunction))}
+{renderDropdown('Heating Voltage', heatingVoltage, (e) => setHeatingVoltage(e.target.value), ['230', '380'],  airCurtainControlType === 'Thermostat' || heatingFunction === 'none' || ['On/Off Valve Actuator','On/Off Valve Actuator with Feedback','Floating Valve Actuator','Floating Valve Actuator with Feedback','Proportional Valve Actuator','Proportional Valve Actuator with Feedback'].includes(heatingFunction))}
+
+{renderDropdown('Room Sensor', roomSensor, (e) => setRoomSensor(e.target.value), ['none', 'Temperature', 'Temperature and Humidity'], airCurtainControlType === 'Thermostat')}
+
+{renderDropdown('Air Curtain Integration', airCurtainIntegration, (e) => setAirCurtainIntegration(e.target.value), ['none', 'own Panel'], airCurtainControlType === 'Thermostat')}
+{renderDropdown('Air Curtain Protocol Integration', airCurtainProtocolIntegration, (e) => setAirCurtainProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], airCurtainControlType === 'Thermostat')}
 
 <TextField
   fullWidth
@@ -481,6 +651,7 @@ if (heatingFunction === 'Proportional Electrical Heater') {
   value={airCurtainIntegrationPoints}
   onChange={(e) => setAirCurtainIntegrationPoints(e.target.value)}
   InputProps={{ style: { color: 'white' } }}
+  disabled={airCurtainControlType === 'Thermostat'}
 />
 
 
