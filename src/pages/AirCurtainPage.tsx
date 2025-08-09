@@ -57,37 +57,6 @@ const labelStyles = {
 };
 
 
-function renderDropdown(
-  label: string,
-  value: string,
-  onChange: (event: SelectChangeEvent<string>) => void,
-  options: string[],
-  disabled: boolean
-) {
-  return (
-    <FormControl fullWidth disabled={disabled}>
-      <InputLabel sx={{ color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } }}>{label}</InputLabel>
-      <Select
-        value={value}
-        onChange={onChange}
-        label={label}
-        sx={{
-          color: '#ECEFF1',
-          '.MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
-          '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
-          '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
-          '&.Mui-disabled': { color: '#888', backgroundColor: '#1e1e1e' },
-          '&.Mui-disabled .MuiOutlinedInput-notchedOutline': { borderColor: '#555' },
-          svg: { color: '#90A4AE' }
-        }}
-      >
-        {options.map((opt, i) => (
-          <MenuItem key={i} value={opt}>{opt}</MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  );
-}
 
 
 export default function AirCurtainPage() {
@@ -151,6 +120,12 @@ useEffect(() => {
   }
 }, [airCurtainControlType]);
 
+React.useEffect(() => {
+  if (airCurtainIntegration === 'none') {
+    setAirCurtainProtocolIntegration('');
+    setAirCurtainIntegrationPoints('');
+  }
+}, [airCurtainIntegration]);
 
 useEffect(() => {
   const valveFunctions = [
@@ -162,6 +137,7 @@ useEffect(() => {
     'Proportional Valve Actuator with Feedback'
   ];
 
+
   // Valf türlerinden biri SEÇİLİRSE veya 'none' seçilirse ➜ ikisini de temizle
   const shouldClear = valveFunctions.includes(heatingFunction) || heatingFunction === 'none';
 
@@ -170,25 +146,23 @@ useEffect(() => {
     setHeatingVoltage('');
   }
 }, [heatingFunction]);
-// 4) renderDropdown fonksiyonu burada başlıyor
 const renderDropdown = (
   label: string,
   value: string,
-  onChange: (event: SelectChangeEvent) => void,
+  onChange: (e: SelectChangeEvent) => void,
   options: string[],
   disabled: boolean = false
 ) => (
-  <FormControl fullWidth sx={{ mt: 2 }} disabled={disabled}>
-    <InputLabel>{label}</InputLabel>
-    <Select value={value} label={label} onChange={onChange}>
-      {options.map((option) => (
-        <MenuItem key={option} value={option}>
-          {option}
-        </MenuItem>
+  <FormControl fullWidth disabled={disabled}>
+    <InputLabel sx={labelStyles}>{label}</InputLabel>
+    <Select value={value} label={label} onChange={onChange} sx={selectStyles}>
+      {options.map((option, index) => (
+        <MenuItem key={index} value={option}>{option}</MenuItem>
       ))}
     </Select>
   </FormControl>
 );
+
 
 
   
@@ -620,8 +594,18 @@ if (
   value={airCurtainThermostatIntegrationPoints}
   onChange={(e) => setAirCurtainThermostatIntegrationPoints(e.target.value)}
   fullWidth
-  sx={{ mt: 2 }}
-  disabled={airCurtainControlType === 'with DDC'}
+  sx={{
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: airCurtainThermostatIntegration === 'none' ? '#555' : '#B0BEC5'
+    }
+  }}
+  disabled={airCurtainThermostatIntegration === 'none' || airCurtainControlType === 'with DDC'}
+  InputProps={{
+    style: {
+      color: (airCurtainThermostatIntegration === 'none' || airCurtainControlType === 'with DDC') ? '#888' : 'white',
+      backgroundColor: (airCurtainThermostatIntegration === 'none' || airCurtainControlType === 'with DDC') ? '#1e1e1e' : 'transparent'
+    }
+  }}
 />
 
 
@@ -642,7 +626,7 @@ if (
 {renderDropdown('Room Sensor', roomSensor, (e) => setRoomSensor(e.target.value), ['none', 'Temperature', 'Temperature and Humidity'], airCurtainControlType === 'Thermostat')}
 
 {renderDropdown('Air Curtain Integration', airCurtainIntegration, (e) => setAirCurtainIntegration(e.target.value), ['none', 'own Panel'], airCurtainControlType === 'Thermostat')}
-{renderDropdown('Air Curtain Protocol Integration', airCurtainProtocolIntegration, (e) => setAirCurtainProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], airCurtainControlType === 'Thermostat')}
+{renderDropdown('Air Curtain Protocol Integration', airCurtainProtocolIntegration, (e) => setAirCurtainProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none')}
 
 <TextField
   fullWidth
@@ -650,8 +634,18 @@ if (
   placeholder="Air Curtain Integration Points"
   value={airCurtainIntegrationPoints}
   onChange={(e) => setAirCurtainIntegrationPoints(e.target.value)}
-  InputProps={{ style: { color: 'white' } }}
-  disabled={airCurtainControlType === 'Thermostat'}
+  disabled={airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none'}
+  InputProps={{
+    style: {
+      color: (airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none') ? '#888' : 'white',
+      backgroundColor: (airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none') ? '#1e1e1e' : 'transparent'
+    }
+  }}
+  sx={{
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: (airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none') ? '#555' : '#B0BEC5'
+    }
+  }}
 />
 
 
