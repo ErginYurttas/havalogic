@@ -737,23 +737,25 @@ setShowTable(true);
               {renderDropdown('Pump Protocol Integration', PumpprotocolIntegration, (e) => setPumpProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], PumpIntegration === 'none'|| isOwnPanel)}
 
             
-              <TextField  fullWidth
-                          variant="outlined"
-                          placeholder="Pump Integration Points"
-                          value={PumpIntegrationPoints}
-                          onChange={(e) => setPumpIntegrationPoints(e.target.value)}
-                          disabled={isOwnPanel}
-                          InputProps={{
-                          style: {
-                          color: isOwnPanel ? '#888' : 'white',
-                          backgroundColor: isOwnPanel ? '#1e1e1e' : 'transparent'
-                                  }
-                            }}
-                          sx={{'& .MuiOutlinedInput-notchedOutline': { 
-                            borderColor: isOwnPanel ? '#555' : '#B0BEC5'
-                                  }
-                                }}
-                              />
+              <TextField
+  label="Pump Integration Points"
+  value={PumpIntegrationPoints}
+  onChange={(e) => setPumpIntegrationPoints(e.target.value)}
+  fullWidth
+  sx={{
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: (PumpIntegration === 'none' || isOwnPanel) ? '#555' : '#B0BEC5',
+    },
+  }}
+  disabled={PumpIntegration === 'none' || isOwnPanel}
+  InputProps={{
+    style: {
+      color: (PumpIntegration === 'none' || isOwnPanel) ? '#888' : 'white',
+      backgroundColor: (PumpIntegration === 'none' || isOwnPanel) ? '#1e1e1e' : 'transparent',
+    },
+  }}
+/>
+
 
               
 

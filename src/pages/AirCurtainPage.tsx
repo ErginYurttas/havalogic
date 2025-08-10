@@ -146,6 +146,7 @@ useEffect(() => {
     setHeatingVoltage('');
   }
 }, [heatingFunction]);
+
 const renderDropdown = (
   label: string,
   value: string,
