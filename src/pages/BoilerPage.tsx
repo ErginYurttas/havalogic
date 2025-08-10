@@ -336,7 +336,7 @@ if (boilerTemperature === 'Inlet Temperature') {
   );
 }
 
-const balanceRows: any[] = []; // en başta tanımla
+const balanceRows: any[] = []; 
 
 if (boilerBalanceTankTemperature && boilerBalanceTankTemperature !== 'none') {
   if (boilerBalanceTankTemperature === 'Primer Side Temperature') {

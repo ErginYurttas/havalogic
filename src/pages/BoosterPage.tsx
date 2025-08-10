@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import {
   Box,
   Container,
@@ -15,6 +16,8 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
+
+
 
 const ModernButton = styled(Button)({
   borderRadius: '8px',
@@ -88,6 +91,38 @@ export default function BoosterPage() {
 
 
 
+useEffect(() => {
+  if (boosterIntegration === 'none') {
+    setBoosterProtocolIntegration('');
+    setBoosterIntegrationPoints('');
+  }
+}, [boosterIntegration]);
+
+useEffect(() => {
+  if (boosterVfdIntegration === 'none') {
+    setBoosterVfdProtocolIntegration('');
+    setBoosterVfdIntegrationPoints('');
+  }
+}, [boosterVfdIntegration]);
+
+
+useEffect(() => {
+  if (boosterVfdIntegration === 'VFD') {
+    if (boosterIntegration !== 'none') setBoosterIntegration('none');
+    setBoosterProtocolIntegration('');
+    setBoosterIntegrationPoints('');
+  }
+}, [boosterVfdIntegration]);
+
+
+useEffect(() => {
+  if (boosterIntegration === 'own Panel') {
+    if (boosterVfdIntegration !== 'none') setBoosterVfdIntegration('none');
+    setBoosterVfdProtocolIntegration('');
+    setBoosterVfdIntegrationPoints('');
+  }
+}, [boosterIntegration]);
+
 
   const renderDropdown = (
   label: string,
@@ -121,24 +156,22 @@ export default function BoosterPage() {
   const desc = description;
   const loc  = location;
 
-
+  // ---------- CONTROL ROWS ----------
   const controlRows: any[] = [];
-
   if (boosterControlType) {
     const pcs = parseInt(boosterPieces || '1', 10);
     const multi = pcs > 1;
 
-
+    // Not: Proportional Control -> AO:1, Feedback -> AI:1
     let basePoints: Array<{ point: string; ai: number; ao: number; di: number; do: number }> = [];
-
     if (boosterControlType === 'MCC with VFD') {
       basePoints = [
-        { point: 'Booster Frequency Inverter Status',              ai: 0, ao: 0, di: 1, do: 0 },
-        { point: 'Booster Frequency Inverter Fault',               ai: 0, ao: 0, di: 1, do: 0 },
-        { point: 'Booster Frequency Inverter Auto/Manual',         ai: 0, ao: 0, di: 1, do: 0 },
-        { point: 'Booster Frequency Inverter Command',             ai: 0, ao: 0, di: 0, do: 1 },
-        { point: 'Booster Frequency Inverter Proportional Control',ai: 1, ao: 0, di: 0, do: 0 },
-        { point: 'Booster Frequency Inverter Feedback',            ai: 0, ao: 1, di: 0, do: 0 },
+        { point: 'Booster Frequency Inverter Status',               ai: 0, ao: 0, di: 1, do: 0 },
+        { point: 'Booster Frequency Inverter Fault',                ai: 0, ao: 0, di: 1, do: 0 },
+        { point: 'Booster Frequency Inverter Auto/Manual',          ai: 0, ao: 0, di: 1, do: 0 },
+        { point: 'Booster Frequency Inverter Command',              ai: 0, ao: 0, di: 0, do: 1 },
+        { point: 'Booster Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 }, // AO:1
+        { point: 'Booster Frequency Inverter Feedback',             ai: 1, ao: 0, di: 0, do: 0 }, // AI:1
       ];
     } else if (boosterControlType === 'own Panel') {
       basePoints = [
@@ -148,41 +181,29 @@ export default function BoosterPage() {
       ];
     }
 
-
     if (basePoints.length > 0) {
       if (!multi) {
-        basePoints.forEach(bp => {
-          controlRows.push({
-            projectCode: code,
-            description: desc,
-            location: loc,
-            point: bp.point,
-            ai: bp.ai, ao: bp.ao, di: bp.di, do: bp.do,
-            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-          });
-        });
+        basePoints.forEach(bp => controlRows.push({
+          projectCode: code, description: desc, location: loc,
+          point: bp.point, ai: bp.ai, ao: bp.ao, di: bp.di, do: bp.do,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        }));
       } else {
         for (let i = 1; i <= pcs; i++) {
-          basePoints.forEach(bp => {
-            controlRows.push({
-              projectCode: code,
-              description: desc,
-              location: loc,
-              point: `${bp.point} ${i}`,
-              ai: bp.ai, ao: bp.ao, di: bp.di, do: bp.do,
-              modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-            });
-          });
+          basePoints.forEach(bp => controlRows.push({
+            projectCode: code, description: desc, location: loc,
+            point: `${bp.point} ${i}`, ai: bp.ai, ao: bp.ao, di: bp.di, do: bp.do,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          }));
         }
       }
     }
   }
 
-
   const pcs = parseInt(boosterPieces || '1', 10);
   const multi = pcs > 1;
 
-  // Maintenance
+  // ---------- MAINTENANCE ----------
   const maintenanceRows: any[] = [];
   if (boosterMaintenanceContacts === 'Each Booster') {
     for (let i = 1; i <= pcs; i++) {
@@ -203,7 +224,7 @@ export default function BoosterPage() {
     });
   }
 
-  // Emergency
+  // ---------- EMERGENCY ----------
   const emergencyRows: any[] = [];
   if (boosterEmergencyContacts === 'Each Booster') {
     for (let i = 1; i <= pcs; i++) {
@@ -224,7 +245,7 @@ export default function BoosterPage() {
     });
   }
 
-  // High Pressure
+  // ---------- HIGH PRESSURE ----------
   const highPressureRows: any[] = [];
   if (boosterHighPressureContacts === 'Each Booster') {
     for (let i = 1; i <= pcs; i++) {
@@ -245,64 +266,88 @@ export default function BoosterPage() {
     });
   }
 
-const pressureMeasurementRows: any[] = [];
-
-if (boosterPressureMeasurement === 'Supply Line Pressure') {
-  pressureMeasurementRows.push({
-    point: 'Supply Line Pressure',
-    ai: 1, ao: 0, di: 0, do: 0,
-    projectCode, description, location,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-  });
-
-} else if (boosterPressureMeasurement === 'Return Line Pressure') {
-  pressureMeasurementRows.push({
-    point: 'Return Line Pressure',
-    ai: 1, ao: 0, di: 0, do: 0,
-    projectCode, description, location,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-  });
-
-} else if (boosterPressureMeasurement === 'Supply and Return Line Pressure') {
-  pressureMeasurementRows.push(
-    {
+  // ---------- PRESSURE MEASUREMENT ----------
+  const pressureMeasurementRows: any[] = [];
+  if (boosterPressureMeasurement === 'Supply Line Pressure') {
+    pressureMeasurementRows.push({
       point: 'Supply Line Pressure',
       ai: 1, ao: 0, di: 0, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    },
-    {
+    });
+  } else if (boosterPressureMeasurement === 'Return Line Pressure') {
+    pressureMeasurementRows.push({
       point: 'Return Line Pressure',
       ai: 1, ao: 0, di: 0, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    });
+  } else if (boosterPressureMeasurement === 'Supply and Return Line Pressure') {
+    pressureMeasurementRows.push(
+      { point: 'Supply Line Pressure',  ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+      { point: 'Return Line Pressure',  ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    );
+  } else if (boosterPressureMeasurement === 'Differential Pressure') {
+    pressureMeasurementRows.push({
+      point: 'Differential Pressure',
+      ai: 1, ao: 0, di: 0, do: 0,
+      projectCode, description, location,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    });
+  }
+
+  // ---------- PANEL INTEGRATION (own Panel) ----------
+  const integrationRows: any[] = [];
+  if (boosterIntegration === 'own Panel') {
+    const pointsValue = Number(boosterIntegrationPoints) || 0;
+    const integrationRow: any = {
+      projectCode, description: desc, location: loc,
+      point: 'Booster Panel Integration Points',
+      ai: 0, ao: 0, di: 0, do: 0,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    };
+    switch (boosterProtocolIntegration) {
+      case 'Modbus RTU':    integrationRow.modbusRtu  = pointsValue; break;
+      case 'Modbus TCP IP': integrationRow.modbusTcp  = pointsValue; break;
+      case 'Bacnet MSTP':   integrationRow.bacnetMstp = pointsValue; break;
+      case 'Bacnet IP':     integrationRow.bacnetIp   = pointsValue; break;
     }
-  );
+    integrationRows.push(integrationRow);
+  }
 
-} else if (boosterPressureMeasurement === 'Differential Pressure') {
-  pressureMeasurementRows.push({
-    point: 'Differential Pressure',
-    ai: 1, ao: 0, di: 0, do: 0,
-    projectCode, description, location,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-  });
+  // ---------- VFD INTEGRATION ----------
+  const vfdIntegrationRows: any[] = [];
+  if (boosterVfdIntegration === 'VFD') {
+    const vfdPoints = Number(boosterVfdIntegrationPoints) || 0;
+    const vfdRow: any = {
+      projectCode, description: desc, location: loc,
+      point: 'Booster VFD Integration Points',
+      ai: 0, ao: 0, di: 0, do: 0,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    };
+    switch (boosterVfdProtocolIntegration) {
+      case 'Modbus RTU':    vfdRow.modbusRtu  = vfdPoints; break;
+      case 'Modbus TCP IP': vfdRow.modbusTcp  = vfdPoints; break;
+      case 'Bacnet MSTP':   vfdRow.bacnetMstp = vfdPoints; break;
+      case 'Bacnet IP':     vfdRow.bacnetIp   = vfdPoints; break;
+    }
+    vfdIntegrationRows.push(vfdRow);
+  }
 
-}
-
-
-
+  // ---------- SET TABLE ----------
   setTableRows([
     ...controlRows,
     ...maintenanceRows,
     ...emergencyRows,
     ...highPressureRows,
-    ...pressureMeasurementRows
-    // ...integrationRows,
-    // ...vfdIntegrationRows,
+    ...pressureMeasurementRows,
+    ...integrationRows,
+    ...vfdIntegrationRows,
   ]);
   setShowTable(true);
 };
-
 
 
   return (
@@ -332,27 +377,29 @@ if (boosterPressureMeasurement === 'Supply Line Pressure') {
 
               {renderDropdown('Booster Control Type', boosterControlType, (e) => setBoosterControlType(e.target.value), ['MCC with VFD', 'own Panel'])}
               
-              {renderDropdown('Booster VFD Integration',  boosterVfdIntegration,  (e) => setBoosterVfdIntegration(e.target.value),  ['none', 'VFD'])}
-              {renderDropdown('Booster VFD Protocol Integration',  boosterVfdProtocolIntegration,  (e) => setBoosterVfdProtocolIntegration(e.target.value),  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],  boosterVfdIntegration === 'none')}
+              {renderDropdown('Booster VFD Integration',  boosterVfdIntegration, (e) => setBoosterVfdIntegration(e.target.value), ['none', 'VFD'],  boosterIntegration === 'own Panel')}
+
+              {renderDropdown('Booster VFD Protocol Integration', boosterVfdProtocolIntegration, (e) => setBoosterVfdProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], boosterVfdIntegration === 'none' || boosterIntegration === 'own Panel')}
 
 <TextField
   label="Booster VFD Integration Points"
   value={boosterVfdIntegrationPoints}
   onChange={(e) => setBoosterVfdIntegrationPoints(e.target.value)}
   fullWidth
+  disabled={boosterVfdIntegration === 'none' || boosterIntegration === 'own Panel'}
   sx={{
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: boosterVfdIntegration === 'none' ? '#555' : '#B0BEC5'
+      borderColor: (boosterVfdIntegration === 'none' || boosterIntegration === 'own Panel') ? '#555' : '#B0BEC5'
     }
   }}
-  disabled={boosterVfdIntegration === 'none'}
   InputProps={{
     style: {
-      color: boosterVfdIntegration === 'none' ? '#888' : 'white',
-      backgroundColor: boosterVfdIntegration === 'none' ? '#1e1e1e' : 'transparent'
+      color: (boosterVfdIntegration === 'none' || boosterIntegration === 'own Panel') ? '#888' : 'white',
+      backgroundColor: (boosterVfdIntegration === 'none' || boosterIntegration === 'own Panel') ? '#1e1e1e' : 'transparent'
     }
   }}
 />
+
 
               
               
@@ -367,27 +414,30 @@ if (boosterPressureMeasurement === 'Supply Line Pressure') {
 
               {renderDropdown('Pressure Measurement',  boosterPressureMeasurement,  (e) => setBoosterPressureMeasurement(e.target.value),  ['none', 'Supply Line Pressure', 'Return Line Pressure', 'Supply and Return Line Pressure', 'Differential Pressure'])}
 
-              {renderDropdown('Booster Integration',  boosterIntegration,  (e) => setBoosterIntegration(e.target.value),  ['none', 'own Panel'])}
-              {renderDropdown('Booster Protocol Integration',  boosterProtocolIntegration,  (e) => setBoosterProtocolIntegration(e.target.value),  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],  boosterIntegration === 'none')}
+              {renderDropdown('Booster Integration', boosterIntegration, (e) => setBoosterIntegration(e.target.value), ['none', 'own Panel'], boosterVfdIntegration === 'VFD')}
+
+              {renderDropdown('Booster Protocol Integration', boosterProtocolIntegration, (e) => setBoosterProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], boosterIntegration === 'none' || boosterVfdIntegration === 'VFD')}
+
 
               <TextField
-              label="Booster Integration Points"
-              value={boosterIntegrationPoints}
-              onChange={(e) => setBoosterIntegrationPoints(e.target.value)}
-              fullWidth
-              sx={{
-              '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: boosterIntegration === 'none' ? '#555' : '#B0BEC5'
-              }
-              }}
-              disabled={boosterIntegration === 'none'}
-              InputProps={{
-              style: {
-              color: boosterIntegration === 'none' ? '#888' : 'white',
-              backgroundColor: boosterIntegration === 'none' ? '#1e1e1e' : 'transparent'
-                }
-              }}
-              />
+  label="Booster Integration Points"
+  value={boosterIntegrationPoints}
+  onChange={(e) => setBoosterIntegrationPoints(e.target.value)}
+  fullWidth
+  disabled={boosterIntegration === 'none' || boosterVfdIntegration === 'VFD'}
+  sx={{
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: (boosterIntegration === 'none' || boosterVfdIntegration === 'VFD') ? '#555' : '#B0BEC5'
+    }
+  }}
+  InputProps={{
+    style: {
+      color: (boosterIntegration === 'none' || boosterVfdIntegration === 'VFD') ? '#888' : 'white',
+      backgroundColor: (boosterIntegration === 'none' || boosterVfdIntegration === 'VFD') ? '#1e1e1e' : 'transparent'
+    }
+  }}
+/>
+
 
 
               <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveBooster}>Send to Table</PrimaryButton>
