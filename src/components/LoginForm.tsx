@@ -25,7 +25,7 @@ export const LoginForm = ({ onSuccess, onCancel, setIsLoggedIn }: LoginFormProps
     if (e) e.preventDefault();
     setError('');
 
-    if (email === 'admin' && password === '1234') {
+    if (email === 'admins' && password === '2143') {
       setIsLoggedIn(true);
       localStorage.setItem('isLoggedIn', 'true');
       onSuccess(email); // Değişti (email'i parametre olarak gönderiyoruz)
