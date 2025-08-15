@@ -209,7 +209,6 @@ export default function Project() {
                 'Boiler',
                 'Booster',
                 'Chiller',
-                'Clean Room',
                 'Collector',
                 'Cooling Tower',
                 'Data Center',
@@ -219,16 +218,15 @@ export default function Project() {
                 'Generator',
                 'Heat Exchanger',
                 'Heat Reclaim',
-                'Office',
                 'Pump',
-                'Surgery Room',
+                'Room',
                 'Unit Heater',
                 'Ups',
                 'Vav',
                 'Water Tank',
                 'Weather',
                 'Manual Entry',
-              ].map((item) => (
+].map((item) => (
                 <MenuItem key={item} onClick={() => handleSystemSelect(item)}>
                   {item}
                 </MenuItem>
