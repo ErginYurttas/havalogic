@@ -66,6 +66,38 @@ export default function CoolingTowerPage() {
   const [tableRows, setTableRows] = useState<any[]>([]);
   const [showTable, setShowTable] = useState(false);
 
+  const [coolingTowerControl, setCoolingTowerControl] = useState('');
+  const [coolingTowerPieces, setCoolingTowerPieces] = useState('');
+  const [coolingTowerPower, setCoolingTowerPower] = useState('');
+  const [coolingTowerVoltage, setCoolingTowerVoltage] = useState('');
+
+  const [coolingTowerMaintenance, setCoolingTowerMaintenance] = useState('');
+  const [coolingTowerEmergency, setCoolingTowerEmergency] = useState('');
+  const [coolingTowerSeismic, setCoolingTowerSeismic] = useState('');
+
+  const [coolingTowerTemperatureMeasurement, setCoolingTowerTemperatureMeasurement] = useState('');
+
+  const [coolingTowerPoolHeating, setCoolingTowerPoolHeating] = useState('');
+  const [coolingTowerPoolFilling, setCoolingTowerPoolFilling] = useState('');
+
+const renderDropdown = (
+  label: string,
+  value: string,
+  onChange: (e: SelectChangeEvent) => void,
+  options: string[],
+  disabled: boolean = false
+) => (
+  <FormControl fullWidth sx={{ mt: 2 }} disabled={disabled}>
+    <InputLabel sx={labelStyles}>{label}</InputLabel>
+    <Select value={value} label={label} onChange={onChange} sx={selectStyles}>
+      {options.map((opt, i) => (
+        <MenuItem key={i} value={opt}>{opt}</MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+);
+
+
   const handleLogout = () => {
     navigate('/');
   };
@@ -101,9 +133,24 @@ export default function CoolingTowerPage() {
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Cooling Tower System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Cooling Tower Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Cooling Tower Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Cooling Tower Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+
+              {renderDropdown('Control',  coolingTowerControl,  (e) => setCoolingTowerControl(e.target.value),  ['own Panel', 'VFD'])}
+              {renderDropdown('Pieces',  coolingTowerPieces,  (e) => setCoolingTowerPieces(e.target.value),  ['1','2','3','4','5','6','7','8'])}
+              {renderDropdown('Power',  coolingTowerPower,  (e) => setCoolingTowerPower(e.target.value),  [  '0.55','0.75','1.1','1.5','2.2','3','4','5.5','7.5','11','15',    '18.5','22','30','37','45','55','75','90','110','132','160'  ])}
+              {renderDropdown('Voltage',  coolingTowerVoltage,  (e) => setCoolingTowerVoltage(e.target.value),  ['230','380'])}
+
+              {renderDropdown('Maintenance Safety Contacts',  coolingTowerMaintenance,  (e) => setCoolingTowerMaintenance(e.target.value),  ['none', 'Each Tower', 'All Tower'])}
+              {renderDropdown('Emergency Safety Contacts',  coolingTowerEmergency,  (e) => setCoolingTowerEmergency(e.target.value),  ['none', 'Each Tower', 'All Tower'])}
+              {renderDropdown('Seismic Safety Contacts',  coolingTowerSeismic,  (e) => setCoolingTowerSeismic(e.target.value),  ['none', 'Each Tower', 'All Tower'])}
+
+              {renderDropdown('Temperature Measurement',  coolingTowerTemperatureMeasurement,  (e) => setCoolingTowerTemperatureMeasurement(e.target.value),  ['none', 'Inlet Temperature', 'Outlet Temperature'])}
+
+              {renderDropdown('Pool Heating',  coolingTowerPoolHeating,  (e) => setCoolingTowerPoolHeating(e.target.value),  [    'none',    'On/Off Command',    'On/Off Command with Feedback',    'Floating Command',    'Floating Command with Feedback',    'Proportional Command',    'Proportional Command with Feedback'  ])}
+              {renderDropdown('Pool Filling',  coolingTowerPoolFilling,  (e) => setCoolingTowerPoolFilling(e.target.value),  ['none', 'Fill'])}
+
 
               <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveCoolingTower}>Send to Table</PrimaryButton>
               <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>

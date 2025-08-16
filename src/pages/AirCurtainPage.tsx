@@ -581,17 +581,17 @@ if (
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Air Curtain System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Air Curtain Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Air Curtain Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Air Curtain Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
 
-{renderDropdown('Air Curtain Control Type', airCurtainControlType, (e) => setAirCurtainControlType(e.target.value), ['with DDC', 'Thermostat'], false)}
+{renderDropdown('Control Type', airCurtainControlType, (e) => setAirCurtainControlType(e.target.value), ['with DDC', 'Thermostat'], false)}
 
-{renderDropdown('Air Curtain Thermostat Integration', airCurtainThermostatIntegration, (e: SelectChangeEvent) => setAirCurtainThermostatIntegration(e.target.value), ['none', 'Thermostat'], airCurtainControlType === 'with DDC')}
+{renderDropdown('Thermostat Integration', airCurtainThermostatIntegration, (e: SelectChangeEvent) => setAirCurtainThermostatIntegration(e.target.value), ['none', 'Thermostat'], airCurtainControlType === 'with DDC')}
 
-{renderDropdown('Air Curtain Thermostat Protocol',  airCurtainThermostatProtocol,  (e: SelectChangeEvent) => setAirCurtainThermostatProtocol(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], airCurtainControlType === 'with DDC')}
+{renderDropdown('Thermostat Protocol',  airCurtainThermostatProtocol,  (e: SelectChangeEvent) => setAirCurtainThermostatProtocol(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], airCurtainControlType === 'with DDC')}
 <TextField
-  label="Air Curtain Thermostat Integration Points"
+  label="Thermostat Integration Points"
   value={airCurtainThermostatIntegrationPoints}
   onChange={(e) => setAirCurtainThermostatIntegrationPoints(e.target.value)}
   fullWidth
@@ -613,9 +613,9 @@ if (
 
 {renderDropdown('Air Curtain Control Hard Points', airCurtainControlHardPoints, (e) => setAirCurtainControlHardPoints(e.target.value), ['Statuses', 'Command', 'Statuses and Command'], airCurtainControlType === 'Thermostat')}
 
-{renderDropdown('Air Curtain Pieces', airCurtainPieces, (e) => setAirCurtainPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], airCurtainControlType === 'Thermostat')}
-{renderDropdown('Air Curtain Power', airCurtainPower, (e) => setAirCurtainPower(e.target.value), [ '0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5','11', '15', '18,5', '22', '30', '37', '45', '55','75', '90', '110', '132', '160'], airCurtainControlType === 'Thermostat')}
-{renderDropdown('Air Curtain Voltage', airCurtainVoltage, (e) => setAirCurtainVoltage(e.target.value),['230', '380'], airCurtainControlType === 'Thermostat')}
+{renderDropdown('Pieces', airCurtainPieces, (e) => setAirCurtainPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], airCurtainControlType === 'Thermostat')}
+{renderDropdown('Power', airCurtainPower, (e) => setAirCurtainPower(e.target.value), [ '0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5','11', '15', '18,5', '22', '30', '37', '45', '55','75', '90', '110', '132', '160'], airCurtainControlType === 'Thermostat')}
+{renderDropdown('Voltage', airCurtainVoltage, (e) => setAirCurtainVoltage(e.target.value),['230', '380'], airCurtainControlType === 'Thermostat')}
 {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value),['none', 'for Each Curtain', 'for All Curtains'], airCurtainControlType === 'Thermostat')}
 {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Curtain', 'for All Curtains'], airCurtainControlType === 'Thermostat')}
 {renderDropdown('Door Safety Contacts', doorSafety, (e) => setDoorSafety(e.target.value), ['none', 'for Each Curtain', 'for All Curtains'], airCurtainControlType === 'Thermostat')}

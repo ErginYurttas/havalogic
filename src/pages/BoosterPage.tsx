@@ -371,18 +371,18 @@ useEffect(() => {
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Booster System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Booster Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Booster Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Booster Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
 
-              {renderDropdown('Booster Control Type', boosterControlType, (e) => setBoosterControlType(e.target.value), ['MCC with VFD', 'own Panel'])}
+              {renderDropdown('Control Type', boosterControlType, (e) => setBoosterControlType(e.target.value), ['MCC with VFD', 'own Panel'])}
               
-              {renderDropdown('Booster VFD Integration',  boosterVfdIntegration, (e) => setBoosterVfdIntegration(e.target.value), ['none', 'VFD'],  boosterIntegration === 'own Panel')}
+              {renderDropdown('VFD Integration',  boosterVfdIntegration, (e) => setBoosterVfdIntegration(e.target.value), ['none', 'VFD'],  boosterIntegration === 'own Panel')}
 
-              {renderDropdown('Booster VFD Protocol Integration', boosterVfdProtocolIntegration, (e) => setBoosterVfdProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], boosterVfdIntegration === 'none' || boosterIntegration === 'own Panel')}
+              {renderDropdown('VFD Protocol Integration', boosterVfdProtocolIntegration, (e) => setBoosterVfdProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], boosterVfdIntegration === 'none' || boosterIntegration === 'own Panel')}
 
 <TextField
-  label="Booster VFD Integration Points"
+  label="VFD Integration Points"
   value={boosterVfdIntegrationPoints}
   onChange={(e) => setBoosterVfdIntegrationPoints(e.target.value)}
   fullWidth
@@ -404,13 +404,13 @@ useEffect(() => {
               
               
               
-              {renderDropdown('Booster Pieces', boosterPieces, (e) => setBoosterPieces(e.target.value), ['1','2','3','4','5','6','7','8'])}
-              {renderDropdown('Booster Power', boosterPower, (e) => setBoosterPower(e.target.value), ['0,55','0,75','1,1','1,5','2,2','3','4','5,5','7,5','11','15','18,5','22','30','37','45','55','75','90','110','132','160'])}
-              {renderDropdown('Booster Voltage', boosterVoltage, (e) => setBoosterVoltage(e.target.value), ['230','380'])}
+              {renderDropdown('Pieces', boosterPieces, (e) => setBoosterPieces(e.target.value), ['1','2','3','4','5','6','7','8'])}
+              {renderDropdown('Power', boosterPower, (e) => setBoosterPower(e.target.value), ['0,55','0,75','1,1','1,5','2,2','3','4','5,5','7,5','11','15','18,5','22','30','37','45','55','75','90','110','132','160'])}
+              {renderDropdown('Voltage', boosterVoltage, (e) => setBoosterVoltage(e.target.value), ['230','380'])}
 
-              {renderDropdown('Booster Maintenance Contacts',  boosterMaintenanceContacts,  (e) => setBoosterMaintenanceContacts(e.target.value),  ['none', 'Each Booster', 'All Boosters'])}
-              {renderDropdown('Booster Emergency Contacts',  boosterEmergencyContacts,  (e) => setBoosterEmergencyContacts(e.target.value),  ['none', 'Each Booster', 'All Boosters'])}
-              {renderDropdown('Booster High Pressure Contacts',  boosterHighPressureContacts,  (e) => setBoosterHighPressureContacts(e.target.value),  ['none', 'Each Booster', 'All Boosters'])}
+              {renderDropdown('Maintenance Safety Contacts',  boosterMaintenanceContacts,  (e) => setBoosterMaintenanceContacts(e.target.value),  ['none', 'Each Booster', 'All Boosters'])}
+              {renderDropdown('Emergency Safety Contacts',  boosterEmergencyContacts,  (e) => setBoosterEmergencyContacts(e.target.value),  ['none', 'Each Booster', 'All Boosters'])}
+              {renderDropdown('High Pressure Safety Contacts',  boosterHighPressureContacts,  (e) => setBoosterHighPressureContacts(e.target.value),  ['none', 'Each Booster', 'All Boosters'])}
 
               {renderDropdown('Pressure Measurement',  boosterPressureMeasurement,  (e) => setBoosterPressureMeasurement(e.target.value),  ['none', 'Supply Line Pressure', 'Return Line Pressure', 'Supply and Return Line Pressure', 'Differential Pressure'])}
 

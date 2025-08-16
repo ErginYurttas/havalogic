@@ -489,23 +489,23 @@ if (boilerIntegration === 'own Panel') {
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Boiler System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Boiler Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Boiler Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Boiler Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
 
-{renderDropdown('Boiler Control Type', boilerControlType, (e) => setBoilerControlType(e.target.value), ['Local', 'Cascad'])}
-{renderDropdown('Boiler Pieces', boilerPieces, (e) => setBoilerPieces(e.target.value), ['1','2','3','4','5','6','7','8'])}
-{renderDropdown('Boiler Power', boilerPower, (e) => setBoilerPower(e.target.value),  ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5','11', '15', '18,5', '22', '30', '37', '45', '55','75', '90', '110', '132', '160'])}
-{renderDropdown('Boiler Voltage',  boilerVoltage,  (e) => setBoilerVoltage(e.target.value), ['230', '380'])}
+{renderDropdown('Control Type', boilerControlType, (e) => setBoilerControlType(e.target.value), ['Local', 'Cascad'])}
+{renderDropdown('Pieces', boilerPieces, (e) => setBoilerPieces(e.target.value), ['1','2','3','4','5','6','7','8'])}
+{renderDropdown('Power', boilerPower, (e) => setBoilerPower(e.target.value),  ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5','11', '15', '18,5', '22', '30', '37', '45', '55','75', '90', '110', '132', '160'])}
+{renderDropdown('Voltage',  boilerVoltage,  (e) => setBoilerVoltage(e.target.value), ['230', '380'])}
 
-{renderDropdown('Boiler Maintenance Contacts',  boilerMaintenanceContacts,  (e) => setBoilerMaintenanceContacts(e.target.value),  ['none', 'Each Boiler', 'All Boilers'])}
-{renderDropdown('Boiler Emergency Contacts',  boilerEmergencyContacts,  (e) => setBoilerEmergencyContacts(e.target.value),  ['none', 'Each Boiler', 'All Boilers'])}
-{renderDropdown('Boiler High Temperature Contacts',  boilerHighTemperatureContacts,  (e) => setBoilerHighTemperatureContacts(e.target.value),  ['none', 'Each Boiler', 'All Boilers'])}
-{renderDropdown('Boiler Gas Leakage Contacts',  boilerGasLeakageContacts,  (e) => setBoilerGasLeakageContacts(e.target.value),  ['none', 'Each Boiler', 'All Boilers'])}
+{renderDropdown('Maintenance Safety Contacts',  boilerMaintenanceContacts,  (e) => setBoilerMaintenanceContacts(e.target.value),  ['none', 'Each Boiler', 'All Boilers'])}
+{renderDropdown('Emergency Safety Contacts',  boilerEmergencyContacts,  (e) => setBoilerEmergencyContacts(e.target.value),  ['none', 'Each Boiler', 'All Boilers'])}
+{renderDropdown('High Temperature Safety Contacts',  boilerHighTemperatureContacts,  (e) => setBoilerHighTemperatureContacts(e.target.value),  ['none', 'Each Boiler', 'All Boilers'])}
+{renderDropdown('Gas Leakage Safety Contacts',  boilerGasLeakageContacts,  (e) => setBoilerGasLeakageContacts(e.target.value),  ['none', 'Each Boiler', 'All Boilers'])}
 
-{renderDropdown('Boiler Temperature',  boilerTemperature,  (e) => setBoilerTemperature(e.target.value),  ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
+{renderDropdown('Temperature Measurement',  boilerTemperature,  (e) => setBoilerTemperature(e.target.value),  ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
 {renderDropdown('Boiler Balance Tank',  boilerBalanceTank,  (e) => setBoilerBalanceTank(e.target.value),  ['none', 'Balance Tank'])}
-{renderDropdown('Boiler Balance Tank Temperature',  boilerBalanceTankTemperature,  (e) => setBoilerBalanceTankTemperature(e.target.value),  ['Primer Side Temperature', 'Seconder Side Temperature', 'Primer and Seconder Side Temperature'],  boilerBalanceTank === 'none')}
+{renderDropdown('Balance Tank Temperature Measurement',  boilerBalanceTankTemperature,  (e) => setBoilerBalanceTankTemperature(e.target.value),  ['Primer Side Temperature', 'Seconder Side Temperature', 'Primer and Seconder Side Temperature'],  boilerBalanceTank === 'none')}
 
 {renderDropdown('Boiler Integration',  boilerIntegration,  handleBoilerIntegrationChange,  ['none', 'own Panel'])}
 {renderDropdown('Boiler Protocol Integration',  boilerProtocolIntegration,  (e) => setBoilerProtocolIntegration(e.target.value),  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],  protocolDisabled)}

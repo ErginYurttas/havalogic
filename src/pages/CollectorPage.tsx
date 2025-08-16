@@ -208,9 +208,9 @@ const handleSaveCollector = () => {
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Collector System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Collector Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Collector Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Collector Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
 
               {renderDropdown('Temperature Measurement',  collectorTemperatureMeasurement,  (e) => setCollectorTemperatureMeasurement(e.target.value),  ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
 

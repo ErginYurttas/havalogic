@@ -701,16 +701,16 @@ setShowTable(true);
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Pump System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Pump Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Pump Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Pump Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              {renderDropdown( 'Pump Control Type', pumpControlType, handlePumpControlTypeChange, ['MCC', 'own Panel'])}
-              {renderDropdown( 'Pump Control Protocol Integration', PumpcontrolpackagedprotocolIntegration, (e) => setPumpControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], pumpControlType === 'MCC' )}   
+              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              {renderDropdown( 'Control Type', pumpControlType, handlePumpControlTypeChange, ['MCC', 'own Panel'])}
+              {renderDropdown( 'Control Protocol Integration', PumpcontrolpackagedprotocolIntegration, (e) => setPumpControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], pumpControlType === 'MCC' )}   
 
               <TextField
               fullWidth
               variant="outlined"
-              placeholder="Pump Control Integration Points"
+              placeholder="Control Integration Points"
               value={PumpControlPackagedPoints}
               onChange={(e) => setPumpControlPackagedPoints(e.target.value)}
               disabled={pumpControlType === 'MCC'} 
@@ -721,12 +721,12 @@ setShowTable(true);
                 }}
               />
               
-              {renderDropdown('Pump Control Hard Points',  Pumpcontrolpackagedhardpoints, (e) => setPumpControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], pumpControlType === 'MCC')}
+              {renderDropdown('Control Hard Points',  Pumpcontrolpackagedhardpoints, (e) => setPumpControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], pumpControlType === 'MCC')}
 
-              {renderDropdown('Pump Control', pumpControl, handlePumpControlChange, ['DOL', 'Power Supply Only', 'Soft Starter','Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta' ], isOwnPanel )}
-              {renderDropdown('Pump Pieces', PumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], pumpControl === 'none'|| isOwnPanel)}
-              {renderDropdown('Pump Power', PumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], pumpControl === 'none'|| isOwnPanel)}
-              {renderDropdown('Pump Voltage', PumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], pumpControl === 'none'|| isOwnPanel)}
+              {renderDropdown('Control', pumpControl, handlePumpControlChange, ['DOL', 'Power Supply Only', 'Soft Starter','Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta' ], isOwnPanel )}
+              {renderDropdown('Pieces', PumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], pumpControl === 'none'|| isOwnPanel)}
+              {renderDropdown('Power', PumpPower, (e) => setPumpPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], pumpControl === 'none'|| isOwnPanel)}
+              {renderDropdown('Voltage', PumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], pumpControl === 'none'|| isOwnPanel)}
               {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value), ['none', 'for Each Pump', 'for All Pumps'], isOwnPanel)}
               {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Pump', 'for All Pumps'], isOwnPanel)}
              

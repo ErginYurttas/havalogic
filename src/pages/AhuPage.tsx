@@ -3925,16 +3925,16 @@ setShowTable(true);
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>AHU System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="AHU Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="AHU Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="AHU Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              {renderDropdown('AHU Control Type', ahuControl, handleAhuControlChange, ['MCC', 'Packaged'])}
-              {renderDropdown('AHU Control Protocol Integration', ahucontrolpackagedprotocolIntegration, (e) => setAhuControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], ahuControl === 'MCC')}
+              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              {renderDropdown('Control Type', ahuControl, handleAhuControlChange, ['MCC', 'Packaged'])}
+              {renderDropdown('Control Protocol Integration', ahucontrolpackagedprotocolIntegration, (e) => setAhuControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], ahuControl === 'MCC')}
               
               <TextField
               fullWidth
               variant="outlined"
-              placeholder="AHU Control Packaged Integration Points"
+              placeholder="Control Packaged Integration Points"
               value={ahuControlPackagedPoints}
               onChange={(e) => setAhuControlPackagedPoints(e.target.value)}
               disabled={ahuControl === 'MCC'}
@@ -3945,7 +3945,7 @@ setShowTable(true);
               }}
               />
               
-              {renderDropdown('AHU Control Packaged Hard Points', ahucontrolpackagedhardpoints, (e) => setAhuControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], ahuControl === 'MCC')}
+              {renderDropdown('Control Packaged Hard Points', ahucontrolpackagedhardpoints, (e) => setAhuControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], ahuControl === 'MCC')}
 
               {renderDropdown('Vantilator Control', vantControl, (e) => setVantControl(e.target.value), ['DOL', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'], isPackaged)}
               {renderDropdown('Vantilator Pieces', vantPieces, (e) => setVantPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], isPackaged)}
@@ -3973,13 +3973,13 @@ setShowTable(true);
               {renderDropdown('Cooling Voltage', coolingVoltage, (e) => setCoolingVoltage(e.target.value), ['230', '380'], coolingFunction === 'none' || coolingValveOptions.includes(coolingFunction)|| isPackaged)}
               {renderDropdown('Cooling Coil Temperature', coolingTemperature, (e) => setCoolingTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], coolingFunction === 'none' || coolingDXOptions.includes(coolingFunction) || isPackaged)}
 
-              {renderDropdown('Supply Air', supplyAirSensor, (e) => setSupplyAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
-              {renderDropdown('Fresh Air', freshAirSensor, (e) => setFreshAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
-              {renderDropdown('Return Air', returnAirSensor, (e) => setReturnAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity', 'Co2', 'Temperature, Humidity and Co2'], isPackaged)}
-              {renderDropdown('Exhaust Air', exhaustAirSensor, (e) => setExhaustAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
-              {renderDropdown('Mixed Air', mixedAirSensor, (e) => setMixedAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
-              {renderDropdown('Dehumidification Air', dehumidificationAirSensor, (e) => setDehumidificationAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
-              {renderDropdown('Heat Exchanger Air', heatExchangerAirSensor, (e) => setHeatExchangerAirSensor(e.target.value), ['none', 'Fresh Side Temperature', 'Return Side Temperature', 'Fresh and Return Side Temperature'], isPackaged)}
+              {renderDropdown('Supply Air Measurement', supplyAirSensor, (e) => setSupplyAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
+              {renderDropdown('Fresh Air Measurement', freshAirSensor, (e) => setFreshAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
+              {renderDropdown('Return Air Measurement', returnAirSensor, (e) => setReturnAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity', 'Co2', 'Temperature, Humidity and Co2'], isPackaged)}
+              {renderDropdown('Exhaust Air Measurement', exhaustAirSensor, (e) => setExhaustAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
+              {renderDropdown('Mixed Air Measurement', mixedAirSensor, (e) => setMixedAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
+              {renderDropdown('Dehumidification Air Measurement', dehumidificationAirSensor, (e) => setDehumidificationAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
+              {renderDropdown('Heat Exchanger Air Measurement', heatExchangerAirSensor, (e) => setHeatExchangerAirSensor(e.target.value), ['none', 'Fresh Side Temperature', 'Return Side Temperature', 'Fresh and Return Side Temperature'], isPackaged)}
               {renderDropdown('Fresh Damper Actuator', freshDamperActuator, (e) => setFreshDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator', '2x Proportional Damper Actuator with Feedback' ], isPackaged)}
               {renderDropdown('Supply Damper Actuator', supplyDamperActuator, (e) => setSupplyDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ], isPackaged)}
               {renderDropdown('Return Damper Actuator', returnDamperActuator, (e) => setReturnDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ], isPackaged)}

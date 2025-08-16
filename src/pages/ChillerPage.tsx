@@ -350,18 +350,18 @@ useEffect(() => {
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Chiller System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Chiller Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Chiller Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Chiller Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
 
-              {renderDropdown("Chiller Control Type",  chillerControlType,  (e) => setChillerControlType(e.target.value),  ["own Panel", "Local"])}
-              {renderDropdown("Chiller Pieces",  chillerPieces,  (e) => setChillerPieces(e.target.value),  ["1", "2", "3", "4", "5", "6", "7", "8"])}
-              {renderDropdown("Chiller Power",  chillerPower,  (e) => setChillerPower(e.target.value),  [    "0.55", "0.75", "1.1", "1.5", "2.2", "3", "4", "5.5", "7.5",    "9.2", "11", "15", "18.5", "22", "30", "37", "45", "55",    "75", "90", "110", "132", "160"  ])}
-              {renderDropdown("Chiller Voltage",  chillerVoltage,  (e) => setChillerVoltage(e.target.value),  ["230", "380"])}
+              {renderDropdown("Control Type",  chillerControlType,  (e) => setChillerControlType(e.target.value),  ["own Panel", "Local"])}
+              {renderDropdown("Pieces",  chillerPieces,  (e) => setChillerPieces(e.target.value),  ["1", "2", "3", "4", "5", "6", "7", "8"])}
+              {renderDropdown("Power",  chillerPower,  (e) => setChillerPower(e.target.value),  [    "0.55", "0.75", "1.1", "1.5", "2.2", "3", "4", "5.5", "7.5",    "9.2", "11", "15", "18.5", "22", "30", "37", "45", "55",    "75", "90", "110", "132", "160"  ])}
+              {renderDropdown("Voltage",  chillerVoltage,  (e) => setChillerVoltage(e.target.value),  ["230", "380"])}
 
-              {renderDropdown('Chiller Maintenance Contacts',  chillerMaintenanceContacts,  (e) => setChillerMaintenanceContacts(e.target.value),  ['none', 'Each Chiller', 'All Chiller'])}
-              {renderDropdown('Chiller Emergency Contacts',  chillerEmergencyContacts,  (e) => setChillerEmergencyContacts(e.target.value),  ['none', 'Each Chiller', 'All Chiller'])}
-              {renderDropdown('Chiller Flow Contacts',  chillerFlowContacts,  (e) => setChillerFlowContacts(e.target.value),  ['none', 'Each Chiller', 'All Chiller'])}
+              {renderDropdown('Maintenance Safety Contacts',  chillerMaintenanceContacts,  (e) => setChillerMaintenanceContacts(e.target.value),  ['none', 'Each Chiller', 'All Chiller'])}
+              {renderDropdown('Emergency Safety Contacts',  chillerEmergencyContacts,  (e) => setChillerEmergencyContacts(e.target.value),  ['none', 'Each Chiller', 'All Chiller'])}
+              {renderDropdown('Flow Safety Contacts',  chillerFlowContacts,  (e) => setChillerFlowContacts(e.target.value),  ['none', 'Each Chiller', 'All Chiller'])}
 
               {renderDropdown('Temperature Measurement',  chillerTemperatureMeasurement,  (e) => setChillerTemperatureMeasurement(e.target.value),  ['none', 'Primer Side Temperature', 'Seconder Side Temperature', 'Primer and Seconder Side Temperature'])}
 

@@ -1532,16 +1532,16 @@ setShowTable(true);
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Fan System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Fan Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Fan Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Fan Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
               {renderDropdown('Fan Control Type', fanControl, handleFanControlChange, ['MCC', 'Packaged'])}
               {renderDropdown('Fan Control Protocol Integration', fancontrolpackagedprotocolIntegration, (e) => setFanControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], fanControl === 'MCC')}
               
               <TextField
               fullWidth
               variant="outlined"
-              placeholder="Fan Control Packaged Integration Points"
+              placeholder="Control Packaged Integration Points"
               value={fanControlPackagedPoints}
               onChange={(e) => setFanControlPackagedPoints(e.target.value)}
               disabled={fanControl === 'MCC'}
@@ -1552,7 +1552,7 @@ setShowTable(true);
               }}
               />
               
-              {renderDropdown('Fan Control Packaged Hard Points', fancontrolpackagedhardpoints, (e) => setFanControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], fanControl === 'MCC')}
+              {renderDropdown('Control Packaged Hard Points', fancontrolpackagedhardpoints, (e) => setFanControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], fanControl === 'MCC')}
 
               {renderDropdown('Aspirator Control', aspControl, handleAspControlChange, ['none', 'DOL', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta','Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'], isPackaged)}
               {renderDropdown('Aspirator Pieces', aspPieces, (e) => setAspPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], aspControl === 'none'|| isPackaged)}
