@@ -67,6 +67,11 @@ export default function CoolingTowerPage() {
   const [showTable, setShowTable] = useState(false);
 
   const [coolingTowerControl, setCoolingTowerControl] = useState('');
+
+  const [ctIntegration, setCtIntegration] = useState('');
+  const [ctProtocolIntegration, setCtProtocolIntegration] = useState('');
+  const [ctIntegrationPoints, setCtIntegrationPoints] = useState('');
+
   const [coolingTowerPieces, setCoolingTowerPieces] = useState('');
   const [coolingTowerPower, setCoolingTowerPower] = useState('');
   const [coolingTowerVoltage, setCoolingTowerVoltage] = useState('');
@@ -138,6 +143,32 @@ const renderDropdown = (
               <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
 
               {renderDropdown('Control',  coolingTowerControl,  (e) => setCoolingTowerControl(e.target.value),  ['own Panel', 'VFD'])}
+              
+              {renderDropdown('Integration',  ctIntegration,  (e) => {    const v = e.target.value;    setCtIntegration(v);    if (v === 'none') {      setCtProtocolIntegration('');      setCtIntegrationPoints('');    }  },  ['none', 'own Panel'])}
+
+              {renderDropdown('Protocol Integration',  ctProtocolIntegration,  (e) => setCtProtocolIntegration(e.target.value),  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],  ctIntegration === 'none' )}
+
+<TextField
+  fullWidth
+  variant="outlined"
+  placeholder="Cooling Tower Integration Points"
+  value={ctIntegrationPoints}
+  onChange={(e) => setCtIntegrationPoints(e.target.value)}
+  disabled={ctIntegration === 'none'}
+  InputProps={{
+    style: {
+      color: (ctIntegration === 'none') ? '#888' : 'white',
+      backgroundColor: (ctIntegration === 'none') ? '#1e1e1e' : 'transparent'
+    }
+  }}
+  sx={{
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: (ctIntegration === 'none') ? '#555' : '#B0BEC5'
+    }
+  }}
+/>
+              
+              
               {renderDropdown('Pieces',  coolingTowerPieces,  (e) => setCoolingTowerPieces(e.target.value),  ['1','2','3','4','5','6','7','8'])}
               {renderDropdown('Power',  coolingTowerPower,  (e) => setCoolingTowerPower(e.target.value),  [  '0.55','0.75','1.1','1.5','2.2','3','4','5.5','7.5','11','15',    '18.5','22','30','37','45','55','75','90','110','132','160'  ])}
               {renderDropdown('Voltage',  coolingTowerVoltage,  (e) => setCoolingTowerVoltage(e.target.value),  ['230','380'])}

@@ -127,6 +127,14 @@ React.useEffect(() => {
   }
 }, [airCurtainIntegration]);
 
+
+useEffect(() => {
+  if (airCurtainThermostatIntegration === 'none') {
+    setAirCurtainThermostatProtocol('');
+    setAirCurtainThermostatIntegrationPoints('');
+  }
+}, [airCurtainThermostatIntegration]);
+
 useEffect(() => {
   const valveFunctions = [
     'On/Off Valve Actuator',
@@ -136,6 +144,8 @@ useEffect(() => {
     'Proportional Valve Actuator',
     'Proportional Valve Actuator with Feedback'
   ];
+
+
 
 
   // Valf türlerinden biri SEÇİLİRSE veya 'none' seçilirse ➜ ikisini de temizle
@@ -589,7 +599,9 @@ if (
 
 {renderDropdown('Thermostat Integration', airCurtainThermostatIntegration, (e: SelectChangeEvent) => setAirCurtainThermostatIntegration(e.target.value), ['none', 'Thermostat'], airCurtainControlType === 'with DDC')}
 
-{renderDropdown('Thermostat Protocol',  airCurtainThermostatProtocol,  (e: SelectChangeEvent) => setAirCurtainThermostatProtocol(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], airCurtainControlType === 'with DDC')}
+{renderDropdown('Thermostat Protocol',  airCurtainThermostatProtocol,  (e: SelectChangeEvent) => setAirCurtainThermostatProtocol(e.target.value),  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],  airCurtainControlType === 'with DDC' || airCurtainThermostatIntegration === 'none')}
+
+
 <TextField
   label="Thermostat Integration Points"
   value={airCurtainThermostatIntegrationPoints}

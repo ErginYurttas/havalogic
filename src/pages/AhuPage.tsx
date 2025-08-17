@@ -362,6 +362,14 @@ React.useEffect(() => {
   }
 }, [ahuControl]);
 
+
+React.useEffect(() => {
+  if (heatRecoveryControl === 'none' || heatRecoveryControl === 'Plate Recuperator' || isPackaged) {
+    setHeatRecoveryPower('');
+    setHeatRecoveryVoltage('');
+  }
+}, [heatRecoveryControl, isPackaged]);
+
   const renderDropdown = (
     label: string,
     value: string,
@@ -647,8 +655,8 @@ if (!(ahuControl === 'MCC' && vantControl && vantpieces)) {
     { point: 'Vantilator Fan Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Vantilator Fan Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Vantilator Fan Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
-    { point: 'Vantilator Fan Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
-    { point: 'Vantilator Fan Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
+    { point: 'Vantilator Fan Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
+    { point: 'Vantilator Fan Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 }
   ];
 
   for (let i = 1; i <= vantpieces; i++) {
@@ -776,7 +784,7 @@ if (vantControl === 'EC') {
     { point: 'Vantilator EC Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Vantilator EC Fan Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
     { point: 'Vantilator EC Fan Feedback', ai: 1, ao: 0, di: 0, do: 0 },
-    { point: 'Vantilator EC Fan Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
+    { point: 'Vantilator EC Fan Command', ai: 0, ao: 0, di: 0, do: 1 }
   ];
 
   for (let i = 1; i <= vantpieces; i++) {
@@ -806,9 +814,7 @@ if (vantControl === 'EC') {
 let asprows: any[] = [];
 const asppieces = Number(aspPieces);
 
-if (!(ahuControl === 'MCC' && aspControl && asppieces)) {
-  asprows = [];
-} else {}
+if (ahuControl === 'MCC' && aspControl && aspControl !== 'none' && asppieces > 0) {
 
 if (aspControl === 'DOL' || aspControl === 'Star-Delta') {
   const dolRows = [
@@ -846,8 +852,8 @@ if (aspControl === 'VFD') {
     { point: 'Aspirator Fan Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Aspirator Fan Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Aspirator Fan Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
-    { point: 'Aspirator Fan Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
-    { point: 'Aspirator Fan Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
+    { point: 'Aspirator Fan Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
+    { point: 'Aspirator Fan Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 }
   ];
 
   for (let i = 1; i <= asppieces; i++) {
@@ -908,10 +914,10 @@ if (aspControl === 'VFD with By Pass Circuit' || aspControl === 'VFD with By Pas
 
 if (aspControl === 'Soft Starter') {
   const softStarterRows = [
-    { point: 'Aspirator Soft Starter Fan Status', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Soft Starter Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Soft Starter Fan Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Soft Starter Fan Command', ai: 0, ao: 0, di: 0, do: 1 }
+    { point: 'Aspirator Fan Soft Starter Status', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Soft Starter Fault', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Soft Starter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
   ];
 
   for (let i = 1; i <= asppieces; i++) {
@@ -943,7 +949,7 @@ if (aspControl === 'Soft Starter with By Pass Circuit' || aspControl === 'Soft S
     { point: 'Aspirator Fan Soft Starter Fault', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Aspirator Fan Circuit Breaker Fault', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Aspirator Fan Soft Starter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
-    { point: 'Aspirator Fan By Pass Switch Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
+    { point: 'Aspirator Fan By/Pass Switch Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Aspirator Fan Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
   ];
 
@@ -977,7 +983,7 @@ if (aspControl === 'EC') {
     { point: 'Aspirator EC Fan Fault', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Aspirator EC Fan Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
     { point: 'Aspirator EC Fan Feedback', ai: 1, ao: 0, di: 0, do: 0 },
-    { point: 'Aspirator EC Fan Soft Starter Command', ai: 0, ao: 0, di: 0, do: 1 }
+    { point: 'Aspirator EC Fan Command', ai: 0, ao: 0, di: 0, do: 1 }
   ];
 
   for (let i = 1; i <= asppieces; i++) {
@@ -1002,7 +1008,7 @@ if (aspControl === 'EC') {
   }
   
 }
-
+}
 
 
 const maintenanceRows: any[] = [];
@@ -1526,37 +1532,35 @@ if (heatingFunction === 'Proportional Electrical Heater') {
 
 const heatingTemperatureRows: any[] = [];
 
-if (!heatingTemperatureRows.includes(heatingFunction)) {
-  if (heatingTemperature === 'Inlet Temperature') {
-    heatingTemperatureRows.push({
+if (heatingTemperature === 'Inlet Temperature') {
+  heatingTemperatureRows.push({
+    point: 'Heating Coil Inlet Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (heatingTemperature === 'Outlet Temperature') {
+  heatingTemperatureRows.push({
+    point: 'Heating Coil Outlet Temperature',
+    ai: 1, ao: 0, di: 0, do: 0,
+    projectCode, description, location,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+} else if (heatingTemperature === 'Inlet and Outlet Temperature') {
+  heatingTemperatureRows.push(
+    {
       point: 'Heating Coil Inlet Temperature',
       ai: 1, ao: 0, di: 0, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    });
-  } else if (heatingTemperature === 'Outlet Temperature') {
-    heatingTemperatureRows.push({
+    },
+    {
       point: 'Heating Coil Outlet Temperature',
       ai: 1, ao: 0, di: 0, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    });
-  } else if (heatingTemperature === 'Inlet and Outlet Temperature') {
-    heatingTemperatureRows.push(
-      {
-        point: 'Heating Coil Inlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        projectCode, description, location,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      },
-      {
-        point: 'Heating Coil Outlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        projectCode, description, location,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      }
-    );
-  }
+    }
+  );
 }
 
 
@@ -1569,7 +1573,7 @@ if (coolingFunction === 'On/Off Valve Actuator') {
       ai: 0, ao: 0, di: 0, do: 1,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    },
+    }
   );
 }
 
@@ -1586,7 +1590,7 @@ if (coolingFunction === 'On/Off Valve Actuator with Feedback') {
       ai: 0, ao: 0, di: 1, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    },
+    }
   );
 }
 
@@ -1603,7 +1607,7 @@ if (coolingFunction === 'Floating Valve Actuator') {
       ai: 0, ao: 0, di: 0, do: 1,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    },
+    }
     
   );
 }
@@ -1669,7 +1673,7 @@ if (coolingFunction === '1-Staged DX Unit') {
   coolingRows.push(
     { point: 'Cooling DX Unit Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
     { point: 'Cooling DX Unit Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Cooling DX Unit Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
     
 
   );
@@ -1682,7 +1686,7 @@ if (coolingFunction === '2-Staged DX Unit') {
     { point: 'Cooling DX Unit-1 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
     { point: 'Cooling DX Unit-2 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
     { point: 'Cooling DX Unit-2 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Cooling DX Unit-2 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-2 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
   );
 }
 
@@ -1696,7 +1700,7 @@ if (coolingFunction === '3-Staged DX Unit') {
     { point: 'Cooling DX Unit-2 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
     { point: 'Cooling DX Unit-3 Status', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
     { point: 'Cooling DX Unit-3 Fault', ai: 0, ao: 0, di: 1, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Cooling DX Unit-3 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Cooling DX Unit-3 Command', ai: 0, ao: 0, di: 0, do: 1, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
   );
 }
 
@@ -2743,16 +2747,16 @@ if (recuperatorDamperActuator === '2x Floating Damper Actuator with Feedback') {
 
 if (recuperatorDamperActuator === '2x Proportional Damper Actuator') {
   recuperatorDamperRows.push(
-    { point: 'Heat Exchanger Proportional Damper Actuator Proportional Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Heat Exchanger Proportional Damper Actuator Proportional Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
+    { point: 'Heat Exchanger Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
   );
 }
 
 if (recuperatorDamperActuator === '2x Proportional Damper Actuator with Feedback') {
   recuperatorDamperRows.push(
-    { point: 'Heat Exchanger Proportional Damper Actuator Proportional Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Proportional Damper Actuator Command-1', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
     { point: 'Heat Exchanger Proportional Damper Actuator Feedback-1', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
-    { point: 'Heat Exchanger Proportional Damper Actuator Proportional Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
+    { point: 'Heat Exchanger Proportional Damper Actuator Command-2', ai: 0, ao: 1, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 },
     { point: 'Heat Exchanger Proportional Damper Actuator Feedback-2', ai: 1, ao: 0, di: 0, do: 0, projectCode, description, location, modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 }
   );
 }
@@ -3520,8 +3524,8 @@ if (heatRecoveryControl === 'Heat Wheel with MCC (VFD)') {
     { point: 'Heat Exchanger Wheel Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Heat Exchanger Wheel Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Heat Exchanger Wheel Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
-    { point: 'Heat Exchanger Wheel Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
-    { point: 'Heat Exchanger Wheel Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 },
+    { point: 'Heat Exchanger Wheel Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
+    { point: 'Heat Exchanger Wheel Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 },
   ];
   heatExchangerRows = rows.map(row => ({
     projectCode,
@@ -3545,6 +3549,7 @@ if (heatRecoveryControl === 'Heat Wheel with Packaged') {
     { point: 'Heat Exchanger Wheel Frequency Inverter Status', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Heat Exchanger Wheel Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Heat Exchanger Wheel Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
+    { point: 'Heat Exchanger Wheel Frequency Inverter Proportional Command', ai: 0, ao: 1, di: 0, do: 0 },
   ];
   heatExchangerRows = rows.map(row => ({
     projectCode,
@@ -3932,18 +3937,30 @@ setShowTable(true);
               {renderDropdown('Control Protocol Integration', ahucontrolpackagedprotocolIntegration, (e) => setAhuControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], ahuControl === 'MCC')}
               
               <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Control Packaged Integration Points"
-              value={ahuControlPackagedPoints}
-              onChange={(e) => setAhuControlPackagedPoints(e.target.value)}
-              disabled={ahuControl === 'MCC'}
-              InputProps={{
-              style: {
-              color: ahuControl === 'MCC' ? '#888' : 'white'
-              }
-              }}
-              />
+  label="Control Packaged Integration Points"
+  value={ahuControlPackagedPoints}
+  onChange={(e) => setAhuControlPackagedPoints(e.target.value)}
+  fullWidth
+  variant="outlined"
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: ahuControl === 'MCC' ? '#555' : '#B0BEC5',
+    },
+  }}
+  disabled={ahuControl === 'MCC'}
+  InputProps={{
+    sx: {
+      backgroundColor: ahuControl === 'MCC' ? '#1e1e1e' : 'transparent',
+
+      '& .MuiInputBase-input': { color: 'white' },
+
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
               
               {renderDropdown('Control Packaged Hard Points', ahucontrolpackagedhardpoints, (e) => setAhuControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], ahuControl === 'MCC')}
 
@@ -4000,8 +4017,8 @@ setShowTable(true);
               {renderDropdown('Run Around Pump Voltage', pumpVoltage, (e) => setPumpVoltage(e.target.value), ['230', '380'], runAroundPumpControl === 'none'|| isPackaged)}
               {renderDropdown('Run Around Coil Temperature', runAroundTemperature,  (e) => setRunAroundTemperature(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], runAroundPumpControl === 'none'|| isPackaged)}
               {renderDropdown('Heat Exchanger Control', heatRecoveryControl, (e) => setHeatRecoveryControl(e.target.value), ['none', 'Heat Wheel with MCC (DOL)', 'Heat Wheel with MCC (VFD)','Heat Wheel with Packaged', 'Plate Recuperator'], isPackaged)}
-              {renderDropdown('Heat Exchanger Control Unit Power',  heatRecoveryPower,  (e) => setHeatRecoveryPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11'], heatRecoveryControl === 'none' || isPackaged)}
-              {renderDropdown('Heat Exchanger Control Unit Voltage', heatRecoveryVoltage, (e) => setHeatRecoveryVoltage(e.target.value), ['230', '380'], heatRecoveryControl === 'none' || isPackaged)}
+              {renderDropdown('Heat Exchanger Control Unit Power',  heatRecoveryPower,  (e) => setHeatRecoveryPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11'], (heatRecoveryControl === 'none' || heatRecoveryControl === 'Plate Recuperator' || isPackaged))}
+              {renderDropdown('Heat Exchanger Control Unit Voltage', heatRecoveryVoltage, (e) => setHeatRecoveryVoltage(e.target.value), ['230', '380'], (heatRecoveryControl === 'none' || heatRecoveryControl === 'Plate Recuperator' || isPackaged))}
               {renderDropdown('Humidification Function', humidificationFunction, (e) => setHumidificationFunction(e.target.value), ['none', 'Proportional Humidification', '1-Staged Humidification', '2-Staged Humidification', '3-Staged Humidification'], isPackaged)}
               {renderDropdown('Humidification Power', humidificationPower, (e) => setHumidificationPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], humidificationFunction === 'none'|| isPackaged)}
               {renderDropdown('Humidification Voltage', humidificationVoltage, (e) => setHumidificationVoltage(e.target.value), ['230', '380'], humidificationFunction === 'none'|| isPackaged)}
