@@ -63,30 +63,12 @@ export default function CollectorPage() {
   const [projectCode, setProjectCode] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
+
+  const [temperatureMeasurements, setTemperatureMeasurements] = useState('');
+  const [pressureMeasurements, setPressureMeasurements] = useState('');
+
   const [tableRows, setTableRows] = useState<any[]>([]);
   const [showTable, setShowTable] = useState(false);
-
-  const [collectorTemperatureMeasurement, setCollectorTemperatureMeasurement] = useState('');
-  const [collectorPressureMeasurement, setCollectorPressureMeasurement] = useState('');
-
-
-const renderDropdown = (
-  label: string,
-  value: string,
-  onChange: (e: SelectChangeEvent) => void,
-  options: string[],
-  disabled: boolean = false
-) => (
-  <FormControl fullWidth sx={{ mt: 2 }} disabled={disabled}>
-    <InputLabel sx={labelStyles}>{label}</InputLabel>
-    <Select value={value} label={label} onChange={onChange} sx={selectStyles}>
-      {options.map((opt, i) => (
-        <MenuItem key={i} value={opt}>{opt}</MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-);
-
 
   const handleLogout = () => {
     navigate('/');
@@ -96,40 +78,54 @@ const renderDropdown = (
     navigate('/projects');
   };
 
+  const renderDropdown = (
+  label: string,
+  value: string,
+  onChange: (e: SelectChangeEvent) => void,
+  options: string[],
+  disabled: boolean = false
+) => (
+  <FormControl fullWidth disabled={disabled}>
+    <InputLabel sx={labelStyles}>{label}</InputLabel>
+    <Select value={value} label={label} onChange={onChange} sx={selectStyles}>
+      {options.map((option, i) => (
+        <MenuItem key={i} value={option}>
+          {option}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+);
+
 const handleSaveCollector = () => {
-  const temperatureMeasurementRows: any[] = [];
-  if (collectorTemperatureMeasurement === 'Inlet Temperature') {
-    temperatureMeasurementRows.push({
-      projectCode,
-      description,
-      location,
+  const rows: any[] = [];
+
+
+  const temperatureRows: any[] = [];
+  if (temperatureMeasurements === 'Inlet Temperature') {
+    temperatureRows.push({
+      projectCode, description, location,
       point: 'Collector Inlet Temperature',
       ai: 1, ao: 0, di: 0, do: 0,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     });
-  } else if (collectorTemperatureMeasurement === 'Outlet Temperature') {
-    temperatureMeasurementRows.push({
-      projectCode,
-      description,
-      location,
+  } else if (temperatureMeasurements === 'Outlet Temperature') {
+    temperatureRows.push({
+      projectCode, description, location,
       point: 'Collector Outlet Temperature',
       ai: 1, ao: 0, di: 0, do: 0,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     });
-  } else if (collectorTemperatureMeasurement === 'Inlet and Outlet Temperature') {
-    temperatureMeasurementRows.push(
+  } else if (temperatureMeasurements === 'Inlet and Outlet Temperature') {
+    temperatureRows.push(
       {
-        projectCode,
-        description,
-        location,
+        projectCode, description, location,
         point: 'Collector Inlet Temperature',
         ai: 1, ao: 0, di: 0, do: 0,
         modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
       },
       {
-        projectCode,
-        description,
-        location,
+        projectCode, description, location,
         point: 'Collector Outlet Temperature',
         ai: 1, ao: 0, di: 0, do: 0,
         modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
@@ -137,55 +133,54 @@ const handleSaveCollector = () => {
     );
   }
 
-  const pressureMeasurementRows: any[] = [];
-  if (collectorPressureMeasurement === 'Inlet Pressure') {
-    pressureMeasurementRows.push({
-      projectCode,
-      description,
-      location,
-      point: 'Collector Inlet Pressure',
+  const pressureRows: any[] = [];
+  if (pressureMeasurements === 'Inlet Line Pressure') {
+    pressureRows.push({
+      projectCode, description, location,
+      point: 'Collector Inlet Line Pressure',
       ai: 1, ao: 0, di: 0, do: 0,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     });
-  } else if (collectorPressureMeasurement === 'Outlet Pressure') {
-    pressureMeasurementRows.push({
-      projectCode,
-      description,
-      location,
-      point: 'Collector Outlet Pressure',
+  } else if (pressureMeasurements === 'Outlet Line Pressure') {
+    pressureRows.push({
+      projectCode, description, location,
+      point: 'Collector Outlet Line Pressure',
       ai: 1, ao: 0, di: 0, do: 0,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     });
-  } else if (collectorPressureMeasurement === 'Inlet and Outlet Pressure') {
-    pressureMeasurementRows.push(
+  } else if (pressureMeasurements === 'Inlet and Outlet Line Pressure') {
+    pressureRows.push(
       {
-        projectCode,
-        description,
-        location,
-        point: 'Collector Inlet Pressure',
+        projectCode, description, location,
+        point: 'Collector Inlet Line Pressure',
         ai: 1, ao: 0, di: 0, do: 0,
         modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
       },
       {
-        projectCode,
-        description,
-        location,
-        point: 'Collector Outlet Pressure',
+        projectCode, description, location,
+        point: 'Collector Outlet Line Pressure',
         ai: 1, ao: 0, di: 0, do: 0,
         modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
       }
     );
+  } else if (pressureMeasurements === 'Differential Pressure') {
+    pressureRows.push({
+      projectCode, description, location,
+      point: 'Collector Differential Pressure',
+      ai: 1, ao: 0, di: 0, do: 0,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    });
   }
 
-  setTableRows([
-    ...temperatureMeasurementRows,
-    ...pressureMeasurementRows
+
+setTableRows([
+
+    ...temperatureRows,
+    ...pressureRows,
+
   ]);
   setShowTable(true);
 };
-
-
-
 
   return (
     <Box sx={{ minHeight: '100vh', background: 'radial-gradient(circle at top right, #1A237E, #000000)', color: '#FFFFFF', display: 'flex', flexDirection: 'column' }}>
@@ -208,17 +203,72 @@ const handleSaveCollector = () => {
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Collector System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField
+  label="Project Code"
+  value={projectCode}
+  onChange={(e) => setProjectCode(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+    }
+  }}
+/>
 
-              {renderDropdown('Temperature Measurement',  collectorTemperatureMeasurement,  (e) => setCollectorTemperatureMeasurement(e.target.value),  ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
+<TextField
+  label="Description"
+  value={description}
+  onChange={(e) => setDescription(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+    }
+  }}
+/>
 
-              {renderDropdown('Pressure Measurement',  collectorPressureMeasurement,  (e) => setCollectorPressureMeasurement(e.target.value),  ['none', 'Inlet Pressure', 'Outlet Pressure', 'Inlet and Outlet Pressure'])}
+<TextField
+  label="Located"
+  value={location}
+  onChange={(e) => setLocation(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+    }
+  }}
+/>
 
+{renderDropdown('Temperature Measurement',  temperatureMeasurements,  (e) => setTemperatureMeasurements(e.target.value),  ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
 
-
-
+{renderDropdown('Pressure Measurement',  pressureMeasurements,  (e) => setPressureMeasurements(e.target.value),  ['none', 'Inlet Line Pressure', 'Outlet Line Pressure', 'Inlet and Outlet Line Pressure', 'Differential Pressure'])}
               <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveCollector}>Send to Table</PrimaryButton>
               <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
             </Stack>

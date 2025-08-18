@@ -135,6 +135,18 @@ React.useEffect(() => {
 }, [PumpIntegration]);
 
 React.useEffect(() => {
+  if (isOwnPanel) {
+    setPressureMeasurements('');
+  }
+}, [isOwnPanel]);
+
+React.useEffect(() => {
+  if (pumpControlType === 'MCC') {
+    setPressureMeasurements('');
+  }
+}, [pumpControlType]);
+
+React.useEffect(() => {
   if (pumpControlType === 'MCC') {
     setPumpControlPackagedProtocolIntegration('');
     setPumpControlPackagedPoints('');
@@ -313,8 +325,8 @@ if (pumpControl === 'VFD') {
     { point: 'Pump Frequency Inverter Fault', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Pump Frequency Inverter Auto/Manual', ai: 0, ao: 0, di: 1, do: 0 },
     { point: 'Pump Frequency Inverter Command', ai: 0, ao: 0, di: 0, do: 1 },
-    { point: 'Pump Frequency Inverter Proportional Control', ai: 1, ao: 0, di: 0, do: 0 },
-    { point: 'Pump Frequency Inverter Feedback', ai: 0, ao: 1, di: 0, do: 0 }
+    { point: 'Pump Frequency Inverter Proportional Control', ai: 0, ao: 1, di: 0, do: 0 },
+    { point: 'Pump Frequency Inverter Feedback', ai: 1, ao: 0, di: 0, do: 0 }
   ];
 
   for (let i = 1; i <= Pumppieces; i++) {
@@ -532,30 +544,30 @@ if (emergencySafety === 'for All Pumps') {
 
 const TemperatureMeasurementsRows: any[] = [];
 
-if (temperaturemeasurements === 'Supply Temperature') {
+if (temperaturemeasurements === 'Inlet Temperature') {
   TemperatureMeasurementsRows.push({
-    point: 'Supply Temperature',
+    point: 'Pump Inlet Temperature',
     ai: 1, ao: 0, di: 0, do: 0,
     projectCode, description, location,
     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
   });
-} else if (temperaturemeasurements === 'Return Temperature') {
+} else if (temperaturemeasurements === 'Outlet Temperature') {
   TemperatureMeasurementsRows.push({
-    point: 'Return Temperature',
+    point: 'Pump Outlet Temperature',
     ai: 1, ao: 0, di: 0, do: 0,
     projectCode, description, location,
     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
   });
-} else if (temperaturemeasurements === 'Supply and Return Temperature') {
+} else if (temperaturemeasurements === 'Inlet and Outlet Temperature') {
   TemperatureMeasurementsRows.push(
     {
-      point: 'Supply Temperature',
+      point: 'Pump Inlet Temperature',
       ai: 1, ao: 0, di: 0, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     },
     {
-      point: 'Return Temperature',
+      point: 'Pump Outlet Temperature',
       ai: 1, ao: 0, di: 0, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
@@ -568,32 +580,32 @@ if (temperaturemeasurements === 'Supply Temperature') {
 
 const PressureMeasurementsRows: any[] = [];
 
-if (pressuremeasurements === 'Supply Line Pressure') {
+if (pressuremeasurements === 'Inlet Pressure') {
   PressureMeasurementsRows.push({
-    point: 'Supply Line Pressure',
+    point: 'Pump Inlet Pressure',
     ai: 1, ao: 0, di: 0, do: 0,
     projectCode, description, location,
     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
   });
 
-} else if (pressuremeasurements === 'Return Line Pressure') {
+} else if (pressuremeasurements === 'Outlet Pressure') {
   PressureMeasurementsRows.push({
-    point: 'Return Line Pressure',
+    point: 'Pump Outlet Pressure',
     ai: 1, ao: 0, di: 0, do: 0,
     projectCode, description, location,
     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
   });
 
-} else if (pressuremeasurements === 'Supply and Return Line Pressure') {
+} else if (pressuremeasurements === 'Inlet and Outlet Pressure') {
   PressureMeasurementsRows.push(
     {
-      point: 'Supply Line Pressure',
+      point: 'Pump Inlet Pressure',
       ai: 1, ao: 0, di: 0, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
     },
     {
-      point: 'Return Line Pressure',
+      point: 'Pump Outlet Pressure',
       ai: 1, ao: 0, di: 0, do: 0,
       projectCode, description, location,
       modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
@@ -602,16 +614,13 @@ if (pressuremeasurements === 'Supply Line Pressure') {
 
 } else if (pressuremeasurements === 'Differential Pressure') {
   PressureMeasurementsRows.push({
-    point: 'Differential Pressure',
+    point: 'Pump Differential Pressure',
     ai: 1, ao: 0, di: 0, do: 0,
     projectCode, description, location,
     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
   });
 
 }
-
-
-
 
 
 const PumpIntegrationRows: any[] = [];
@@ -664,10 +673,10 @@ setTableRows([
   ...Pumprows,
   ...maintenanceRows,
   ...emergencyRows,
-  ...PumpIntegrationRows,
   ...PumpControlPackagedRows,
   ...TemperatureMeasurementsRows,
-  ...PressureMeasurementsRows
+  ...PressureMeasurementsRows,
+  ...PumpIntegrationRows
 ]);
 
 
@@ -701,27 +710,120 @@ setShowTable(true);
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Pump System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField
+  label="Project Code"
+  value={projectCode}
+  onChange={(e) => setProjectCode(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{
+    sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' },
+    },
+  }}
+/>
+
+<TextField
+  label="Description"
+  value={description}
+  onChange={(e) => setDescription(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{
+    sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' },
+    },
+  }}
+/>
+
+<TextField
+  label="Located"
+  value={location}
+  onChange={(e) => setLocation(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{
+    sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' },
+    },
+  }}
+/>
+
               {renderDropdown( 'Control Type', pumpControlType, handlePumpControlTypeChange, ['MCC', 'own Panel'])}
-              {renderDropdown( 'Control Protocol Integration', PumpcontrolpackagedprotocolIntegration, (e) => setPumpControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], pumpControlType === 'MCC' )}   
+              {renderDropdown( 'Control Panel Integration Points', PumpcontrolpackagedprotocolIntegration, (e) => setPumpControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], pumpControlType === 'MCC' )}   
 
               <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Control Integration Points"
-              value={PumpControlPackagedPoints}
-              onChange={(e) => setPumpControlPackagedPoints(e.target.value)}
-              disabled={pumpControlType === 'MCC'} 
-              InputProps={{
-              style: {
-              color: pumpControlType === 'MCC' ? '#888' : 'white'
-                  }
-                }}
-              />
+  label="Control Panel Integration Points"
+  value={PumpControlPackagedPoints}
+  onChange={(e) => setPumpControlPackagedPoints(e.target.value)}
+  fullWidth
+  variant="outlined"
+  disabled={pumpControlType === 'MCC'}
+  sx={{
+
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: pumpControlType === 'MCC' ? '#555' : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: pumpControlType === 'MCC' ? '#555' : '#CFD8DC',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: pumpControlType === 'MCC' ? '#555' : '#90A4AE',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: pumpControlType === 'MCC' ? '#1e1e1e' : 'transparent',
+
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+  InputLabelProps={{
+
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' },
+    },
+  }}
+/>
+
               
-              {renderDropdown('Control Hard Points',  Pumpcontrolpackagedhardpoints, (e) => setPumpControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], pumpControlType === 'MCC')}
+              {renderDropdown('Control Panel Hard Points',  Pumpcontrolpackagedhardpoints, (e) => setPumpControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], pumpControlType === 'MCC')}
 
               {renderDropdown('Control', pumpControl, handlePumpControlChange, ['DOL', 'Power Supply Only', 'Soft Starter','Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta', 'Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta' ], isOwnPanel )}
               {renderDropdown('Pieces', PumpPieces, (e) => setPumpPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], pumpControl === 'none'|| isOwnPanel)}
@@ -730,8 +832,8 @@ setShowTable(true);
               {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value), ['none', 'for Each Pump', 'for All Pumps'], isOwnPanel)}
               {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Pump', 'for All Pumps'], isOwnPanel)}
              
-              {renderDropdown('Temperature Measuremets', temperaturemeasurements, (e) => setTemperatureMeasurements(e.target.value), ['none', 'Supply Temperature', 'Return Temperature', 'Supply and Return Temperature'], isOwnPanel)}
-              {renderDropdown('Pressure Measuremets', pressuremeasurements, (e) => setPressureMeasurements(e.target.value), ['none', 'Supply Line Pressure', 'Return Line Pressure', 'Supply and Return Line Pressure','Differential Pressure'], isOwnPanel)}
+              {renderDropdown('Temperature Measuremets', temperaturemeasurements, (e) => setTemperatureMeasurements(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'], isOwnPanel)}
+              {renderDropdown('Pressure Measuremets', pressuremeasurements, (e) => setPressureMeasurements(e.target.value), ['none', 'Inlet Pressure', 'Outlet Pressure', 'Inlet and Outlet Pressure','Differential Pressure'], isOwnPanel)}
 
               {renderDropdown('Pump Integration', PumpIntegration, (e) => setPumpIntegration(e.target.value), ['none', 'VFD'], isOwnPanel)}
               {renderDropdown('Pump Protocol Integration', PumpprotocolIntegration, (e) => setPumpProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], PumpIntegration === 'none'|| isOwnPanel)}
@@ -742,16 +844,34 @@ setShowTable(true);
   value={PumpIntegrationPoints}
   onChange={(e) => setPumpIntegrationPoints(e.target.value)}
   fullWidth
+  variant="outlined"
   sx={{
-    '& .MuiOutlinedInput-notchedOutline': {
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
       borderColor: (PumpIntegration === 'none' || isOwnPanel) ? '#555' : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: (PumpIntegration === 'none' || isOwnPanel) ? '#555' : '#CFD8DC',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: (PumpIntegration === 'none' || isOwnPanel) ? '#555' : '#90A4AE',
     },
   }}
   disabled={PumpIntegration === 'none' || isOwnPanel}
   InputProps={{
-    style: {
-      color: (PumpIntegration === 'none' || isOwnPanel) ? '#888' : 'white',
+    sx: {
       backgroundColor: (PumpIntegration === 'none' || isOwnPanel) ? '#1e1e1e' : 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' },
     },
   }}
 />

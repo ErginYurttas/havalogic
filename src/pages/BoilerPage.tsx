@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -41,6 +42,7 @@ const PrimaryButton = styled(ModernButton)({
   }
 });
 
+// 🔹 PumpPage ile aynı stil
 const selectStyles = {
   color: '#ECEFF1',
   '.MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
@@ -63,410 +65,472 @@ export default function BoilerPage() {
   const [projectCode, setProjectCode] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
+
+  const [controlType, setControlType] = useState(''); 
+  const [pieces, setPieces] = useState('');
+  const [power, setBoilerPower] = useState('');
+  const [voltage, setBoilerVoltage] = useState('');
+  const [maintenanceSafety, setMaintenanceSafety] = useState('');
+  const [emergencySafety, setEmergencySafety] = useState('');
+  const [hightemperatureSafety, setHighTemperatureSafety] = useState('');
+  const [gasleakageSafety, setGasLeakageSafety] = useState('');
+  const [temperaturemeasurements, setTemperatureMeasurements] = useState('');
+  const [protocolIntegration, setProtocolIntegration] = useState('');
+  const [protocolIntegrationPoints, setProtocolIntegrationPoints] = useState('');
+  const [hardPoints, setHardPoints] = useState(''); 
+
+  const [balanceTank, setBalanceTank] = useState('');
+  const [balanceTankTemperature, setBalanceTankTemperature] = useState('');
+
+
   const [tableRows, setTableRows] = useState<any[]>([]);
   const [showTable, setShowTable] = useState(false);
 
-  const [boilerControlType, setBoilerControlType] = useState('');
-  const [boilerPieces, setBoilerPieces] = useState('');
-  const [boilerPower, setBoilerPower] = useState('');
-  const [boilerVoltage, setBoilerVoltage] = useState('');
+  const isLocal = controlType === 'local';
 
-  const [boilerMaintenanceContacts, setBoilerMaintenanceContacts] = useState('');
-  const [boilerEmergencyContacts, setBoilerEmergencyContacts] = useState('');
-  const [boilerHighTemperatureContacts, setBoilerHighTemperatureContacts] = useState('');
-  const [boilerGasLeakageContacts, setBoilerGasLeakageContacts] = useState('');
-
-  const [boilerTemperature, setBoilerTemperature] = useState('');
-  const [boilerBalanceTank, setBoilerBalanceTank] = useState('');
-  const [boilerBalanceTankTemperature, setBoilerBalanceTankTemperature] = useState('');
-
-  const [boilerIntegration, setBoilerIntegration] = useState('');
-  const [boilerProtocolIntegration, setBoilerProtocolIntegration] = useState('');
-  const [boilerIntegrationPoints, setBoilerIntegrationPoints] = useState('');
-
-  const [protocolDisabled, setProtocolDisabled] = useState(false);
-  const [pointsDisabled, setPointsDisabled] = useState(false);
 
   useEffect(() => {
-  if (boilerBalanceTank === 'none') {
-    setBoilerBalanceTankTemperature('');
-  }
-}, [boilerBalanceTank]);
+    if (isLocal) {
+      setProtocolIntegration('');
+      setProtocolIntegrationPoints('');
+      setHardPoints('');
+    }
+  }, [isLocal]);
 
-  const handleLogout = () => {
-    navigate('/');
-  };
-
-  const handleBack = () => {
-    navigate('/projects');
-  };
-
+  const handleLogout = () => navigate('/');
+  const handleBack = () => navigate('/projects');
 
 
   const renderDropdown = (
-  label: string,
-  value: string,
-  onChange: (e: SelectChangeEvent) => void,
-  options: string[],
-  disabled: boolean = false
-) => (
-  <FormControl fullWidth sx={{ mt: 2 }} disabled={disabled}>
-    <InputLabel sx={labelStyles}>{label}</InputLabel>
-    <Select
-      value={value}
-      label={label}
-      onChange={onChange}
-      sx={selectStyles}
-    >
-      {options.map((option, index) => (
-        <MenuItem key={index} value={option}>
-          {option}
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-);
+    label: string,
+    value: string,
+    onChange: (e: SelectChangeEvent) => void,
+    options: string[],
+    disabled: boolean = false
+  ) => (
+    <FormControl fullWidth disabled={disabled}>
+      <InputLabel sx={labelStyles}>{label}</InputLabel>
+      <Select value={value} label={label} onChange={onChange} sx={selectStyles}>
+        {options.map((option, index) => (
+          <MenuItem key={index} value={option}>{option}</MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
 
-
-const handleBoilerIntegrationChange = (e: SelectChangeEvent) => {
-  const value = e.target.value;
-  setBoilerIntegration(value);
-
-  if (value === 'none') {
-    setBoilerProtocolIntegration('');
-    setBoilerIntegrationPoints('');
-    setProtocolDisabled(true);
-    setPointsDisabled(true);
-  } else {
-    setProtocolDisabled(false);
-    setPointsDisabled(false);
+useEffect(() => {
+  if (balanceTank === 'none') {
+    setBalanceTankTemperature('');
   }
-};
+}, [balanceTank]);
 
+useEffect(() => {
+  if (balanceTank === 'none') setBalanceTankTemperature('');
+}, [balanceTank]);
 
-
-const handleSaveBoiler = () => {
+  const handleSave = () => {
   const rows: any[] = [];
+  const hardPointsRows: any[] = [];
+  const n = parseInt(pieces) || 1;
 
-  const code = projectCode;
-  const desc = description;
-  const loc = location;
-
-  // Pieces sayısı
-  const count = parseInt(boilerPieces) || 1;
-  const isMultiple = count > 1;
-
-  // Hangi control type seçiliyse ona göre baz satır isimleri
-  let pointNames: string[] = [];
-  if (boilerControlType === 'Local') {
-    pointNames = ['Boiler Status', 'Boiler Fault', 'Boiler Command'];
-  } else if (boilerControlType === 'Cascad') {
-    pointNames = ['Cascad Panel Status', 'Cascad Panel Fault', 'Cascad Panel Command'];
-  }
-
-  // Parçala ve satırları oluştur
-  if (pointNames.length > 0) {
-    for (let i = 1; i <= count; i++) {
-      const suffix = isMultiple ? ` ${i}` : '';
-      pointNames.forEach((name) => {
-        // DI/DO kuralları
-        const isStatus = name.toLowerCase().includes('status');
-        const isFault  = name.toLowerCase().includes('fault');
-        const isCmd    = name.toLowerCase().includes('command');
-
-        rows.push({
-          projectCode: code,
-          description: desc,
-          location: loc,
-          point: `${name}${suffix}`,
-          ai: 0,
-          ao: 0,
-          di: (isStatus || isFault) ? 1 : 0,
-          do: isCmd ? 1 : 0,
-          modbusRtu: 0,
-          modbusTcp: 0,
-          bacnetMstp: 0,
-          bacnetIp: 0,
-          mbus: 0
-        });
-      });
+  // --- Control Type: local
+  if (controlType === 'local') {
+    for (let i = 1; i <= n; i++) {
+      const sfx = n > 1 ? ` ${i}` : '';
+      rows.push(
+        {
+          projectCode, description, location,
+          point: `Boiler Status${sfx}`,
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        },
+        {
+          projectCode, description, location,
+          point: `Boiler Fault${sfx}`,
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        },
+        {
+          projectCode, description, location,
+          point: `Boiler Command${sfx}`,
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        }
+      );
     }
   }
 
 
-  const maintenanceRows: any[] = [];
-  const pcs = parseInt(boilerPieces) || 1;
-  const multi = pcs > 1;
+  if (
+    controlType === 'own Panel' &&
+    ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'].includes(protocolIntegration) &&
+    protocolIntegrationPoints.trim() !== '' &&
+    !isNaN(Number(protocolIntegrationPoints))
+  ) {
+    const val = Number(protocolIntegrationPoints);
+    const base: any = {
+      projectCode, description, location,
+      point: 'Boiler Panel Integration',
+      ai: 0, ao: 0, di: 0, do: 0,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+    };
 
-  if (boilerMaintenanceContacts === 'Each Boiler') {
-    for (let i = 1; i <= pcs; i++) {
-      const sfx = multi ? ` ${i}` : '';
-      maintenanceRows.push({
-        projectCode,
-        description,
-        location,
-        point: `Boiler Maintenance Status${sfx}`,
+    switch (protocolIntegration) {
+      case 'Modbus RTU':   base.modbusRtu = val;   break;
+      case 'Modbus TCP IP':base.modbusTcp = val;   break;
+      case 'Bacnet MSTP':  base.bacnetMstp = val;  break;
+      case 'Bacnet IP':    base.bacnetIp = val;    break;
+    }
+
+    rows.push(base);
+  }
+
+ 
+  if (hardPoints === 'Statuses') {
+    hardPointsRows.push(
+      {
+        point: 'Boiler General Status',
         ai: 0, ao: 0, di: 1, do: 0,
+        projectCode, description, location,
         modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      });
-    }
-  } else if (boilerMaintenanceContacts === 'All Boilers') {
+      },
+      {
+        point: 'Boiler General Fault',
+        ai: 0, ao: 0, di: 1, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      }
+    );
+  }
+
+  if (hardPoints === 'Command') {
+    hardPointsRows.push(
+      {
+        point: 'Boiler General Command',
+        ai: 0, ao: 0, di: 0, do: 1,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      }
+    );
+  }
+
+  if (hardPoints === 'Statuses and Command') {
+    hardPointsRows.push(
+      {
+        point: 'Boiler General Status',
+        ai: 0, ao: 0, di: 1, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      },
+      {
+        point: 'Boiler General Fault',
+        ai: 0, ao: 0, di: 1, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      },
+      {
+        point: 'Boiler General Command',
+        ai: 0, ao: 0, di: 0, do: 1,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      }
+    );
+  }
+
+  // --- Maintenance Safety Contacts (Boiler)
+const maintenanceRows: any[] = [];
+const count = Number(pieces) || 1;
+const multi = count > 1;
+
+if (maintenanceSafety === 'for Each Boiler' && controlType) {
+  for (let i = 1; i <= count; i++) {
+    const sfx = multi ? ` ${i}` : '';
     maintenanceRows.push({
       projectCode,
       description,
       location,
-      point: 'Boiler General Maintenance Status',
-      ai: 0, ao: 0, di: 1, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      point: `Boiler Maintenance Status${sfx}`,
+      ai: 0,
+      ao: 0,
+      di: 1,
+      do: 0,
+      modbusRtu: 0,
+      modbusTcp: 0,
+      bacnetMstp: 0,
+      bacnetIp: 0,
+      mbus: 0
     });
   }
+}
 
-  // --- Emergency Contacts ---
-  const emergencyRows: any[] = [];
-  if (boilerEmergencyContacts === 'Each Boiler') {
-    for (let i = 1; i <= pcs; i++) {
-      const sfx = multi ? ` ${i}` : '';
+if (maintenanceSafety === 'for All Boilers' && controlType) {
+  maintenanceRows.push({
+    projectCode,
+    description,
+    location,
+    point: 'Boiler General Maintenance Status',
+    ai: 0,
+    ao: 0,
+    di: 1,
+    do: 0,
+    modbusRtu: 0,
+    modbusTcp: 0,
+    bacnetMstp: 0,
+    bacnetIp: 0,
+    mbus: 0
+  });
+}
+
+const emergencyRows: any[] = [];
+
+if (emergencySafety === 'for Each Boiler') {
+  const count = parseInt(pieces) || 1;
+  const multi = count > 1;
+  const hasControl = controlType !== '' && controlType !== 'none';
+
+  if (hasControl) {
+    for (let i = 1; i <= count; i++) {
       emergencyRows.push({
         projectCode,
         description,
         location,
-        point: `Boiler Emergency Status${sfx}`,
-        ai: 0, ao: 0, di: 1, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        point: `Boiler Emergency Status${multi ? ` ${i}` : ''}`,
+        ai: 0,
+        ao: 0,
+        di: 1,
+        do: 0,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
       });
     }
-  } else if (boilerEmergencyContacts === 'All Boilers') {
+  }
+}
+
+if (emergencySafety === 'for All Boilers') {
+  const hasControl = controlType !== '' && controlType !== 'none';
+
+  if (hasControl) {
     emergencyRows.push({
       projectCode,
       description,
       location,
       point: 'Boiler General Emergency Status',
-      ai: 0, ao: 0, di: 1, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      ai: 0,
+      ao: 0,
+      di: 1,
+      do: 0,
+      modbusRtu: 0,
+      modbusTcp: 0,
+      bacnetMstp: 0,
+      bacnetIp: 0,
+      mbus: 0
     });
   }
+}
 
-  const highTempRows: any[] = [];
-if (boilerHighTemperatureContacts === 'Each Boiler') {
-  for (let i = 1; i <= pcs; i++) {
-    const sfx = multi ? ` ${i}` : '';
+
+const highTempRows: any[] = [];
+
+if (hightemperatureSafety === 'for Each Boiler') {
+  const pcs = parseInt(pieces) || 1;
+
+  if (controlType !== 'none') {
+    for (let i = 1; i <= pcs; i++) {
+      highTempRows.push({
+        projectCode,
+        description,
+        location,
+        point: `Boiler High Temperature Status${pcs > 1 ? ` ${i}` : ''}`,
+        ai: 0,
+        ao: 0,
+        di: 1,
+        do: 0,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
+    }
+  }
+} else if (hightemperatureSafety === 'for All Boilers') {
+  if (controlType !== 'none') {
     highTempRows.push({
       projectCode,
       description,
       location,
-      point: `Boiler High Temperature Status${sfx}`,
-      ai: 0, ao: 0, di: 1, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      point: 'Boiler General High Temperature Status',
+      ai: 0,
+      ao: 0,
+      di: 1,
+      do: 0,
+      modbusRtu: 0,
+      modbusTcp: 0,
+      bacnetMstp: 0,
+      bacnetIp: 0,
+      mbus: 0
     });
   }
-} else if (boilerHighTemperatureContacts === 'All Boilers') {
-  highTempRows.push({
-    projectCode,
-    description,
-    location,
-    point: 'Boiler General High Temperature Status',
-    ai: 0, ao: 0, di: 1, do: 0,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-  });
 }
 
-
+// --- Gas Leakage Safety Contacts ---
 const gasLeakRows: any[] = [];
-if (boilerGasLeakageContacts === 'Each Boiler') {
-  for (let i = 1; i <= pcs; i++) {
-    const sfx = multi ? ` ${i}` : '';
+
+if (gasleakageSafety === 'for Each Boiler') {
+  const pcs = parseInt(pieces) || 1;
+
+  if (controlType !== 'none') {
+    for (let i = 1; i <= pcs; i++) {
+      gasLeakRows.push({
+        projectCode,
+        description,
+        location,
+        point: `Boiler Gas Leakage Status${pcs > 1 ? ` ${i}` : ''}`,
+        ai: 0,
+        ao: 0,
+        di: 1,
+        do: 0,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0
+      });
+    }
+  }
+} else if (gasleakageSafety === 'for All Boilers') {
+  if (controlType !== 'none') {
     gasLeakRows.push({
       projectCode,
       description,
       location,
-      point: `Boiler Gas Leakage Status${sfx}`,
-      ai: 0, ao: 0, di: 1, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      point: 'Boiler General Gas Leakage Status',
+      ai: 0,
+      ao: 0,
+      di: 1,
+      do: 0,
+      modbusRtu: 0,
+      modbusTcp: 0,
+      bacnetMstp: 0,
+      bacnetIp: 0,
+      mbus: 0
     });
   }
-} else if (boilerGasLeakageContacts === 'All Boilers') {
-  gasLeakRows.push({
-    projectCode,
-    description,
-    location,
-    point: 'Boiler General Gas Leakage Status',
-    ai: 0, ao: 0, di: 1, do: 0,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-  });
 }
 
-const temperatureRows: any[] = [];
+const TemperatureMeasurementsRows: any[] = [];
+const pcs = Math.max(1, parseInt(pieces) || 1);
 
-if (boilerTemperature === 'Inlet Temperature') {
-  temperatureRows.push({
-    projectCode,
-    description,
-    location,
-    point: 'Boiler Inlet Temperature',
-    ai: 1, ao: 0, di: 0, do: 0,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-  });
-} else if (boilerTemperature === 'Outlet Temperature') {
-  temperatureRows.push({
-    projectCode,
-    description,
-    location,
-    point: 'Boiler Outlet Temperature',
-    ai: 1, ao: 0, di: 0, do: 0,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-  });
-} else if (boilerTemperature === 'Inlet and Outlet Temperature') {
-  temperatureRows.push(
-    {
-      projectCode,
-      description,
-      location,
-      point: 'Boiler Inlet Temperature',
-      ai: 1, ao: 0, di: 0, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    },
-    {
-      projectCode,
-      description,
-      location,
-      point: 'Boiler Outlet Temperature',
-      ai: 1, ao: 0, di: 0, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    }
-  );
-}
-
-const balanceRows: any[] = []; 
-
-if (boilerBalanceTankTemperature && boilerBalanceTankTemperature !== 'none') {
-  if (boilerBalanceTankTemperature === 'Primer Side Temperature') {
-    balanceRows.push(
-      {
-        projectCode,
-        description,
-        location,
-        point: 'Balance Tank Primer Side Inlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      },
-      {
-        projectCode,
-        description,
-        location,
-        point: 'Balance Tank Primer Side Outlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      }
-    );
-  }
-  else if (boilerBalanceTankTemperature === 'Seconder Side Temperature') {
-    balanceRows.push(
-      {
-        projectCode,
-        description,
-        location,
-        point: 'Balance Tank Seconder Side Inlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      },
-      {
-        projectCode,
-        description,
-        location,
-        point: 'Balance Tank Seconder Side Outlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      }
-    );
-  }
-  else if (boilerBalanceTankTemperature === 'Primer and Seconder Side Temperature') {
-    balanceRows.push(
-      {
-        projectCode,
-        description,
-        location,
-        point: 'Balance Tank Primer Side Inlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      },
-      {
-        projectCode,
-        description,
-        location,
-        point: 'Balance Tank Primer Side Outlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      },
-      {
-        projectCode,
-        description,
-        location,
-        point: 'Balance Tank Seconder Side Inlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      },
-      {
-        projectCode,
-        description,
-        location,
-        point: 'Balance Tank Seconder Side Outlet Temperature',
-        ai: 1, ao: 0, di: 0, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      }
-    );
-  }
-}
-
-const integrationRows: any[] = [];
-
-if (boilerIntegration === 'own Panel') {
-  const integrationRow = {
-    projectCode,
-    description,
-    location,
-    point: 'Boiler Panel Integration Points',
-    ai: 0, ao: 0, di: 0, do: 0,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-  };
-
-  const pointsValue = Number(boilerIntegrationPoints) || 0;
-
-  switch (boilerProtocolIntegration) {
-    case 'Modbus RTU':
-      integrationRow.modbusRtu = pointsValue;
-      break;
-    case 'Modbus TCP IP':
-      integrationRow.modbusTcp = pointsValue;
-      break;
-    case 'Bacnet MSTP':
-      integrationRow.bacnetMstp = pointsValue;
-      break;
-    case 'Bacnet IP':
-      integrationRow.bacnetIp = pointsValue;
-      break;
-    default:
-      break;
-  }
-
-  integrationRows.push(integrationRow);
-}
-
-
-  setTableRows([
-    ...rows,
-    ...maintenanceRows,
-    ...emergencyRows,
-    ...highTempRows,
-    ...gasLeakRows,  
-    ...temperatureRows,
-    ...balanceRows,
-    ...integrationRows
-
-  ]);
-  setShowTable(true);
+const tempPointsMap: Record<string, string[]> = {
+  'Inlet Temperature': ['Boiler Inlet Temperature'],
+  'Outlet Temperature': ['Boiler Outlet Temperature'],
+  'Inlet and Outlet Temperature': ['Boiler Inlet Temperature', 'Boiler Outlet Temperature'],
 };
 
+const selectedPoints = tempPointsMap[temperaturemeasurements] || [];
 
+if (selectedPoints.length) {
+  if (pcs > 1) {
+    for (let i = 1; i <= pcs; i++) {
+      selectedPoints.forEach((name) => {
+        TemperatureMeasurementsRows.push({
+          point: `${name} ${i}`,
+          ai: 1, ao: 0, di: 0, do: 0,
+          projectCode, description, location,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        });
+      });
+    }
+  } else {
+    selectedPoints.forEach((name) => {
+      TemperatureMeasurementsRows.push({
+        point: name,
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    });
+  }
+}
+
+
+const BalanceTankTempRows: any[] = [];
+
+if (balanceTank !== 'none' && balanceTankTemperature) {
+  if (balanceTankTemperature === 'Primer Side Temperature') {
+    BalanceTankTempRows.push(
+      {
+        point: 'Boiler Balance Tank Primer Side Inlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      },
+      {
+        point: 'Boiler Balance Tank Primer Side Outlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      }
+    );
+  } else if (balanceTankTemperature === 'Seconder Side Temperature') {
+    BalanceTankTempRows.push(
+      {
+        point: 'Boiler Balance Tank Seconder Side Inlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      },
+      {
+        point: 'Boiler Balance Tank Seconder Side Outlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      }
+    );
+  } else if (balanceTankTemperature === 'Primer and Seconder Side Temperature') {
+    BalanceTankTempRows.push(
+      {
+        point: 'Boiler Balance Tank Primer Side Inlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      },
+      {
+        point: 'Boiler Balance Tank Primer Side Outlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      },
+      {
+        point: 'Boiler Balance Tank Seconder Side Inlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      },
+      {
+        point: 'Boiler Balance Tank Seconder Side Outlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      }
+    );
+  }
+}
+  setTableRows([
+  ...hardPointsRows,
+  ...maintenanceRows,
+  ...emergencyRows,
+  ...highTempRows,
+  ...gasLeakRows,
+  ...TemperatureMeasurementsRows,
+  ...BalanceTankTempRows,
+  ...rows,
+]);
+setShowTable(true);
+};
 
   return (
     <Box sx={{ minHeight: '100vh', background: 'radial-gradient(circle at top right, #1A237E, #000000)', color: '#FFFFFF', display: 'flex', flexDirection: 'column' }}>
@@ -482,61 +546,155 @@ if (boilerIntegration === 'own Panel') {
         </Stack>
       </Box>
 
-      {/* Main Layout */}
+      {/* Main */}
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
         {/* Form */}
         <Container maxWidth="sm" sx={{ py: 6, px: 2, maxWidth: '600px', ml: 4, mr: 2 }}>
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Boiler System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField
+                label="Project Code"
+                value={projectCode}
+                onChange={(e) => setProjectCode(e.target.value)}
+                fullWidth
+                variant="outlined"
+                InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+                  }
+                }}
+              />
 
-{renderDropdown('Control Type', boilerControlType, (e) => setBoilerControlType(e.target.value), ['Local', 'Cascad'])}
-{renderDropdown('Pieces', boilerPieces, (e) => setBoilerPieces(e.target.value), ['1','2','3','4','5','6','7','8'])}
-{renderDropdown('Power', boilerPower, (e) => setBoilerPower(e.target.value),  ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5','11', '15', '18,5', '22', '30', '37', '45', '55','75', '90', '110', '132', '160'])}
-{renderDropdown('Voltage',  boilerVoltage,  (e) => setBoilerVoltage(e.target.value), ['230', '380'])}
+              <TextField
+                label="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                fullWidth
+                variant="outlined"
+                InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+                  }
+                }}
+              />
 
-{renderDropdown('Maintenance Safety Contacts',  boilerMaintenanceContacts,  (e) => setBoilerMaintenanceContacts(e.target.value),  ['none', 'Each Boiler', 'All Boilers'])}
-{renderDropdown('Emergency Safety Contacts',  boilerEmergencyContacts,  (e) => setBoilerEmergencyContacts(e.target.value),  ['none', 'Each Boiler', 'All Boilers'])}
-{renderDropdown('High Temperature Safety Contacts',  boilerHighTemperatureContacts,  (e) => setBoilerHighTemperatureContacts(e.target.value),  ['none', 'Each Boiler', 'All Boilers'])}
-{renderDropdown('Gas Leakage Safety Contacts',  boilerGasLeakageContacts,  (e) => setBoilerGasLeakageContacts(e.target.value),  ['none', 'Each Boiler', 'All Boilers'])}
+              <TextField
+                label="Located"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                fullWidth
+                variant="outlined"
+                InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+                  }
+                }}
+              />
 
-{renderDropdown('Temperature Measurement',  boilerTemperature,  (e) => setBoilerTemperature(e.target.value),  ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
-{renderDropdown('Boiler Balance Tank',  boilerBalanceTank,  (e) => setBoilerBalanceTank(e.target.value),  ['none', 'Balance Tank'])}
-{renderDropdown('Balance Tank Temperature Measurement',  boilerBalanceTankTemperature,  (e) => setBoilerBalanceTankTemperature(e.target.value),  ['Primer Side Temperature', 'Seconder Side Temperature', 'Primer and Seconder Side Temperature'],  boilerBalanceTank === 'none')}
+              {renderDropdown(
+                'Control Type',
+                controlType,
+                (e) => setControlType(e.target.value as string),
+                ['local', 'own Panel']
+              )}
 
-{renderDropdown('Boiler Integration',  boilerIntegration,  handleBoilerIntegrationChange,  ['none', 'own Panel'])}
-{renderDropdown('Boiler Protocol Integration',  boilerProtocolIntegration,  (e) => setBoilerProtocolIntegration(e.target.value),  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],  protocolDisabled)}
+              {renderDropdown(
+                'Control Protocol Integration',
+                protocolIntegration,
+                (e) => setProtocolIntegration(e.target.value as string),
+                ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],
+                isLocal 
+              )}
 
-<TextField
-  label="Boiler Integration Points"
-  value={boilerIntegrationPoints}
-  onChange={(e) => setBoilerIntegrationPoints(e.target.value)}
-  fullWidth
-  sx={{
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: boilerIntegration === 'none' ? '#555' : '#B0BEC5'
-    }
-  }}
-  disabled={boilerIntegration === 'none'}
-  InputProps={{
-    style: {
-      color: boilerIntegration === 'none' ? '#888' : 'white',
-      backgroundColor: boilerIntegration === 'none' ? '#1e1e1e' : 'transparent'
-    }
-  }}
-/>
+              <TextField
+                label="Control Protocol Integration Points"
+                value={protocolIntegrationPoints}
+                onChange={(e) => setProtocolIntegrationPoints(e.target.value)}
+                fullWidth
+                variant="outlined"
+                disabled={isLocal}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+                    borderColor: isLocal ? '#555' : '#B0BEC5'
+                  },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: isLocal ? '#555' : '#CFD8DC'
+                  },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: isLocal ? '#555' : '#90A4AE'
+                  }
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: isLocal ? '#1e1e1e' : 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+                  }
+                }}
+                InputLabelProps={{
+                  sx: {
+                    color: '#90A4AE',
+                    '&.Mui-focused': { color: '#B0BEC5' },
+                    '&.Mui-disabled': { color: '#888' }
+                  }
+                }}
+              />
 
+              {renderDropdown(
+                'Control Protocol Hard Points',
+                hardPoints,
+                (e) => setHardPoints(e.target.value as string),
+                ['none', 'Statuses', 'Command', 'Statuses and Command'],
+                isLocal 
+              )}
 
+              {renderDropdown('Pieces', pieces,  (e) => setPieces(e.target.value as string),  ['1','2','3','4','5','6','7','8']  )}
 
-              <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveBoiler}>Send to Table</PrimaryButton>
+              {renderDropdown('Power', power, (e) => setBoilerPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'] )}
+              {renderDropdown('Voltage', voltage, (e) => setBoilerVoltage(e.target.value), ['230', '380'], )}
+              {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value), ['none', 'for Each Boiler', 'for All Boilers'], )}
+              {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none', 'for Each Boiler', 'for All Boilers'], )}
+              {renderDropdown('High Temperature Safety Contacts', hightemperatureSafety, (e) => setHighTemperatureSafety(e.target.value), ['none', 'for Each Boiler', 'for All Boilers'], )}
+              {renderDropdown('Gas Leakage Safety Contacts', gasleakageSafety, (e) => setGasLeakageSafety(e.target.value), ['none', 'for Each Boiler', 'for All Boilers'], )}
+
+              {renderDropdown('Temperature Measuremets', temperaturemeasurements, (e) => setTemperatureMeasurements(e.target.value), ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'])}
+
+              {renderDropdown('Balance Tank',  balanceTank,  (e) => setBalanceTank(e.target.value),  ['none', 'Balance Tank'])}
+
+              {renderDropdown('Balance Tank Temperature Measurement',  balanceTankTemperature,  (e) => setBalanceTankTemperature(e.target.value),  ['Primer Side Temperature', 'Seconder Side Temperature', 'Primer and Seconder Side Temperature'],  balanceTank === 'none' )}
+
+              <PrimaryButton sx={{ width: '100%' }} onClick={handleSave}>Send to Table</PrimaryButton>
               <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
             </Stack>
           </Box>
         </Container>
 
+              
         {/* Table */}
         <Box sx={{
           flex: 1,

@@ -1532,29 +1532,93 @@ setShowTable(true);
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Fan System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              {renderDropdown('Fan Control Type', fanControl, handleFanControlChange, ['MCC', 'Packaged'])}
-              {renderDropdown('Fan Control Protocol Integration', fancontrolpackagedprotocolIntegration, (e) => setFanControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], fanControl === 'MCC')}
+              <TextField
+  label="Project Code"
+  value={projectCode}
+  onChange={(e) => setProjectCode(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{ sx: labelStyles }}   // Select ile aynı label rengi
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+  }}
+  InputProps={{
+    sx: {
+      '& .MuiInputBase-input': { color: '#ECEFF1' }, // Select iç yazı rengiyle aynı
+    },
+  }}
+/>
+
+<TextField
+  label="Description"
+  value={description}
+  onChange={(e) => setDescription(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{ sx: labelStyles }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+  }}
+  InputProps={{ sx: { '& .MuiInputBase-input': { color: '#ECEFF1' } } }}
+/>
+
+<TextField
+  label="Location"
+  value={location}
+  onChange={(e) => setLocation(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{ sx: labelStyles }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+  }}
+  InputProps={{ sx: { '& .MuiInputBase-input': { color: '#ECEFF1' } } }}
+/>
+
+              {renderDropdown('Control Type', fanControl, handleFanControlChange, ['MCC', 'Packaged'])}
+              {renderDropdown('Control Protocol Integration', fancontrolpackagedprotocolIntegration, (e) => setFanControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], fanControl === 'MCC')}
               
               <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Control Packaged Integration Points"
-              value={fanControlPackagedPoints}
-              onChange={(e) => setFanControlPackagedPoints(e.target.value)}
-              disabled={fanControl === 'MCC'}
-              InputProps={{
-              style: {
-              color: fanControl === 'MCC' ? '#888' : 'white'
-              }
-              }}
-              />
+  label="Control Packaged Integration Points"
+  value={fanControlPackagedPoints}
+  onChange={(e) => setFanControlPackagedPoints(e.target.value)}
+  fullWidth
+  variant="outlined"
+  disabled={fanControl === 'MCC'}
+  InputLabelProps={{ sx: labelStyles }} // Select ile aynı label renkleri
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: fanControl === 'MCC' ? '#555' : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: fanControl === 'MCC' ? '#555' : '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: fanControl === 'MCC' ? '#555' : '#CFD8DC',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: fanControl === 'MCC' ? '#1e1e1e' : 'transparent',
+      '& .MuiInputBase-input': { color: 'white' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
+
               
               {renderDropdown('Control Packaged Hard Points', fancontrolpackagedhardpoints, (e) => setFanControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], fanControl === 'MCC')}
 
-              {renderDropdown('Aspirator Control', aspControl, handleAspControlChange, ['none', 'DOL', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta','Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'], isPackaged)}
+              {renderDropdown('Aspirator Control', aspControl, handleAspControlChange, ['DOL', 'EC', 'Power Supply Only', 'Soft Starter', 'Soft Starter with By Pass Circuit', 'Soft Starter with By Pass Circuit + Star-Delta','Star-Delta', 'VFD', 'VFD with By Pass Circuit', 'VFD with By Pass Circuit + Star-Delta'], isPackaged)}
               {renderDropdown('Aspirator Pieces', aspPieces, (e) => setAspPieces(e.target.value), ['1', '2', '3', '4', '5', '6', '7', '8'], aspControl === 'none'|| isPackaged)}
               {renderDropdown('Aspirator Power', aspPower, (e) => setAspPower(e.target.value), ['0,55', '0,75', '1,1', '1,5', '2,2', '3', '4', '5,5', '7,5', '11', '15', '18,5', '22', '30', '37', '45', '55', '75', '90', '110', '132', '160'], aspControl === 'none'|| isPackaged)}
               {renderDropdown('Aspirator Voltage', aspVoltage, (e) => setAspVoltage(e.target.value), ['230', '380'], aspControl === 'none'|| isPackaged)}
@@ -1563,8 +1627,8 @@ setShowTable(true);
               {renderDropdown('Door Safety Contacts', doorSafety, (e) => setDoorSafety(e.target.value), ['none', 'for Each Fan', 'for All Fans'], isPackaged)}
               {renderDropdown('Fire Safety Contacts', fireSafety, (e) => setFireSafety(e.target.value), ['none', 'only Viewing', 'Viewing and Control'], isPackaged)}
               
-              {renderDropdown('Return Air', returnAirSensor, (e) => setReturnAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity', 'Co2', 'Temperature, Humidity and Co2'], isPackaged)}
-              {renderDropdown('Exhaust Air', exhaustAirSensor, (e) => setExhaustAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
+              {renderDropdown('Return Air Measurement', returnAirSensor, (e) => setReturnAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity', 'Co2', 'Temperature, Humidity and Co2'], isPackaged)}
+              {renderDropdown('Exhaust Air Measurement', exhaustAirSensor, (e) => setExhaustAirSensor(e.target.value), ['none', 'Temperature', 'Humidity', 'Temperature and Humidity'], isPackaged)}
               
               {renderDropdown('Return Damper Actuator', returnDamperActuator, (e) => setReturnDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ], isPackaged)}
               {renderDropdown('Exhaust Damper Actuator',exhaustDamperActuator, (e) => setExhaustDamperActuator(e.target.value), ['none','On/Off Damper Actuator','On/Off Damper Actuator with Feedback','Floating Damper Actuator','Floating Damper Actuator with Feedback','Proportional Damper Actuator','Proportional Damper Actuator with Feedback','2x On/Off Damper Actuator','2x On/Off Damper Actuator with Feedback','2x Floating Damper Actuator','2x Floating Damper Actuator with Feedback','2x Proportional Damper Actuator','2x Proportional Damper Actuator with Feedback' ], isPackaged)}
@@ -1584,43 +1648,81 @@ setShowTable(true);
               {renderDropdown('Fan Protocol Integration', fanprotocolIntegration, (e) => setFanProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], fanIntegration === 'none'|| isPackaged)}
 
             
-              <TextField  fullWidth
-                          variant="outlined"
-                          placeholder="Fan Integration Points"
-                          value={fanIntegrationPoints}
-                          onChange={(e) => setFanIntegrationPoints(e.target.value)}
-                          disabled={fanIntegration === 'none'|| isPackaged}
-                          InputProps={{
-                          style: {
-                          color: fanIntegration === 'none' ? '#888' : 'white',
-                          backgroundColor: fanIntegration === 'none' ? '#1e1e1e' : 'transparent'
-                                  }
-                            }}
-                          sx={{'& .MuiOutlinedInput-notchedOutline': { borderColor: fanIntegration === 'none' ? '#555' : '#B0BEC5'
-                                  }
-                                }}
-                              />
+              <TextField
+  label="Fan Integration Points"
+  value={fanIntegrationPoints}
+  onChange={(e) => setFanIntegrationPoints(e.target.value)}
+  fullWidth
+  variant="outlined"
+  disabled={fanIntegration === 'none' || isPackaged}
+  InputLabelProps={{ sx: labelStyles }} // Select ile aynı label renkleri
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: (fanIntegration === 'none' || isPackaged) ? '#555' : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: (fanIntegration === 'none' || isPackaged) ? '#555' : '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: (fanIntegration === 'none' || isPackaged) ? '#555' : '#CFD8DC',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: (fanIntegration === 'none' || isPackaged) ? '#1e1e1e' : 'transparent',
+      '& .MuiInputBase-input': { color: 'white' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
+
+
 
               {renderDropdown('Run Around Pump Integration', runaroundpumpIntegration, (e) => setRunAroundPumpIntegration(e.target.value), ['none', 'own Panel', 'VFD'], isPackaged)}
               {renderDropdown('Run Around Pump Protocol Integration', runaroundpumpprotocolIntegration, (e) => setRunAroundPumpProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], runaroundpumpIntegration === 'none'|| isPackaged)}
 
 
-              <TextField  fullWidth
-                          variant="outlined"
-                          placeholder="Run Around Pump Integration Points"
-                          value={runaroundpumpIntegrationPoints}
-                          onChange={(e) => setRunAroundPumpIntegrationPoints(e.target.value)}
-                          disabled={runaroundpumpIntegration === 'none'|| isPackaged}
-                          InputProps={{
-                          style: {
-                          color: runaroundpumpIntegration === 'none' ? '#888' : 'white',
-                          backgroundColor: runaroundpumpIntegration === 'none' ? '#1e1e1e' : 'transparent'
-                                  }
-                            }}
-                          sx={{'& .MuiOutlinedInput-notchedOutline': { borderColor: runaroundpumpIntegration === 'none' ? '#555' : '#B0BEC5'
-                                  }
-                                }}
-                              />
+              <TextField
+  label="Run Around Pump Integration Points"
+  value={runaroundpumpIntegrationPoints}
+  onChange={(e) => setRunAroundPumpIntegrationPoints(e.target.value)}
+  fullWidth
+  variant="outlined"
+  disabled={runaroundpumpIntegration === 'none' || isPackaged}
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' },
+    },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: (runaroundpumpIntegration === 'none' || isPackaged) ? '#555' : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: (runaroundpumpIntegration === 'none' || isPackaged) ? '#555' : '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: (runaroundpumpIntegration === 'none' || isPackaged) ? '#555' : '#CFD8DC',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: (runaroundpumpIntegration === 'none' || isPackaged) ? '#1e1e1e' : 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
+
+
 
 
 

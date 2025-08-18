@@ -3930,30 +3930,24 @@ setShowTable(true);
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>AHU System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              {renderDropdown('Control Type', ahuControl, handleAhuControlChange, ['MCC', 'Packaged'])}
-              {renderDropdown('Control Protocol Integration', ahucontrolpackagedprotocolIntegration, (e) => setAhuControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], ahuControl === 'MCC')}
-              
               <TextField
-  label="Control Packaged Integration Points"
-  value={ahuControlPackagedPoints}
-  onChange={(e) => setAhuControlPackagedPoints(e.target.value)}
+  label="Project Code"
+  value={projectCode}
+  onChange={(e) => setProjectCode(e.target.value)}
   fullWidth
   variant="outlined"
-  sx={{
-    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
-      borderColor: ahuControl === 'MCC' ? '#555' : '#B0BEC5',
-    },
+  InputLabelProps={{
+    sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } },
   }}
-  disabled={ahuControl === 'MCC'}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+  }}
   InputProps={{
     sx: {
-      backgroundColor: ahuControl === 'MCC' ? '#1e1e1e' : 'transparent',
-
-      '& .MuiInputBase-input': { color: 'white' },
-
+      backgroundColor: 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' }, // dropdown ile aynı metin rengi
       '&.Mui-disabled .MuiInputBase-input': {
         WebkitTextFillColor: '#888',
         color: '#888',
@@ -3961,6 +3955,98 @@ setShowTable(true);
     },
   }}
 />
+
+<TextField
+  label="Description"
+  value={description}
+  onChange={(e) => setDescription(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{
+    sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
+
+<TextField
+  label="Located"
+  value={location}
+  onChange={(e) => setLocation(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{
+    sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
+
+              {renderDropdown('Control Type', ahuControl, handleAhuControlChange, ['MCC', 'Packaged'])}
+              {renderDropdown('Control Protocol Integration', ahucontrolpackagedprotocolIntegration, (e) => setAhuControlPackagedProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], ahuControl === 'MCC')}
+              
+             <TextField
+  label="Control Packaged Integration Points"
+  value={ahuControlPackagedPoints}
+  onChange={(e) => setAhuControlPackagedPoints(e.target.value)}
+  fullWidth
+  variant="outlined"
+  disabled={ahuControl === 'MCC'}
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+    },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: ahuControl === 'MCC' ? '#555' : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: ahuControl === 'MCC' ? '#555' : '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: ahuControl === 'MCC' ? '#555' : '#CFD8DC',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: ahuControl === 'MCC' ? '#1e1e1e' : 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
+
               
               {renderDropdown('Control Packaged Hard Points', ahucontrolpackagedhardpoints, (e) => setAhuControlPackagedHardPoints(e.target.value), ['none', 'Statuses', 'Command', 'Statuses and Command'], ahuControl === 'MCC')}
 
@@ -4030,43 +4116,86 @@ setShowTable(true);
               {renderDropdown('Fan Protocol Integration', fanprotocolIntegration, (e) => setFanProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], fanIntegration === 'none'|| isPackaged)}
 
             
-              <TextField  fullWidth
-                          variant="outlined"
-                          placeholder="Fan Integration Points"
-                          value={fanIntegrationPoints}
-                          onChange={(e) => setFanIntegrationPoints(e.target.value)}
-                          disabled={fanIntegration === 'none'|| isPackaged}
-                          InputProps={{
-                          style: {
-                          color: fanIntegration === 'none' ? '#888' : 'white',
-                          backgroundColor: fanIntegration === 'none' ? '#1e1e1e' : 'transparent'
-                                  }
-                            }}
-                          sx={{'& .MuiOutlinedInput-notchedOutline': { borderColor: fanIntegration === 'none' ? '#555' : '#B0BEC5'
-                                  }
-                                }}
-                              />
+              <TextField
+  label="Fan Integration Points"
+  value={fanIntegrationPoints}
+  onChange={(e) => setFanIntegrationPoints(e.target.value)}
+  fullWidth
+  variant="outlined"
+  disabled={fanIntegration === 'none' || isPackaged}
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' },
+    },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: (fanIntegration === 'none' || isPackaged) ? '#555' : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: (fanIntegration === 'none' || isPackaged) ? '#555' : '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: (fanIntegration === 'none' || isPackaged) ? '#555' : '#CFD8DC',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: (fanIntegration === 'none' || isPackaged) ? '#1e1e1e' : 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
+
+
 
               {renderDropdown('Run Around Pump Integration', runaroundpumpIntegration, (e) => setRunAroundPumpIntegration(e.target.value), ['none', 'own Panel', 'VFD'], isPackaged)}
               {renderDropdown('Run Around Pump Protocol Integration', runaroundpumpprotocolIntegration, (e) => setRunAroundPumpProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], runaroundpumpIntegration === 'none'|| isPackaged)}
 
 
-              <TextField  fullWidth
-                          variant="outlined"
-                          placeholder="Run Around Pump Integration Points"
-                          value={runaroundpumpIntegrationPoints}
-                          onChange={(e) => setRunAroundPumpIntegrationPoints(e.target.value)}
-                          disabled={runaroundpumpIntegration === 'none'|| isPackaged}
-                          InputProps={{
-                          style: {
-                          color: runaroundpumpIntegration === 'none' ? '#888' : 'white',
-                          backgroundColor: runaroundpumpIntegration === 'none' ? '#1e1e1e' : 'transparent'
-                                  }
-                            }}
-                          sx={{'& .MuiOutlinedInput-notchedOutline': { borderColor: runaroundpumpIntegration === 'none' ? '#555' : '#B0BEC5'
-                                  }
-                                }}
-                              />
+              <TextField
+  label="Run Around Pump Integration Points"
+  value={runaroundpumpIntegrationPoints}
+  onChange={(e) => setRunAroundPumpIntegrationPoints(e.target.value)}
+  fullWidth
+  variant="outlined"
+  disabled={runaroundpumpIntegration === 'none' || isPackaged}
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' },
+    },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: (runaroundpumpIntegration === 'none' || isPackaged) ? '#555' : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: (runaroundpumpIntegration === 'none' || isPackaged) ? '#555' : '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: (runaroundpumpIntegration === 'none' || isPackaged) ? '#555' : '#CFD8DC',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: (runaroundpumpIntegration === 'none' || isPackaged) ? '#1e1e1e' : 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
+
 
 
 
@@ -4074,44 +4203,88 @@ setShowTable(true);
               {renderDropdown('Heat Exchanger Protocol Integration', heatexchangerprotocolIntegration, (e) => setHeatExchangerProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], heatexchangerIntegration === 'none'|| isPackaged)}
 
 
-              <TextField  fullWidth
-                          variant="outlined"
-                          placeholder="Heat Exchanger Integration Points"
-                          value={heatexchangerIntegrationPoints}
-                          onChange={(e) => setHeatExchangerIntegrationPoints(e.target.value)}
-                          disabled={heatexchangerIntegration === 'none'|| isPackaged}
-                          InputProps={{
-                          style: {
-                          color: heatexchangerIntegration === 'none' ? '#888' : 'white',
-                          backgroundColor: heatexchangerIntegration === 'none' ? '#1e1e1e' : 'transparent'
-                                  }
-                            }}
-                          sx={{'& .MuiOutlinedInput-notchedOutline': { borderColor: heatexchangerIntegration === 'none' ? '#555' : '#B0BEC5'
-                                  }
-                                }}
-                              />
+              <TextField
+  label="Heat Exchanger Integration Points"
+  value={heatexchangerIntegrationPoints}
+  onChange={(e) => setHeatExchangerIntegrationPoints(e.target.value)}
+  fullWidth
+  variant="outlined"
+  disabled={heatexchangerIntegration === 'none' || isPackaged}
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' },
+    },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: (heatexchangerIntegration === 'none' || isPackaged) ? '#555' : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: (heatexchangerIntegration === 'none' || isPackaged) ? '#555' : '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: (heatexchangerIntegration === 'none' || isPackaged) ? '#555' : '#CFD8DC',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: (heatexchangerIntegration === 'none' || isPackaged) ? '#1e1e1e' : 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
+
+
 
 
               {renderDropdown('Humidification Integration', humidificationIntegration, (e) => setHumidificationIntegration(e.target.value), ['none', 'own Panel'], isPackaged)}
               {renderDropdown('Humidification Protocol Integration', humidificationprotocolIntegration, (e) => setHumidificationProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], humidificationIntegration === 'none'|| isPackaged)}
 
 
-              <TextField  fullWidth
-                          variant="outlined"
-                          placeholder="Humidification Integration Points"
-                          value={humidificationIntegrationPoints}
-                          onChange={(e) => setHumidificationIntegrationPoints(e.target.value)}
-                          disabled={humidificationIntegration === 'none'|| isPackaged}
-                          InputProps={{
-                          style: {
-                          color: humidificationIntegration === 'none' ? '#888' : 'white',
-                          backgroundColor: humidificationIntegration === 'none' ? '#1e1e1e' : 'transparent'
-                                  }
-                            }}
-                          sx={{'& .MuiOutlinedInput-notchedOutline': { borderColor: humidificationIntegration === 'none' ? '#555' : '#B0BEC5'
-                                  }
-                                }}
-                              />
+              <TextField
+  label="Humidification Integration Points"
+  value={humidificationIntegrationPoints}
+  onChange={(e) => setHumidificationIntegrationPoints(e.target.value)}
+  fullWidth
+  variant="outlined"
+  disabled={humidificationIntegration === 'none' || isPackaged}
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' },
+    },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: (humidificationIntegration === 'none' || isPackaged) ? '#555' : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: (humidificationIntegration === 'none' || isPackaged) ? '#555' : '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: (humidificationIntegration === 'none' || isPackaged) ? '#555' : '#CFD8DC',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: (humidificationIntegration === 'none' || isPackaged) ? '#1e1e1e' : 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
+
+
 
 
 
@@ -4119,22 +4292,44 @@ setShowTable(true);
               {renderDropdown('Dehumidification Protocol Integration', dehumidificationprotocolIntegration, (e) => setDehumidificationProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], dehumidificationIntegration === 'none'|| isPackaged)}
 
 
-              <TextField  fullWidth
-                          variant="outlined"
-                          placeholder="Dehumidification Integration Points"
-                          value={dehumidificationIntegrationPoints}
-                          onChange={(e) => setDehumidificationIntegrationPoints(e.target.value)}
-                          disabled={dehumidificationIntegration === 'none'|| isPackaged}
-                          InputProps={{
-                          style: {
-                          color: dehumidificationIntegration === 'none' ? '#888' : 'white',
-                          backgroundColor: dehumidificationIntegration === 'none' ? '#1e1e1e' : 'transparent'
-                                  }
-                            }}
-                          sx={{'& .MuiOutlinedInput-notchedOutline': { borderColor: dehumidificationIntegration === 'none' ? '#555' : '#B0BEC5'
-                                  }
-                                }}
-                              />
+              <TextField
+  label="Dehumidification Integration Points"
+  value={dehumidificationIntegrationPoints}
+  onChange={(e) => setDehumidificationIntegrationPoints(e.target.value)}
+  fullWidth
+  variant="outlined"
+  disabled={dehumidificationIntegration === 'none' || isPackaged}
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' },
+    },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: (dehumidificationIntegration === 'none' || isPackaged) ? '#555' : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: (dehumidificationIntegration === 'none' || isPackaged) ? '#555' : '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: (dehumidificationIntegration === 'none' || isPackaged) ? '#555' : '#CFD8DC',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: (dehumidificationIntegration === 'none' || isPackaged) ? '#1e1e1e' : 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
+
+
 
 <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveAhu}>Send to Table</PrimaryButton>
 <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
