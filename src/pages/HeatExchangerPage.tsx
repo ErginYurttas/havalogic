@@ -63,6 +63,12 @@ export default function HeatExchangerPage() {
   const [projectCode, setProjectCode] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
+
+  const [temperatureMeasurement, setTemperatureMeasurement] = useState('');
+  const [valveFunction, setValveFunction] = useState('');
+
+  const [filter, setFilter] = useState('');
+
   const [tableRows, setTableRows] = useState<any[]>([]);
   const [showTable, setShowTable] = useState(false);
 
@@ -74,11 +80,215 @@ export default function HeatExchangerPage() {
     navigate('/projects');
   };
 
-  const handleSaveHeatExchanger = () => {
-    // Şimdilik boş. Daha sonra tabloya veri eklenecek.
-    setTableRows([]);
-    setShowTable(true);
-  };
+  const renderDropdown = (
+  label: string,
+  value: string,
+  onChange: (e: SelectChangeEvent) => void,
+  options: string[],
+  disabled: boolean = false
+) => (
+  <FormControl fullWidth disabled={disabled}>
+    <InputLabel sx={labelStyles}>{label}</InputLabel>
+    <Select value={value} label={label} onChange={onChange} sx={selectStyles}>
+      {options.map((option, i) => (
+        <MenuItem key={i} value={option}>
+          {option}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+);
+
+const handleSaveHeatExchanger = () => {
+  const rows: any[] = []; 
+
+
+  const temperatureRows: any[] = [];
+
+  if (temperatureMeasurement && temperatureMeasurement !== 'none') {
+
+    if (
+      temperatureMeasurement === 'Primer Inlet Temperature' ||
+      temperatureMeasurement === 'Primer Side Temperature' ||
+      temperatureMeasurement === 'Primer and Seconder Side Temperature' ||
+      temperatureMeasurement === 'Inlet Side Temperature'
+    ) {
+      temperatureRows.push({
+        projectCode, description, location,
+        point: 'Heat Exchanger Primer Inlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+
+    if (
+      temperatureMeasurement === 'Primer Outlet Temperature' ||
+      temperatureMeasurement === 'Primer Side Temperature' ||
+      temperatureMeasurement === 'Primer and Seconder Side Temperature' ||
+      temperatureMeasurement === 'Outlet Side Temperature'
+    ) {
+      temperatureRows.push({
+        projectCode, description, location,
+        point: 'Heat Exchanger Primer Outlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+
+
+    if (
+      temperatureMeasurement === 'Seconder Inlet Temperature' ||
+      temperatureMeasurement === 'Seconder Side Temperature' ||
+      temperatureMeasurement === 'Primer and Seconder Side Temperature' ||
+      temperatureMeasurement === 'Inlet Side Temperature'
+    ) {
+      temperatureRows.push({
+        projectCode, description, location,
+        point: 'Heat Exchanger Seconder Inlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+
+    if (
+      temperatureMeasurement === 'Seconder Outlet Temperature' ||
+      temperatureMeasurement === 'Seconder Side Temperature' ||
+      temperatureMeasurement === 'Primer and Seconder Side Temperature' ||
+      temperatureMeasurement === 'Outlet Side Temperature'
+    ) {
+      temperatureRows.push({
+        projectCode, description, location,
+        point: 'Heat Exchanger Seconder Outlet Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+  }
+
+const valveRows: any[] = [];
+
+if (valveFunction && valveFunction !== 'none') {
+  switch (valveFunction) {
+    case 'On/Off Valve Actuator':
+      valveRows.push({
+        projectCode, description, location,
+        point: 'Heat Exchanger On/Off Valve Actuator Command',
+        ai: 0, ao: 0, di: 0, do: 1,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+      break;
+
+    case 'On/Off Valve Actuator with Feedback':
+      valveRows.push(
+        {
+          projectCode, description, location,
+          point: 'Heat Exchanger On/Off Valve Actuator Command',
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        },
+        {
+          projectCode, description, location,
+          point: 'Heat Exchanger On/Off Valve Actuator Status',
+          ai: 0, ao: 0, di: 1, do: 0, // DI (D1 değil)
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        }
+      );
+      break;
+
+    case 'Floating Valve Actuator':
+      valveRows.push(
+        {
+          projectCode, description, location,
+          point: 'Heat Exchanger Floating Valve Actuator Open Command',
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        },
+        {
+          projectCode, description, location,
+          point: 'Heat Exchanger Floating Valve Actuator Close Command',
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        }
+      );
+      break;
+
+    case 'Floating Valve Actuator with Feedback':
+      valveRows.push(
+        {
+          projectCode, description, location,
+          point: 'Heat Exchanger Floating Valve Actuator Open Command',
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        },
+        {
+          projectCode, description, location,
+          point: 'Heat Exchanger Floating Valve Actuator Close Command',
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        },
+        {
+          projectCode, description, location,
+          point: 'Heat Exchanger Floating Valve Actuator Open Status',
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        },
+        {
+          projectCode, description, location,
+          point: 'Heat Exchanger Floating Valve Actuator Close Status',
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        }
+      );
+      break;
+
+    case 'Proportional Valve Actuator':
+      valveRows.push({
+        projectCode, description, location,
+        point: 'Heat Exchanger Proportional Valve Actuator Control',
+        ai: 0, ao: 1, di: 0, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+      break;
+
+    case 'Proportional Valve Actuator with Feedback':
+      valveRows.push(
+        {
+          projectCode, description, location,
+          point: 'Heat Exchanger Proportional Valve Actuator Control',
+          ai: 0, ao: 1, di: 0, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        },
+        {
+          projectCode, description, location,
+          point: 'Heat Exchanger Proportional Valve Actuator Feedback',
+          ai: 1, ao: 0, di: 0, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        }
+      );
+      break;
+  }
+}
+
+const filterRows: any[] = [];
+
+if (filter === 'Differential Pressure') {
+  filterRows.push({
+    projectCode, description, location,
+    point: 'Heat Exchanger Differential Pressure',
+    ai: 1, ao: 0, di: 0, do: 0,
+    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  });
+}
+
+  setTableRows([
+    ...rows,
+    ...temperatureRows,
+    ...valveRows,
+    ...filterRows
+  ]);
+  setShowTable(true);
+};
+
 
   return (
     <Box sx={{ minHeight: '100vh', background: 'radial-gradient(circle at top right, #1A237E, #000000)', color: '#FFFFFF', display: 'flex', flexDirection: 'column' }}>
@@ -163,6 +373,16 @@ export default function HeatExchangerPage() {
     },
   }}
 />
+
+{renderDropdown('Temperature Measurement',  temperatureMeasurement,  (e) => setTemperatureMeasurement(e.target.value as string),  ['none','Primer Inlet Temperature','Primer Outlet Temperature','Seconder Inlet Temperature','Seconder Outlet Temperature','Primer Side Temperature','Seconder Side Temperature','Inlet Side Temperature','Outlet Side Temperature','Primer and Seconder Side Temperature'  ]
+)}
+
+{renderDropdown('Valve Function',  valveFunction,  (e) => setValveFunction(e.target.value as string),  [    'none',    'On/Off Valve Actuator',    'On/Off Valve Actuator with Feedback',    'Floating Valve Actuator',    'Floating Valve Actuator with Feedback',    'Proportional Valve Actuator',    'Proportional Valve Actuator with Feedback'  ])}
+
+{renderDropdown('Filter',  filter,  (e) => setFilter(e.target.value as string),  ['none', 'Differential Pressure'])}
+
+
+
               <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveHeatExchanger}>Send to Table</PrimaryButton>
               <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
             </Stack>
