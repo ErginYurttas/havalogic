@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -89,6 +89,9 @@ export default function HeatReclaimPage() {
   const [vfdProtocolIntegration, setVfdProtocolIntegration] = useState('');
   const [vfdIntegrationPoints, setVfdIntegrationPoints] = useState('');
 
+  const isControlLocal = controlType === 'Local';
+  const isControlOwnPanel = controlType === 'own Panel';
+  const isVfdNone = vfdIntegration !== 'VFD'; 
 
   const [tableRows, setTableRows] = useState<any[]>([]);
   const [showTable, setShowTable] = useState(false);
@@ -100,6 +103,44 @@ export default function HeatReclaimPage() {
   const handleBack = () => {
     navigate('/projects');
   };
+
+// Control Type = Local => kontrol paneli entegrasyon alanlarını temizle
+useEffect(() => {
+  if (isControlLocal) {
+    setControlProtocolIntegration('');
+    setControlPanelIntegrationPoints('');
+    setControlPanelHardPoints('');
+  }
+}, [isControlLocal]);
+
+// Control Type = own Panel => listedeki tüm alanları temizle
+useEffect(() => {
+  if (isControlOwnPanel) {
+    setPieces('');
+    setPower('');
+    setVoltage('');
+    setMaintenanceSafety('');
+    setEmergencySafety('');
+    setFireSafety('');
+    setHeatingValveFunction('');
+    setCoolingValveFunction('');
+    setTemperatureMeasurement('');
+    setFreshAirFilter('');
+    setSupplyAirFilter('');
+    setReturnAirFilter('');
+    setVfdIntegration('');
+    setVfdProtocolIntegration('');
+    setVfdIntegrationPoints('');
+  }
+}, [isControlOwnPanel]);
+
+// VFD Integration = none => alt alanları temizle
+useEffect(() => {
+  if (isVfdNone) {
+    setVfdProtocolIntegration('');
+    setVfdIntegrationPoints('');
+  }
+}, [isVfdNone]);
 
 const renderDropdown = (
   label: string,
@@ -118,11 +159,687 @@ const renderDropdown = (
   </FormControl>
 );
 
-  const handleSaveHeatReclaim = () => {
-    // Şimdilik boş. Daha sonra tabloya veri eklenecek.
-    setTableRows([]);
+const handleSaveHeatReclaim = () => {
+  // tabloyu sıfırla
+  setTableRows([]);
+
+  const rows: any[] = [];
+
+  // Pieces — boşsa 1 kabul edilir
+  const numPieces = Math.max(parseInt(pieces) || 1, 1);
+  const suffix = (i: number) => (numPieces > 1 ? ` ${i}` : '');
+
+  // 1) Control Type 'none' ya da boş ise satır ekleme
+  if (controlType === 'none' || controlType === '') {
     setShowTable(true);
+    setTableRows([]);
+    return;
+  }
+
+  // 2) Control Type 'Local' ise: Status/Fault (DI=1), Command (DO=1) — parçaya göre çoğalt
+  if (controlType === 'Local') {
+    for (let i = 1; i <= numPieces; i++) {
+      rows.push(
+        {
+          point: `Heat Reclaim Unit Status${suffix(i)}`,
+          description, location,
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        },
+        {
+          point: `Heat Reclaim Unit Fault${suffix(i)}`,
+          description, location,
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        },
+        {
+          point: `Heat Reclaim Unit Command${suffix(i)}`,
+          description, location,
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        }
+      );
+    }
+  }
+
+  // 3) Control Type 'own Panel' ise: Integration satırı (seçilen protokol kolonu = points)
+  if (controlType === 'own Panel') {
+    if (controlProtocolIntegration !== '' && controlPanelIntegrationPoints !== '') {
+      const parsedPoints = parseInt(controlPanelIntegrationPoints) || 0;
+
+      const protocol = {
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0
+      };
+
+      switch (controlProtocolIntegration) {
+        case 'Modbus RTU':    protocol.modbusRtu  = parsedPoints; break;
+        case 'Modbus TCP IP': protocol.modbusTcp  = parsedPoints; break;
+        case 'Bacnet MSTP':   protocol.bacnetMstp = parsedPoints; break;
+        case 'Bacnet IP':     protocol.bacnetIp   = parsedPoints; break;
+        default: break;
+      }
+
+      rows.push({
+        point: 'Heat Reclaim Control Unit Integration',
+        description, location,
+        ai: 0, ao: 0, di: 0, do: 0,
+        modbusRtu: protocol.modbusRtu,
+        modbusTcp: protocol.modbusTcp,
+        bacnetMstp: protocol.bacnetMstp,
+        bacnetIp: protocol.bacnetIp,
+        mbus: 0,
+        projectCode
+      });
+    }
+  }
+
+  // 4) Control Panel Hard Points kuralları
+  if (controlPanelHardPoints === 'Statuses' || controlPanelHardPoints === 'Statuses and Command') {
+    rows.push(
+      {
+        point: 'Heat Reclaim Control Unit General Status',
+        description, location,
+        ai: 0, ao: 0, di: 1, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        projectCode
+      },
+      {
+        point: 'Heat Reclaim Control Unit General Fault',
+        description, location,
+        ai: 0, ao: 0, di: 1, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        projectCode
+      }
+    );
+  }
+  if (controlPanelHardPoints === 'Command' || controlPanelHardPoints === 'Statuses and Command') {
+    rows.push({
+      point: 'Heat Reclaim Control Unit General Command',
+      description, location,
+      ai: 0, ao: 0, di: 0, do: 1,
+      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+      projectCode
+    });
+  }
+
+  // 5) Maintenance Rows — *Status* olarak
+  const maintenanceRows: any[] = [];
+  if (maintenanceSafety === 'for Each Heat Reclaim') {
+    if (controlType !== 'none') {
+      for (let i = 1; i <= numPieces; i++) {
+        maintenanceRows.push({
+          point: `Heat Reclaim Maintenance Status${numPieces > 1 ? ` ${i}` : ''}`,
+          ai: 0, ao: 0, di: 1, do: 0,
+          projectCode, description, location,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        });
+      }
+    }
+  }
+  if (maintenanceSafety === 'for All Heat Reclaim') {
+    if (controlType !== 'none') {
+      maintenanceRows.push({
+        point: 'Heat Reclaim General Maintenance Status',
+        ai: 0, ao: 0, di: 1, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+  }
+  rows.push(...maintenanceRows);
+
+  // 6) Emergency Rows — *Status* olarak
+  const emergencyRows: any[] = [];
+  if (emergencySafety === 'for Each Heat Reclaim') {
+    if (controlType !== 'none') {
+      for (let i = 1; i <= numPieces; i++) {
+        emergencyRows.push({
+          point: `Heat Reclaim Emergency Status${numPieces > 1 ? ` ${i}` : ''}`,
+          ai: 0, ao: 0, di: 1, do: 0,
+          projectCode, description, location,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        });
+      }
+    }
+  }
+  if (emergencySafety === 'for All Heat Reclaim') {
+    if (controlType !== 'none') {
+      emergencyRows.push({
+        point: 'Heat Reclaim General Emergency Status',
+        ai: 0, ao: 0, di: 1, do: 0,
+        projectCode, description, location,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+  }
+  rows.push(...emergencyRows);
+
+  // 7) Fire Safety — Emergency'den hemen sonra, Heating Valve'dan önce
+  if (fireSafety && fireSafety !== 'none') {
+    if (fireSafety === 'only Viewing' || fireSafety === 'Viewing and Control') {
+      rows.push({
+        point: 'Heat Reclaim Fire Status',
+        description, location,
+        ai: 0, ao: 0, di: 1, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        projectCode
+      });
+    }
+  }
+
+  // 8) Heating Valve Function — PIECES aware
+  for (let i = 1; i <= numPieces; i++) {
+    const pieceSuffix = numPieces > 1 ? ` ${i}` : '';
+
+    switch (heatingValveFunction) {
+      case 'none':
+      case '':
+        // satır eklenmez
+        break;
+
+      case 'On/Off Valve Actuator':
+        rows.push({
+          point: `Heat Reclaim Heating On/Off Valve Command${pieceSuffix}`,
+          description, location,
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        });
+        break;
+
+      case 'On/Off Valve Actuator with Feedback':
+        rows.push(
+          {
+            point: `Heat Reclaim Heating On/Off Valve Command${pieceSuffix}`,
+            description, location,
+            ai: 0, ao: 0, di: 0, do: 1,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+            projectCode
+          },
+          {
+            point: `Heat Reclaim Heating On/Off Valve Status${pieceSuffix}`,
+            description, location,
+            ai: 0, ao: 0, di: 1, do: 0,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+            projectCode
+          }
+        );
+        break;
+
+      case 'Floating Valve Actuator':
+        rows.push(
+          {
+            point: `Heat Reclaim Heating Floating Valve Open Command${pieceSuffix}`,
+            description, location,
+            ai: 0, ao: 0, di: 0, do: 1,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+            projectCode
+          },
+          {
+            point: `Heat Reclaim Heating Floating Valve Close Command${pieceSuffix}`,
+            description, location,
+            ai: 0, ao: 0, di: 0, do: 1,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+            projectCode
+          }
+        );
+        break;
+
+      case 'Floating Valve Actuator with Feedback':
+        rows.push(
+          {
+            point: `Heat Reclaim Heating Floating Valve Open Command${pieceSuffix}`,
+            description, location,
+            ai: 0, ao: 0, di: 0, do: 1,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+            projectCode
+          },
+          {
+            point: `Heat Reclaim Heating Floating Valve Close Command${pieceSuffix}`,
+            description, location,
+            ai: 0, ao: 0, di: 0, do: 1,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+            projectCode
+          },
+          {
+            point: `Heat Reclaim Heating Floating Valve Open Status${pieceSuffix}`,
+            description, location,
+            ai: 0, ao: 0, di: 1, do: 0,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+            projectCode
+          },
+          {
+            point: `Heat Reclaim Heating Floating Valve Close Status${pieceSuffix}`,
+            description, location,
+            ai: 0, ao: 0, di: 1, do: 0,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+            projectCode
+          }
+        );
+        break;
+
+      case 'Proportional Valve Actuator':
+        rows.push({
+          point: `Heat Reclaim Heating Proportional  Valve Control${pieceSuffix}`,
+          description, location,
+          ai: 0, ao: 1, di: 0, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        });
+        break;
+
+      case 'Proportional Valve Actuator with Feedback':
+        rows.push(
+          {
+            point: `Heat Reclaim Heating Proportional  Valve Control${pieceSuffix}`,
+            description, location,
+            ai: 0, ao: 1, di: 0, do: 0,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+            projectCode
+          },
+          {
+            point: `Heat Reclaim Heating Proportional  Valve Feedback${pieceSuffix}`,
+            description, location,
+            ai: 1, ao: 0, di: 0, do: 0,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+            projectCode
+          }
+        );
+        break;
+
+      default:
+        break;
+    }
+  }
+
+
+  // 9) Cooling Valve Function — PIECES aware (Heating ile birebir)
+for (let i = 1; i <= numPieces; i++) {
+  const pieceSuffix = numPieces > 1 ? ` ${i}` : '';
+
+  switch (coolingValveFunction) {
+    case 'none':
+    case '':
+      // satır eklenmez
+      break;
+
+    case 'On/Off Valve Actuator':
+      rows.push({
+        point: `Heat Reclaim Cooling On/Off Valve Command${pieceSuffix}`,
+        description, location,
+        ai: 0, ao: 0, di: 0, do: 1,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        projectCode
+      });
+      break;
+
+    case 'On/Off Valve Actuator with Feedback':
+      rows.push(
+        {
+          point: `Heat Reclaim Cooling On/Off Valve Command${pieceSuffix}`,
+          description, location,
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        },
+        {
+          point: `Heat Reclaim Cooling On/Off Valve Status${pieceSuffix}`,
+          description, location,
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        }
+      );
+      break;
+
+    case 'Floating Valve Actuator':
+      rows.push(
+        {
+          point: `Heat Reclaim Cooling Floating Valve Open Command${pieceSuffix}`,
+          description, location,
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        },
+        {
+          point: `Heat Reclaim Cooling Floating Valve Close Command${pieceSuffix}`,
+          description, location,
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        }
+      );
+      break;
+
+    case 'Floating Valve Actuator with Feedback':
+      rows.push(
+        {
+          point: `Heat Reclaim Cooling Floating Valve Open Command${pieceSuffix}`,
+          description, location,
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        },
+        {
+          point: `Heat Reclaim Cooling Floating Valve Close Command${pieceSuffix}`,
+          description, location,
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        },
+        {
+          point: `Heat Reclaim Cooling Floating Valve Open Status${pieceSuffix}`,
+          description, location,
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        },
+        {
+          point: `Heat Reclaim Cooling Floating Valve Close Status${pieceSuffix}`,
+          description, location,
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        }
+      );
+      break;
+
+    case 'Proportional Valve Actuator':
+      rows.push({
+        point: `Heat Reclaim Cooling Proportional  Valve Control${pieceSuffix}`,
+        description, location,
+        ai: 0, ao: 1, di: 0, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        projectCode
+      });
+      break;
+
+    case 'Proportional Valve Actuator with Feedback':
+      rows.push(
+        {
+          point: `Heat Reclaim Cooling Proportional  Valve Control${pieceSuffix}`,
+          description, location,
+          ai: 0, ao: 1, di: 0, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        },
+        {
+          point: `Heat Reclaim Cooling Proportional  Valve Feedback${pieceSuffix}`,
+          description, location,
+          ai: 1, ao: 0, di: 0, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          projectCode
+        }
+      );
+      break;
+
+    default:
+      break;
+  }
+}
+
+
+// 10) Temperature Measurement — PIECES aware
+if (temperatureMeasurement && temperatureMeasurement !== 'none') {
+  for (let i = 1; i <= numPieces; i++) {
+    const pieceSuffix = numPieces > 1 ? ` ${i}` : '';
+
+    const addTempRow = (label: string) =>
+      rows.push({
+        point: `Heat Reclaim ${label}${pieceSuffix}`,
+        description, location,
+        ai: 1, ao: 0, di: 0, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        projectCode
+      });
+
+    switch (temperatureMeasurement) {
+      case 'Supply Air Temperature':
+        addTempRow('Supply Air Temperature');
+        break;
+      case 'Return Air Temperature':
+        addTempRow('Return Air Temperature');
+        break;
+      case 'Fresh Air Temperature':
+        addTempRow('Fresh Air Temperature');
+        break;
+      case 'Exhaust Air Temperature':
+        addTempRow('Exhaust Air Temperature');
+        break;
+      case 'Inside Air Temperature':
+        addTempRow('Supply Air Temperature');
+        addTempRow('Return Air Temperature');
+        break;
+      case 'Outside Air Temperature':
+        addTempRow('Fresh Air Temperature');
+        addTempRow('Exhaust Air Temperature');
+        break;
+      case 'Inlet Air Temperature':
+        addTempRow('Fresh Air Temperature');
+        addTempRow('Supply Air Temperature');
+        break;
+      case 'Outlet Air Temperature':
+        addTempRow('Return Air Temperature');
+        addTempRow('Exhaust Air Temperature');
+        break;
+      case 'Inlet and Outlet Air Temperature':
+        addTempRow('Fresh Air Temperature');
+        addTempRow('Supply Air Temperature');
+        addTempRow('Return Air Temperature');
+        addTempRow('Exhaust Air Temperature');
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+
+// 11) Fresh Air Filter — PIECES aware
+if (freshAirFilter && freshAirFilter !== 'none') {
+  for (let i = 1; i <= numPieces; i++) {
+    const pieceSuffix = numPieces > 1 ? ` ${i}` : '';
+
+    const pushAnalog = (grade: string) =>
+      rows.push({
+        point: `Heat Reclaim Fresh Filter ${grade} Pressure${pieceSuffix}`,
+        description, location,
+        ai: 1, ao: 0, di: 0, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        projectCode
+      });
+
+    const pushDigital = (grade: string) =>
+      rows.push({
+        point: `Heat Reclaim Fresh Filter ${grade} Status${pieceSuffix}`,
+        description, location,
+        ai: 0, ao: 0, di: 1, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        projectCode
+      });
+
+    switch (freshAirFilter) {
+      case 'Analog G4':   pushAnalog('G4');  break;
+      case 'Digital G4':  pushDigital('G4'); break;
+
+      case 'Analog F5':   pushAnalog('F5');  break;
+      case 'Digital F5':  pushDigital('F5'); break;
+
+      case 'Analog F6':   pushAnalog('F6');  break;
+      case 'Digital F6':  pushDigital('F6'); break;
+
+      case 'Analog F7':   pushAnalog('F7');  break;
+      case 'Digital F7':  pushDigital('F7'); break;
+
+      case 'Analog F8':   pushAnalog('F8');  break;
+      case 'Digital F8':  pushDigital('F8'); break;
+
+      case 'Analog F9':   pushAnalog('F9');  break;
+      case 'Digital F9':  pushDigital('F9'); break;
+
+      case 'Analog H13':  pushAnalog('H13'); break;
+      case 'Digital H13': pushDigital('H13');break;
+
+      case 'Analog H14':  pushAnalog('H14'); break;
+      case 'Digital H14': pushDigital('H14');break;
+
+      default: break;
+    }
+  }
+}
+
+// 12) Supply Air Filter — PIECES aware (Fresh Air ile birebir)
+if (supplyAirFilter && supplyAirFilter !== 'none') {
+  for (let i = 1; i <= numPieces; i++) {
+    const pieceSuffix = numPieces > 1 ? ` ${i}` : '';
+
+    const pushAnalog = (grade: string) =>
+      rows.push({
+        point: `Heat Reclaim Supply Filter ${grade} Pressure${pieceSuffix}`,
+        description, location,
+        ai: 1, ao: 0, di: 0, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        projectCode
+      });
+
+    const pushDigital = (grade: string) =>
+      rows.push({
+        point: `Heat Reclaim Supply Filter ${grade} Status${pieceSuffix}`,
+        description, location,
+        ai: 0, ao: 0, di: 1, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        projectCode
+      });
+
+    switch (supplyAirFilter) {
+      case 'Analog G4':   pushAnalog('G4');  break;
+      case 'Digital G4':  pushDigital('G4'); break;
+
+      case 'Analog F5':   pushAnalog('F5');  break;
+      case 'Digital F5':  pushDigital('F5'); break;
+
+      case 'Analog F6':   pushAnalog('F6');  break;
+      case 'Digital F6':  pushDigital('F6'); break;
+
+      case 'Analog F7':   pushAnalog('F7');  break;
+      case 'Digital F7':  pushDigital('F7'); break;
+
+      case 'Analog F8':   pushAnalog('F8');  break;
+      case 'Digital F8':  pushDigital('F8'); break;
+
+      case 'Analog F9':   pushAnalog('F9');  break;
+      case 'Digital F9':  pushDigital('F9'); break;
+
+      case 'Analog H13':  pushAnalog('H13'); break;
+      case 'Digital H13': pushDigital('H13'); break;
+
+      case 'Analog H14':  pushAnalog('H14'); break;
+      case 'Digital H14': pushDigital('H14'); break;
+
+      default: break;
+    }
+  }
+}
+
+// 13) Return Air Filter — PIECES aware (Fresh/Supply ile birebir)
+if (returnAirFilter && returnAirFilter !== 'none') {
+  for (let i = 1; i <= numPieces; i++) {
+    const pieceSuffix = numPieces > 1 ? ` ${i}` : '';
+
+    const pushAnalog = (grade: string) =>
+      rows.push({
+        point: `Heat Reclaim Return Filter ${grade} Pressure${pieceSuffix}`,
+        description, location,
+        ai: 1, ao: 0, di: 0, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        projectCode
+      });
+
+    const pushDigital = (grade: string) =>
+      rows.push({
+        point: `Heat Reclaim Return Filter ${grade} Status${pieceSuffix}`,
+        description, location,
+        ai: 0, ao: 0, di: 1, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        projectCode
+      });
+
+    switch (returnAirFilter) {
+      case 'Analog G4':   pushAnalog('G4');  break;
+      case 'Digital G4':  pushDigital('G4'); break;
+
+      case 'Analog F5':   pushAnalog('F5');  break;
+      case 'Digital F5':  pushDigital('F5'); break;
+
+      case 'Analog F6':   pushAnalog('F6');  break;
+      case 'Digital F6':  pushDigital('F6'); break;
+
+      case 'Analog F7':   pushAnalog('F7');  break;
+      case 'Digital F7':  pushDigital('F7'); break;
+
+      case 'Analog F8':   pushAnalog('F8');  break;
+      case 'Digital F8':  pushDigital('F8'); break;
+
+      case 'Analog F9':   pushAnalog('F9');  break;
+      case 'Digital F9':  pushDigital('F9'); break;
+
+      case 'Analog H13':  pushAnalog('H13'); break;
+      case 'Digital H13': pushDigital('H13');break;
+
+      case 'Analog H14':  pushAnalog('H14'); break;
+      case 'Digital H14': pushDigital('H14');break;
+
+      default: break;
+    }
+  }
+}
+
+// 14) VFD Integration
+if (vfdIntegration === 'VFD' && vfdProtocolIntegration !== '' && vfdIntegrationPoints !== '') {
+  const parsedPoints = parseInt(vfdIntegrationPoints) || 0;
+
+  const protocol = {
+    modbusRtu: 0,
+    modbusTcp: 0,
+    bacnetMstp: 0,
+    bacnetIp: 0,
+    mbus: 0
   };
+
+  switch (vfdProtocolIntegration) {
+    case 'Modbus RTU':    protocol.modbusRtu  = parsedPoints; break;
+    case 'Modbus TCP IP': protocol.modbusTcp  = parsedPoints; break;
+    case 'Bacnet MSTP':   protocol.bacnetMstp = parsedPoints; break;
+    case 'Bacnet IP':     protocol.bacnetIp   = parsedPoints; break;
+    default: break;
+  }
+
+  rows.push({
+    point: 'Heat Reclaim VFD Integration',
+    description, location,
+    ai: 0, ao: 0, di: 0, do: 0,
+    modbusRtu: protocol.modbusRtu,
+    modbusTcp: protocol.modbusTcp,
+    bacnetMstp: protocol.bacnetMstp,
+    bacnetIp: protocol.bacnetIp,
+    mbus: protocol.mbus,
+    projectCode
+  });
+}
+
+
+  setTableRows(rows);
+  setShowTable(true);
+};
+
+
+
 
   return (
     <Box sx={{ minHeight: '100vh', background: 'radial-gradient(circle at top right, #1A237E, #000000)', color: '#FFFFFF', display: 'flex', flexDirection: 'column' }}>
@@ -210,7 +927,7 @@ const renderDropdown = (
 
 {renderDropdown('Control Type',  controlType,  (e) => setControlType(e.target.value as string),  ['none', 'Local', 'own Panel'])}
 
-{renderDropdown('Control Protocol Integration',  controlProtocolIntegration,  (e) => setControlProtocolIntegration(e.target.value as string),  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'])}
+{renderDropdown('Control Protocol Integration',  controlProtocolIntegration,  (e) => setControlProtocolIntegration(e.target.value as string),  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],  isControlLocal)}
 
 <TextField
   label="Control Panel Integration Points"
@@ -218,68 +935,114 @@ const renderDropdown = (
   onChange={(e) => setControlPanelIntegrationPoints(e.target.value)}
   fullWidth
   variant="outlined"
-  InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+  disabled={isControlLocal}
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' }, // label kararır
+    },
+  }}
   sx={{
-    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
-    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: (isControlLocal) ? '#555' : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: (isControlLocal) ? '#555' : '#CFD8DC',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: (isControlLocal) ? '#555' : '#90A4AE',
+    },
+    // (Opsiyonel) MUI disabled class’ına özel garanti
+    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#555',
+    },
   }}
   InputProps={{
     sx: {
-      backgroundColor: 'transparent',
+      backgroundColor: (isControlLocal) ? '#1e1e1e' : 'transparent',
       '& .MuiInputBase-input': { color: '#ECEFF1' },
-      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
     },
   }}
 />
 
-{renderDropdown('Control Panel Hard Points',  controlPanelHardPoints,  (e) => setControlPanelHardPoints(e.target.value as string),  ['none', 'Statuses', 'Command', 'Statuses and Command'])}
+{renderDropdown('Control Panel Hard Points',  controlPanelHardPoints,  (e) => setControlPanelHardPoints(e.target.value as string),  ['none', 'Statuses', 'Command', 'Statuses and Command'],  isControlLocal)}
+{renderDropdown('Pieces', pieces, (e) => setPieces(e.target.value as string),  ['1','2','3','4','5','6','7','8'], isControlOwnPanel)}
 
-{renderDropdown('Pieces',  pieces,  (e) => setPieces(e.target.value as string),  ['1','2','3','4','5','6','7','8'])}
+{renderDropdown('Power', power, (e) => setPower(e.target.value as string),  ['0,55','0,75','1,1','1,5','2,2','3','4','5,5','7,5','11','15','18,5','22','30','37','45','55','75','90','110','132','160'], isControlOwnPanel)}
+{renderDropdown('Voltage', voltage, (e) => setVoltage(e.target.value as string),  ['230','380'], isControlOwnPanel)}
+{renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value as string),  ['none', 'for Each Heat Reclaim', 'for All Heat Reclaim'], isControlOwnPanel)}
 
-{renderDropdown('Power',  power,  (e) => setPower(e.target.value as string),  ['0,55','0,75','1,1','1,5','2,2','3','4','5,5','7,5','11','15','18,5','22','30','37','45','55','75','90','110','132','160'])}
+{renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value as string),  ['none', 'for Each Heat Reclaim', 'for All Heat Reclaim'], isControlOwnPanel)}
 
-{renderDropdown('Voltage',  voltage,  (e) => setVoltage(e.target.value as string),  ['230','380'])}
+{renderDropdown('Fire Safety Contacts', fireSafety, (e) => setFireSafety(e.target.value as string),  ['none', 'only Viewing', 'Viewing and Control'], isControlOwnPanel)}
 
-{renderDropdown('Maintenance Safety Contacts',  maintenanceSafety,  (e) => setMaintenanceSafety(e.target.value as string),  ['none', 'for Each Heat Reclaim', 'for All Heat Reclaim'])}
+{renderDropdown('Heating Valve Function', heatingValveFunction, (e) => setHeatingValveFunction(e.target.value as string),
+  ['none','On/Off Valve Actuator','On/Off Valve Actuator with Feedback','Floating Valve Actuator','Floating Valve Actuator with Feedback','Proportional Valve Actuator','Proportional Valve Actuator with Feedback'], isControlOwnPanel)}
 
-{renderDropdown('Emergency Safety Contacts',  emergencySafety,  (e) => setEmergencySafety(e.target.value as string),  ['none', 'for Each Heat Reclaim', 'for All Heat Reclaim'])}
+{renderDropdown('Cooling Valve Function', coolingValveFunction, (e) => setCoolingValveFunction(e.target.value as string),
+  ['none','On/Off Valve Actuator','On/Off Valve Actuator with Feedback','Floating Valve Actuator','Floating Valve Actuator with Feedback','Proportional Valve Actuator','Proportional Valve Actuator with Feedback'], isControlOwnPanel)}
 
-{renderDropdown('Fire Safety Contacts',  fireSafety,  (e) => setFireSafety(e.target.value as string),  ['none', 'only Viewing', 'Viewing and Control'])}
-
-{renderDropdown('Heating Valve Function',  heatingValveFunction,  (e) => setHeatingValveFunction(e.target.value as string),  [    'none',    'On/Off Valve Actuator',    'On/Off Valve Actuator with Feedback',    'Floating Valve Actuator',    'Floating Valve Actuator with Feedback',    'Proportional Valve Actuator',    'Proportional Valve Actuator with Feedback'  ])}
-
-{renderDropdown('Cooling Valve Function',  coolingValveFunction,  (e) => setCoolingValveFunction(e.target.value as string),  [    'none',    'On/Off Valve Actuator',    'On/Off Valve Actuator with Feedback',    'Floating Valve Actuator',    'Floating Valve Actuator with Feedback',    'Proportional Valve Actuator',    'Proportional Valve Actuator with Feedback'  ])}
-
-{renderDropdown('Temperature Measurement',  temperatureMeasurement,  (e) => setTemperatureMeasurement(e.target.value as string),  [    'none',    'Supply Air Temperature',    'Return Air Temperature',    'Fresh Air Temperature',    'Exhaust Air Temperature',    'Inside Air Temperature',    'Outside Air Temperature',    'Inlet Air Temperature',    'Outlet Air Temperature',    'Inlet and Outlet Air Temperature'  ])}
+{renderDropdown('Temperature Measurement', temperatureMeasurement, (e) => setTemperatureMeasurement(e.target.value as string),
+  ['none','Supply Air Temperature','Return Air Temperature','Fresh Air Temperature','Exhaust Air Temperature','Inside Air Temperature','Outside Air Temperature','Inlet Air Temperature','Outlet Air Temperature','Inlet and Outlet Air Temperature'], isControlOwnPanel)}
 
 
-{renderDropdown('Fresh Air Filter',  freshAirFilter,  (e) => setFreshAirFilter(e.target.value as string),  [    'none',    'Analog G4',  'Digital G4',    'Analog F5',  'Digital F5',    'Analog F6',  'Digital F6',    'Analog F7',  'Digital F7',    'Analog F8',  'Digital F8',    'Analog F9',  'Digital F9',    'Analog H13', 'Digital H13',    'Analog H14', 'Digital H14'  ])}
-{renderDropdown('Supply Air Filter',  supplyAirFilter,  (e) => setSupplyAirFilter(e.target.value as string),  [    'none',    'Analog G4',  'Digital G4',    'Analog F5',  'Digital F5',    'Analog F6',  'Digital F6',    'Analog F7',  'Digital F7',    'Analog F8',  'Digital F8',    'Analog F9',  'Digital F9',    'Analog H13', 'Digital H13',    'Analog H14', 'Digital H14'  ])}
+{renderDropdown('Fresh Air Filter', freshAirFilter, (e) => setFreshAirFilter(e.target.value as string),
+  ['none','Analog G4','Digital G4','Analog F5','Digital F5','Analog F6','Digital F6','Analog F7','Digital F7','Analog F8','Digital F8','Analog F9','Digital F9','Analog H13','Digital H13','Analog H14','Digital H14'], isControlOwnPanel)}
 
-{renderDropdown('Return Air Filter',  returnAirFilter,  (e) => setReturnAirFilter(e.target.value as string),  [    'none',    'Analog G4',  'Digital G4',    'Analog F5',  'Digital F5',    'Analog F6',  'Digital F6',    'Analog F7',  'Digital F7',    'Analog F8',  'Digital F8',    'Analog F9',  'Digital F9',    'Analog H13', 'Digital H13',    'Analog H14', 'Digital H14'  ])}            
+{renderDropdown('Supply Air Filter', supplyAirFilter, (e) => setSupplyAirFilter(e.target.value as string),
+  ['none','Analog G4','Digital G4','Analog F5','Digital F5','Analog F6','Digital F6','Analog F7','Digital F7','Analog F8','Digital F8','Analog F9','Digital F9','Analog H13','Digital H13','Analog H14','Digital H14'], isControlOwnPanel)}
 
-{renderDropdown('VFD Integration',  vfdIntegration,  (e) => setVfdIntegration(e.target.value as string),  ['none', 'VFD'])}
+{renderDropdown('Return Air Filter', returnAirFilter, (e) => setReturnAirFilter(e.target.value as string),
+  ['none','Analog G4','Digital G4','Analog F5','Digital F5','Analog F6','Digital F6','Analog F7','Digital F7','Analog F8','Digital F8','Analog F9','Digital F9','Analog H13','Digital H13','Analog H14','Digital H14'], isControlOwnPanel)}
 
-{renderDropdown('VFD Protocol Integration',  vfdProtocolIntegration,  (e) => setVfdProtocolIntegration(e.target.value as string),  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'])}
-
+{renderDropdown('VFD Integration', vfdIntegration, (e) => setVfdIntegration(e.target.value as string),
+  ['none','VFD'], isControlOwnPanel)}
+{renderDropdown('VFD Protocol Integration', vfdProtocolIntegration,
+  (e) => setVfdProtocolIntegration(e.target.value as string),
+  ['Modbus RTU','Modbus TCP IP','Bacnet MSTP','Bacnet IP'],
+  isControlOwnPanel || isVfdNone
+)}
 <TextField
   label="VFD Integration Points"
   value={vfdIntegrationPoints}
   onChange={(e) => setVfdIntegrationPoints(e.target.value)}
   fullWidth
   variant="outlined"
-  InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+  disabled={isControlOwnPanel || isVfdNone}
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' }, // label kararır
+    },
+  }}
   sx={{
-    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
-    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: (isControlOwnPanel || isVfdNone) ? '#555' : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: (isControlOwnPanel || isVfdNone) ? '#555' : '#CFD8DC',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: (isControlOwnPanel || isVfdNone) ? '#555' : '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#555',
+    },
   }}
   InputProps={{
     sx: {
-      backgroundColor: 'transparent',
+      backgroundColor: (isControlOwnPanel || isVfdNone) ? '#1e1e1e' : 'transparent',
       '& .MuiInputBase-input': { color: '#ECEFF1' },
-      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
     },
   }}
 />

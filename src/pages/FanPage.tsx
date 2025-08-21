@@ -674,7 +674,7 @@ const fireRows: any[] = [];
 
 if (fireSafety === 'only Viewing') {
   fireRows.push({
-    point: 'Fire General Status',
+    point: 'Aspirator Fan Fire Status',
     ai: 0, ao: 0, di: 1, do: 0,
     projectCode, description, location,
     modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
