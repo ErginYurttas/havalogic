@@ -33,20 +33,69 @@ const PrimaryButton = styled(ModernButton)({
 
 const normalize = (s: string) => s.trim().toLowerCase();
 
+function StatPill({ label, value }: { label: string; value: number | string }) {
+  return (
+    <Box
+      sx={{
+        px: 1.5,
+        py: 0.5,
+        borderRadius: '4px',
+        backgroundColor: 'rgba(255,255,255,0.10)',
+        border: '1px solid rgba(255,255,255,0.18)',
+        color: '#fff',
+        fontSize: '0.8rem',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 1,
+      }}
+    >
+      <Box component="span" sx={{ opacity: 0.85 }}>{label}:</Box>
+      <Box component="strong" sx={{ fontWeight: 700 }}>{value}</Box>
+    </Box>
+  );
+}
+
 export default function PoolPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
 
-  // ?project paramı VARSA filtre için kullanılır; yoksa/boşsa hepsi gösterilir
-  const projectFilterRaw = (params.get("project") || "");
-  const projectFilter = projectFilterRaw.trim();
+  // ?project paramı VARSA yalnızca Refresh'e basıldığında filtre için kullanılır
+  const projectFilter = (params.get("project") || "").trim();
 
   const [flatRows, setFlatRows] = React.useState<any[]>([]);
   const [snackbar, setSnackbar] = React.useState<{ open: boolean; msg: string; color?: string }>({
     open: false,
     msg: "",
+    color: "#4CAF50",
   });
+
+  // ÖZET: AI/AO/DI/DO + field totals
+  const totals = React.useMemo(() => {
+    const n = (v: any) => {
+      const num = typeof v === "number" ? v : parseFloat(v);
+      return Number.isFinite(num) ? num : 0;
+    };
+    const sum = (k:
+      | "ai" | "ao" | "di" | "do"
+      | "modbusRtu" | "modbusTcp"
+      | "bacnetMstp" | "bacnetIp"
+      | "mbus"
+    ) => flatRows.reduce((acc, r) => acc + n(r[k]), 0);
+
+    return {
+      rows: flatRows.length,
+      ai: sum("ai"),
+      ao: sum("ao"),
+      di: sum("di"),
+      do: sum("do"),
+      modbusRtu: sum("modbusRtu"),
+      modbusTcp: sum("modbusTcp"),
+      bacnetMstp: sum("bacnetMstp"),
+      bacnetIp: sum("bacnetIp"),
+      mbus: sum("mbus"),
+    };
+  }, [flatRows]);
 
   const handleLogout = () => navigate("/");
   const handleBack = () => navigate("/projects");
@@ -101,17 +150,16 @@ export default function PoolPage() {
       filtered = allRows.filter(r => normalize(String(r.projectCode || "")) === want);
     }
 
-    // Eşleşme yoksa otomatik olarak TÜMÜNE düş (kullanıcı yanlış değer göndermiş olabilir)
+    // Eşleşme yoksa ALL'a düş (kırmızı yok, hep yeşil/info)
     if (projectFilter && filtered.length === 0) {
-      const availableCodes = Array.from(new Set(allRows.map(r => String(r.projectCode || "")).filter(Boolean))).sort();
-      setFlatRows(allRows.sort((a, b) => String(a.projectCode || "").localeCompare(String(b.projectCode || ""))));
-      setSnackbar({
-        open: true,
-        msg: availableCodes.length
-          ? `No data for "${projectFilter}". Showing ALL. Available codes: ${availableCodes.join(", ")}`
-          : `No data for "${projectFilter}". Pool is empty.`,
-        color: "#d21947"
+      const allSorted = [...allRows].sort((a, b) => {
+        const ac = String(a.projectCode || "");
+        const bc = String(b.projectCode || "");
+        if (ac !== bc) return ac.localeCompare(bc);
+        return String(a.point || "").localeCompare(String(b.point || ""));
       });
+      setFlatRows(allSorted);
+      setSnackbar({ open: true, msg: "Pool refreshed (all systems)", color: "#4CAF50" });
       return;
     }
 
@@ -131,15 +179,7 @@ export default function PoolPage() {
     });
   }, [projectFilter]);
 
-  // Odağa gelince de yeniden yükle (SPA menü geçişlerinde kesin görünsün)
-  React.useEffect(() => {
-    const onFocus = () => loadPool();
-    window.addEventListener("focus", onFocus);
-    return () => window.removeEventListener("focus", onFocus);
-  }, [loadPool]);
-
-  // İlk yük + query değişince
-  React.useEffect(() => { loadPool(); }, [loadPool, location.search]);
+  // OTOMATİK YÜKLEME YOK — sadece Refresh ile yüklenecek
 
   const clearPool = () => {
     Object.keys(localStorage).forEach((k) => {
@@ -154,7 +194,7 @@ export default function PoolPage() {
       await navigator.clipboard.writeText(JSON.stringify(flatRows, null, 2));
       setSnackbar({ open: true, msg: "Copied to clipboard", color: "#4CAF50" });
     } catch {
-      setSnackbar({ open: true, msg: "Copy failed", color: "#d21947" });
+      setSnackbar({ open: true, msg: "Copy failed", color: "#4CAF50" });
     }
   };
 
@@ -173,22 +213,40 @@ export default function PoolPage() {
         </Stack>
       </Box>
 
-      {/* Başlık + toplam */}
+      {/* Başlık + özet istatistikler */}
       <Container sx={{ flex: 1, py: 4 }}>
-        <Stack direction="row" alignItems="baseline" justifyContent="space-between" sx={{ mb: 2 }}>
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={2}
+          alignItems={{ xs: "flex-start", md: "center" }}
+          justifyContent="space-between"
+          sx={{ mb: 2 }}
+        >
           <Typography variant="h5" sx={{ fontWeight: 600 }}>
             Pool {projectFilter ? `– ${projectFilter}` : "– All Systems"}
           </Typography>
-          <Typography variant="body2" sx={{ opacity: 0.85 }}>
-            Total rows: {flatRows.length}
-          </Typography>
+
+          <Stack direction="row" spacing={1.2} flexWrap="wrap">
+            <StatPill label="Rows" value={totals.rows} />
+            <StatPill label="AI" value={totals.ai} />
+            <StatPill label="AO" value={totals.ao} />
+            <StatPill label="DI" value={totals.di} />
+            <StatPill label="DO" value={totals.do} />
+            <StatPill label="Modbus RTU" value={totals.modbusRtu} />
+            <StatPill label="Modbus TCP/IP" value={totals.modbusTcp} />
+            <StatPill label="Bacnet MSTP" value={totals.bacnetMstp} />
+            <StatPill label="Bacnet IP" value={totals.bacnetIp} />
+            <StatPill label="Mbus" value={totals.mbus} />
+          </Stack>
         </Stack>
 
         {/* Tablo alanı */}
         <Box sx={{ backgroundColor: "rgba(255,255,255,0.1)", borderRadius: "12px", p: 2, minHeight: "70vh", overflow: "auto" }}>
           {flatRows.length === 0 ? (
             <Box sx={{ height: "100%", minHeight: "50vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Typography variant="body1">No data yet.</Typography>
+              <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                Click <strong>Refresh</strong> to load data.
+              </Typography>
             </Box>
           ) : (
             <table

@@ -249,15 +249,13 @@ export default function Project() {
               ))}
             </Menu>
 
+            <PrimaryButton sx={{ width: '100%' }} onClick={handleGoPool}>Go To Pool</PrimaryButton>
             <PrimaryButton sx={{ width: '100%' }}>Add Panel</PrimaryButton>
             <PrimaryButton sx={{ width: '100%' }}>Add Material</PrimaryButton>
             <PrimaryButton sx={{ width: '100%' }}>Add Hardware</PrimaryButton>
             <PrimaryButton sx={{ width: '100%' }}>Add Software</PrimaryButton>
 
-            {/* Go Pool */}
-            <PrimaryButton sx={{ width: '100%' }} onClick={handleGoPool}>
-              Go Pool
-            </PrimaryButton>
+            
 
             <PrimaryButton sx={{ width: '100%' }} onClick={handleBackToHome}>
               Back to Home

@@ -9,12 +9,15 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  Snackbar,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
+
+type ControlType = '' | 'Sensor' | 'Station';
 
 const ModernButton = styled(Button)({
   borderRadius: '8px',
@@ -64,7 +67,7 @@ export default function WeatherPage() {
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
 
-  const [controlType, setControlType] = useState('');
+  const [controlType, setControlType] = useState<ControlType>('');
   const [controlProtocolIntegration, setControlProtocolIntegration] = useState('');
   const [controlPanelIntegrationPoints, setControlPanelIntegrationPoints] = useState('');
   const [sensorMeasurement, setSensorMeasurement] = useState('');
@@ -75,128 +78,159 @@ export default function WeatherPage() {
   const [tableRows, setTableRows] = useState<any[]>([]);
   const [showTable, setShowTable] = useState(false);
 
-  const handleLogout = () => {
-    navigate('/');
-  };
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState('');
 
-  const handleBack = () => {
-    navigate('/projects');
-  };
+  const handleLogout = () => navigate('/');
+  const handleBack = () => navigate('/projects');
 
   useEffect(() => {
-  if (isTypeSensor) {
-    setControlProtocolIntegration('');
-    setControlPanelIntegrationPoints('');
-  }
-}, [isTypeSensor]);
+    if (isTypeSensor) {
+      setControlProtocolIntegration('');
+      setControlPanelIntegrationPoints('');
+    }
+  }, [isTypeSensor]);
 
-useEffect(() => {
-  if (isTypeStation) {
-    setSensorMeasurement('');
-  }
-}, [isTypeStation]);
+  useEffect(() => {
+    if (isTypeStation) {
+      setSensorMeasurement('');
+    }
+  }, [isTypeStation]);
 
-const renderDropdown = (
-  label: string,
-  value: string,
-  onChange: (e: SelectChangeEvent) => void,
-  options: string[],
-  disabled: boolean = false
-) => {
-  const base = label.replace(/\s+/g, '-').toLowerCase();
-  const labelId = `${base}-label`;
-  const selectId = `${base}-select`;
+  const renderDropdown = (
+    label: string,
+    value: string,
+    onChange: (e: SelectChangeEvent) => void,
+    options: string[],
+    disabled: boolean = false
+  ) => {
+    const base = label.replace(/\s+/g, '-').toLowerCase();
+    const labelId = `${base}-label`;
+    const selectId = `${base}-select`;
 
-  return (
-    <FormControl fullWidth disabled={disabled} variant="outlined">
-      <InputLabel id={labelId} sx={labelStyles}>{label}</InputLabel>
-      <Select
-        id={selectId}
-        labelId={labelId}
-        value={value || ''}
-        label={label}
-        onChange={onChange}
-        sx={selectStyles}
-      >
-        {options.map((option, index) => (
-          <MenuItem key={index} value={option}>{option}</MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  );
-};
-
-  const handleSaveWeather = () => {
-  setTableRows([]);
-  const rows: any[] = [];
-
-  // Yardımcı: tek satır ekleme
-  const addRow = (point: string, io: { ai?: number; ao?: number; di?: number; do?: number } = {}) => {
-    rows.push({
-      point,
-      projectCode,
-      description,
-      location,
-      ai: io.ai ?? 0,
-      ao: io.ao ?? 0,
-      di: io.di ?? 0,
-      do: io.do ?? 0,
-      modbusRtu: 0,
-      modbusTcp: 0,
-      bacnetMstp: 0,
-      bacnetIp: 0,
-      mbus: 0,
-    });
+    return (
+      <FormControl fullWidth disabled={disabled} variant="outlined">
+        <InputLabel id={labelId} sx={labelStyles}>{label}</InputLabel>
+        <Select
+          id={selectId}
+          labelId={labelId}
+          value={value || ''}
+          label={label}
+          onChange={onChange}
+          sx={selectStyles}
+        >
+          {options.map((option, index) => (
+            <MenuItem key={index} value={option}>{option}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    );
   };
 
-  // A) Control Type: Station → Weather Station Integration + protokol sütunu
-  if (controlType === 'Station') {
-    if (controlProtocolIntegration !== '' && controlPanelIntegrationPoints !== '') {
-      const parsedPoints = parseInt(controlPanelIntegrationPoints) || 0;
+  const handleSaveWeather = () => {
+    const rows: any[] = [];
 
-      const protocol = { modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 };
-      switch (controlProtocolIntegration) {
-        case 'Modbus RTU':    protocol.modbusRtu  = parsedPoints; break;
-        case 'Modbus TCP IP': protocol.modbusTcp  = parsedPoints; break;
-        case 'Bacnet MSTP':   protocol.bacnetMstp = parsedPoints; break;
-        case 'Bacnet IP':     protocol.bacnetIp   = parsedPoints; break;
-        default: break;
-      }
-
+    // yardımcı
+    const addRow = (point: string, io: { ai?: number; ao?: number; di?: number; do?: number } = {}) => {
       rows.push({
-        point: 'Weather Station Integration',
-        projectCode, description, location,
-        ai: 0, ao: 0, di: 0, do: 0,
-        modbusRtu: protocol.modbusRtu,
-        modbusTcp: protocol.modbusTcp,
-        bacnetMstp: protocol.bacnetMstp,
-        bacnetIp: protocol.bacnetIp,
-        mbus: protocol.mbus,
+        projectCode,
+        description,
+        location,
+        point,
+        ai: io.ai ?? 0,
+        ao: io.ao ?? 0,
+        di: io.di ?? 0,
+        do: io.do ?? 0,
+        modbusRtu: 0,
+        modbusTcp: 0,
+        bacnetMstp: 0,
+        bacnetIp: 0,
+        mbus: 0,
       });
-    }
-  }
+    };
 
-  // B) Control Type: Sensor → Sensor Measurement kuralları
-  if (controlType === 'Sensor') {
-    switch (sensorMeasurement) {
-      case 'Temperature':
-        addRow('Outside Temperature', { ai: 1 });
-        break;
-      case 'Humidity':
-        addRow('Outside Humidity', { ai: 1 });
-        break;
-      case 'Temperature and Humidity':
-        addRow('Outside Temperature', { ai: 1 });
-        addRow('Outside Humidity', { ai: 1 });
-        break;
-      default:
-        break; // none veya boş ise satır yok
+    // A) Control Type: Station → Weather Station Integration (+ protokol & point sayısı)
+    if (controlType === 'Station') {
+      if (controlProtocolIntegration !== '' && controlPanelIntegrationPoints !== '') {
+        const parsedPoints = parseInt(controlPanelIntegrationPoints, 10) || 0;
+        const protocol = { modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0 };
+        switch (controlProtocolIntegration) {
+          case 'Modbus RTU':    protocol.modbusRtu  = parsedPoints; break;
+          case 'Modbus TCP IP': protocol.modbusTcp  = parsedPoints; break;
+          case 'Bacnet MSTP':   protocol.bacnetMstp = parsedPoints; break;
+          case 'Bacnet IP':     protocol.bacnetIp   = parsedPoints; break;
+          default: break;
+        }
+        rows.push({
+          projectCode, description, location,
+          point: 'Weather Station Integration',
+          ai: 0, ao: 0, di: 0, do: 0,
+          modbusRtu: protocol.modbusRtu,
+          modbusTcp: protocol.modbusTcp,
+          bacnetMstp: protocol.bacnetMstp,
+          bacnetIp: protocol.bacnetIp,
+          mbus: protocol.mbus,
+        });
+      }
     }
-  }
 
-  setTableRows(rows);
-  setShowTable(true);
-};
+    // B) Control Type: Sensor → Sensor Measurement kuralları
+    if (controlType === 'Sensor') {
+      switch (sensorMeasurement) {
+        case 'Temperature':
+          addRow('Outside Temperature', { ai: 1 });
+          break;
+        case 'Humidity':
+          addRow('Outside Humidity', { ai: 1 });
+          break;
+        case 'Temperature and Humidity':
+          addRow('Outside Temperature', { ai: 1 });
+          addRow('Outside Humidity', { ai: 1 });
+          break;
+        default:
+          break; // none/boş: satır yok
+      }
+    }
+
+    setTableRows(rows);
+    setShowTable(true);
+  };
+
+  // Pool'a kaydet ve tabloyu temizle (Collector/WaterTank ile aynı)
+  const handleAddPool = () => {
+    const code = projectCode.trim();
+
+    if (!code) {
+      setSnackbarMsg('Please enter Project Code');
+      setSnackbarOpen(true);
+      return;
+    }
+    if (tableRows.length === 0) {
+      setSnackbarMsg('No rows to add. Please generate the table first.');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    const key = `pool:${code}`;
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+
+    const payload = {
+      id: Date.now(),
+      system: 'weather',
+      rows: tableRows,
+      createdAt: new Date().toISOString(),
+      meta: { description, location },
+    };
+
+    localStorage.setItem(key, JSON.stringify([...existing, payload]));
+
+    setSnackbarMsg('Data added to Pool');
+    setSnackbarOpen(true);
+
+    // kayıt sonrası tabloyu temizle
+    setTableRows([]);
+    setShowTable(false);
+  };
 
   return (
     <Box sx={{ minHeight: '100vh', background: 'radial-gradient(circle at top right, #1A237E, #000000)', color: '#FFFFFF', display: 'flex', flexDirection: 'column' }}>
@@ -220,156 +254,128 @@ const renderDropdown = (
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Weather System Input</Typography>
             <Stack spacing={2}>
               <TextField
-  label="Project Code"
-  value={projectCode}
-  onChange={(e) => setProjectCode(e.target.value)}
-  fullWidth
-  variant="outlined"
-  InputLabelProps={{
-    sx: {
-      color: '#90A4AE',
-      '&.Mui-focused': { color: '#B0BEC5' },
-      '&.Mui-disabled': { color: '#888' },
-    },
-  }}
-  sx={{
-    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
-    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
-    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline': { borderColor: '#555' },
-  }}
-  InputProps={{
-    sx: {
-      backgroundColor: 'transparent',
-      '& .MuiInputBase-input': { color: '#ECEFF1' },
-      '&.Mui-disabled': { backgroundColor: '#1e1e1e' },
-      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' },
-    },
-  }}
-/>
+                label="Project Code"
+                value={projectCode}
+                onChange={(e) => setProjectCode(e.target.value)}
+                fullWidth
+                variant="outlined"
+                InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+                  }
+                }}
+              />
 
-<TextField
-  label="Description"
-  value={description}
-  onChange={(e) => setDescription(e.target.value)}
-  fullWidth
-  variant="outlined"
-  InputLabelProps={{
-    sx: {
-      color: '#90A4AE',
-      '&.Mui-focused': { color: '#B0BEC5' },
-      '&.Mui-disabled': { color: '#888' },
-    },
-  }}
-  sx={{
-    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
-    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
-    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline': { borderColor: '#555' },
-  }}
-  InputProps={{
-    sx: {
-      backgroundColor: 'transparent',
-      '& .MuiInputBase-input': { color: '#ECEFF1' },
-      '&.Mui-disabled': { backgroundColor: '#1e1e1e' },
-      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' },
-    },
-  }}
-/>
+              <TextField
+                label="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                fullWidth
+                variant="outlined"
+                InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+                  }
+                }}
+              />
 
-<TextField
-  label="Located"
-  value={location}
-  onChange={(e) => setLocation(e.target.value)}
-  fullWidth
-  variant="outlined"
-  InputLabelProps={{
-    sx: {
-      color: '#90A4AE',
-      '&.Mui-focused': { color: '#B0BEC5' },
-      '&.Mui-disabled': { color: '#888' },
-    },
-  }}
-  sx={{
-    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
-    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
-    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline': { borderColor: '#555' },
-  }}
-  InputProps={{
-    sx: {
-      backgroundColor: 'transparent',
-      '& .MuiInputBase-input': { color: '#ECEFF1' },
-      '&.Mui-disabled': { backgroundColor: '#1e1e1e' },
-      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' },
-    },
-  }}
-/>
+              <TextField
+                label="Located"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                fullWidth
+                variant="outlined"
+                InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+                  }
+                }}
+              />
 
-{/* Control Type */}
-{renderDropdown(
-  'Control Type',
-  controlType,
-  (e) => setControlType(e.target.value as string),
-  ['Sensor', 'Station']
-)}
+              {/* Control Type */}
+              {renderDropdown(
+                'Control Type',
+                controlType,
+                (e) => setControlType(e.target.value as ControlType),
+                ['Sensor', 'Station']
+              )}
 
-{/* Control Protocol Integration (Sensor iken disable + kararsın) */}
-{renderDropdown(
-  'Control Protocol Integration',
-  controlProtocolIntegration,
-  (e) => setControlProtocolIntegration(e.target.value as string),
-  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],
-  isTypeSensor
-)}
+              {/* Control Protocol Integration (Sensor iken disable) */}
+              {renderDropdown(
+                'Control Protocol Integration',
+                controlProtocolIntegration,
+                (e) => setControlProtocolIntegration(e.target.value as string),
+                ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],
+                isTypeSensor
+              )}
 
-{/* Control Panel Integration Points (Sensor iken disable + kararsın) */}
-<TextField
-  label="Control Panel Integration Points"
-  value={controlPanelIntegrationPoints}
-  onChange={(e) => setControlPanelIntegrationPoints(e.target.value)}
-  fullWidth
-  variant="outlined"
-  disabled={isTypeSensor}
-  InputLabelProps={{
-    sx: {
-      color: '#90A4AE',
-      '&.Mui-focused': { color: '#B0BEC5' },
-      '&.Mui-disabled': { color: '#888' },
-    },
-  }}
-  sx={{
-    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
-      borderColor: isTypeSensor ? '#555' : '#B0BEC5',
-    },
-    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-      borderColor: isTypeSensor ? '#555' : '#CFD8DC',
-    },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: isTypeSensor ? '#555' : '#90A4AE',
-    },
-    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline': {
-      borderColor: '#555',
-    },
-  }}
-  InputProps={{
-    sx: {
-      backgroundColor: isTypeSensor ? '#1e1e1e' : 'transparent',
-      '& .MuiInputBase-input': { color: '#ECEFF1' },
-      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' },
-    },
-  }}
-/>
+              {/* Control Panel Integration Points (Sensor iken disable) */}
+              <TextField
+                label="Control Panel Integration Points"
+                value={controlPanelIntegrationPoints}
+                onChange={(e) => setControlPanelIntegrationPoints(e.target.value)}
+                fullWidth
+                variant="outlined"
+                disabled={isTypeSensor}
+                InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' }, '&.Mui-disabled': { color: '#888' } } }}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: isTypeSensor ? '#555' : '#B0BEC5' },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: isTypeSensor ? '#555' : '#CFD8DC' },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: isTypeSensor ? '#555' : '#90A4AE' },
+                  '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline': { borderColor: '#555' },
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: isTypeSensor ? '#1e1e1e' : 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' },
+                  },
+                }}
+              />
 
-{/* Sensor Measurement (Station iken disable + kararsın) */}
-{renderDropdown(
-  'Sensor Measurement',
-  sensorMeasurement,
-  (e) => setSensorMeasurement(e.target.value as string),
-  ['Temperature', 'Humidity', 'Temperature and Humidity'],
-  isTypeStation
-)}
+              {/* Sensor Measurement (Station iken disable) */}
+              {renderDropdown(
+                'Sensor Measurement',
+                sensorMeasurement,
+                (e) => setSensorMeasurement(e.target.value as string),
+                ['Temperature', 'Humidity', 'Temperature and Humidity'],
+                isTypeStation
+              )}
+
               <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveWeather}>Send to Table</PrimaryButton>
+
+              <PrimaryButton
+                sx={{ width: '100%' }}
+                onClick={handleAddPool}
+                disabled={!projectCode || tableRows.length === 0}
+              >
+                Add Pool
+              </PrimaryButton>
+
               <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
             </Stack>
           </Box>
@@ -391,8 +397,6 @@ const renderDropdown = (
           <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
             {projectCode ? `${projectCode} Output Table` : 'Weather Output Table'}
           </Typography>
-
-          <Box sx={{ overflowX: 'auto', overflowY: 'auto', maxWidth: '100%' }} />
 
           {showTable && tableRows.length > 0 && (
             <table style={{
@@ -418,20 +422,20 @@ const renderDropdown = (
               </thead>
               <tbody>
                 {tableRows.map((row, index) => (
-                  <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#f0f4f8', transition: 'background 0.3s', cursor: 'default' }}>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.projectCode}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.description}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.location}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.point}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.ai}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.ao}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.di}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.do}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.modbusRtu}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.modbusTcp}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.bacnetMstp}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.bacnetIp}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.mbus}</td>
+                  <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#f0f4f8' }}>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.projectCode}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.description}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.location}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.point}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.ai}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.ao}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.di}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.do}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.modbusRtu}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.modbusTcp}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.bacnetMstp}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.bacnetIp}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.mbus}</td>
                   </tr>
                 ))}
               </tbody>
@@ -439,6 +443,28 @@ const renderDropdown = (
           )}
         </Box>
       </Box>
+
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMsg}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{
+          '& .MuiSnackbarContent-root': {
+            backgroundColor: '#4CAF50',
+            color: '#fff',
+            fontWeight: 500,
+            padding: '10px 24px',
+            minWidth: 'auto',
+            justifyContent: 'center',
+            textAlign: 'center',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+          }
+        }}
+      />
     </Box>
   );
 }
