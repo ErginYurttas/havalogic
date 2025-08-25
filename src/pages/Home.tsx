@@ -144,15 +144,15 @@ export default function Home() {
   };
 
   const handleSubmit = () => {
-  // Eksik alan kontrolü
+
   if (!formData.projectName || 
       !formData.buildingType || 
       !formData.system || 
       !formData.city || 
       !formData.country || 
       !formData.responsible) {
-    setValidationError(true); // Validasyon hatasını tetikle
-    return; // Fonksiyonu durdur
+    setValidationError(true); 
+    return; 
   }
 
   localStorage.setItem('currentProject', JSON.stringify(formData));

@@ -65,7 +65,6 @@ export default function RoomPage() {
   const [location, setLocation] = useState('');
 
 
-  const [roomType, setRoomType] = useState('');
 
   const [tableRows, setTableRows] = useState<any[]>([]);
   const [showTable, setShowTable] = useState(false);
@@ -205,7 +204,6 @@ export default function RoomPage() {
 />
 
 
-{renderDropdown('Room Type',  roomType,  (e) => setRoomType(e.target.value as string),  ['Clean Room', 'Surgery Room', 'Office'])}
 
               <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveRoom}>Send to Table</PrimaryButton>
               <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>

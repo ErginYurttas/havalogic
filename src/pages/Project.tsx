@@ -5,7 +5,8 @@ import {
   Stack,
   Container,
   Menu,
-  MenuItem
+  MenuItem,
+  Snackbar,
 } from '@mui/material';
 import { styled } from '@mui/system';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -52,6 +53,9 @@ export default function Project() {
   const projectData = localStorageData ? JSON.parse(localStorageData) : null;
   const loggedInUser = localStorage.getItem('loggedInUser');
 
+  // Snackbar (Home sayfasındaki turuncu uyarı ile aynı stil)
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
   const handleLogout = () => {
     navigate('/');
   };
@@ -74,6 +78,19 @@ export default function Project() {
     handleClose();
   };
 
+  const handleGoPool = () => {
+  const projectKey =
+    projectData?.projectCode ||
+    projectData?.projectName; // fallback
+
+  if (projectKey) {
+    navigate(`/pool?project=${encodeURIComponent(projectKey)}`);
+  } else {
+    // mevcut snackbar tetiklensin
+    setSnackbarOpen(true);
+  }
+};
+
   return (
     <Box sx={{
       minHeight: '100vh',
@@ -90,11 +107,10 @@ export default function Project() {
         backgroundColor: 'white',
         boxShadow: '0 2px 10px rgba(0,0,0,0.08)'
       }}>
-
         <Typography variant="body1" sx={{ fontWeight: 'normal', fontSize: '1.1rem' }}>
-    <span style={{ color: '#1976d2' }}>hava</span>
-    <span style={{ color: '#B0BEC5' }}>logic</span>
-  </Typography>
+          <span style={{ color: '#1976d2' }}>hava</span>
+          <span style={{ color: '#B0BEC5' }}>logic</span>
+        </Typography>
         <Stack direction="row" spacing={2} alignItems="center">
           <Typography variant="body1" sx={{
             mr: 2,
@@ -158,7 +174,7 @@ export default function Project() {
               <strong>Building Type:</strong> {projectData?.buildingType}
             </Typography>
             <Typography variant="body1" sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-            <strong>System:</strong> {projectData?.system}
+              <strong>System:</strong> {projectData?.system}
             </Typography>
             {projectData?.buildingType && (
               <Box
@@ -226,7 +242,7 @@ export default function Project() {
                 'Water Tank',
                 'Weather',
                 'Manual Entry',
-].map((item) => (
+              ].map((item) => (
                 <MenuItem key={item} onClick={() => handleSystemSelect(item)}>
                   {item}
                 </MenuItem>
@@ -237,10 +253,40 @@ export default function Project() {
             <PrimaryButton sx={{ width: '100%' }}>Add Material</PrimaryButton>
             <PrimaryButton sx={{ width: '100%' }}>Add Hardware</PrimaryButton>
             <PrimaryButton sx={{ width: '100%' }}>Add Software</PrimaryButton>
-            <PrimaryButton sx={{ width: '100%' }} onClick={handleBackToHome}>Back to Home</PrimaryButton>
+
+            {/* Go Pool */}
+            <PrimaryButton sx={{ width: '100%' }} onClick={handleGoPool}>
+              Go Pool
+            </PrimaryButton>
+
+            <PrimaryButton sx={{ width: '100%' }} onClick={handleBackToHome}>
+              Back to Home
+            </PrimaryButton>
           </Stack>
         </Box>
       </Container>
+
+      {/* Snackbar: Home'daki turuncu uyarı ile birebir konum & stil */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        message="Project Code not found"
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{
+          '& .MuiSnackbarContent-root': {
+            backgroundColor: '#FFA500',
+            color: 'black',
+            fontWeight: 500,
+            padding: '10px 24px',
+            minWidth: 'auto',
+            justifyContent: 'center',
+            textAlign: 'center',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+          }
+        }}
+      />
     </Box>
   );
 }

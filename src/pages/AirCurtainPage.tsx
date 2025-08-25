@@ -591,9 +591,113 @@ if (
           <Box sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px', p: 4, width: '400px', maxWidth: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Air Curtain System Input</Typography>
             <Stack spacing={2}>
-              <TextField fullWidth variant="outlined" placeholder="Project Code" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} InputProps={{ style: { color: 'white' } }} />
-              <TextField fullWidth variant="outlined" placeholder="Located" value={location} onChange={(e) => setLocation(e.target.value)} InputProps={{ style: { color: 'white' } }} />
+              <TextField
+  label="Project Code"
+  value={projectCode}
+  onChange={(e) => setProjectCode(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' },
+    },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#CFD8DC',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
+
+<TextField
+  label="Description"
+  value={description}
+  onChange={(e) => setDescription(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' },
+    },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#CFD8DC',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
+
+<TextField
+  label="Located"
+  value={location}
+  onChange={(e) => setLocation(e.target.value)}
+  fullWidth
+  variant="outlined"
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' },
+    },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#CFD8DC',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor: 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
+  }}
+/>
 
 {renderDropdown('Control Type', airCurtainControlType, (e) => setAirCurtainControlType(e.target.value), ['with DDC', 'Thermostat'], false)}
 
@@ -607,17 +711,47 @@ if (
   value={airCurtainThermostatIntegrationPoints}
   onChange={(e) => setAirCurtainThermostatIntegrationPoints(e.target.value)}
   fullWidth
-  sx={{
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: airCurtainThermostatIntegration === 'none' ? '#555' : '#B0BEC5'
-    }
-  }}
+  variant="outlined"
   disabled={airCurtainThermostatIntegration === 'none' || airCurtainControlType === 'with DDC'}
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' },
+    },
+  }}
+  sx={{
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor:
+        (airCurtainThermostatIntegration === 'none' || airCurtainControlType === 'with DDC')
+          ? '#555'
+          : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor:
+        (airCurtainThermostatIntegration === 'none' || airCurtainControlType === 'with DDC')
+          ? '#555'
+          : '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor:
+        (airCurtainThermostatIntegration === 'none' || airCurtainControlType === 'with DDC')
+          ? '#555'
+          : '#CFD8DC',
+    },
+  }}
   InputProps={{
-    style: {
-      color: (airCurtainThermostatIntegration === 'none' || airCurtainControlType === 'with DDC') ? '#888' : 'white',
-      backgroundColor: (airCurtainThermostatIntegration === 'none' || airCurtainControlType === 'with DDC') ? '#1e1e1e' : 'transparent'
-    }
+    sx: {
+      backgroundColor:
+        (airCurtainThermostatIntegration === 'none' || airCurtainControlType === 'with DDC')
+          ? '#1e1e1e'
+          : 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
   }}
 />
 
@@ -642,22 +776,51 @@ if (
 {renderDropdown('Air Curtain Protocol Integration', airCurtainProtocolIntegration, (e) => setAirCurtainProtocolIntegration(e.target.value), ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'], airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none')}
 
 <TextField
-  fullWidth
-  variant="outlined"
-  placeholder="Air Curtain Integration Points"
+  label="Air Curtain Integration Points"
   value={airCurtainIntegrationPoints}
   onChange={(e) => setAirCurtainIntegrationPoints(e.target.value)}
+  fullWidth
+  variant="outlined"
   disabled={airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none'}
-  InputProps={{
-    style: {
-      color: (airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none') ? '#888' : 'white',
-      backgroundColor: (airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none') ? '#1e1e1e' : 'transparent'
-    }
+  InputLabelProps={{
+    sx: {
+      color: '#90A4AE',
+      '&.Mui-focused': { color: '#B0BEC5' },
+      '&.Mui-disabled': { color: '#888' },
+    },
   }}
   sx={{
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: (airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none') ? '#555' : '#B0BEC5'
-    }
+    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+      borderColor:
+        (airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none')
+          ? '#555'
+          : '#B0BEC5',
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor:
+        (airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none')
+          ? '#555'
+          : '#90A4AE',
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor:
+        (airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none')
+          ? '#555'
+          : '#CFD8DC',
+    },
+  }}
+  InputProps={{
+    sx: {
+      backgroundColor:
+        (airCurtainControlType === 'Thermostat' || airCurtainIntegration === 'none')
+          ? '#1e1e1e'
+          : 'transparent',
+      '& .MuiInputBase-input': { color: '#ECEFF1' },
+      '&.Mui-disabled .MuiInputBase-input': {
+        WebkitTextFillColor: '#888',
+        color: '#888',
+      },
+    },
   }}
 />
 
