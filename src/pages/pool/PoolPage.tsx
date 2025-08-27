@@ -33,6 +33,24 @@ const PrimaryButton = styled(ModernButton)({
 
 const normalize = (s: string) => s.trim().toLowerCase();
 
+// Payload içindeki ekleme sırasını korumak için:
+// 1) ProjectCode'a göre grupla
+// 2) Aynı projede önce pack.createdAt (payload eklenme zamanı)
+// 3) Sonra row.order (yoksa idx fallback)
+function sortOriginal(a: any, b: any) {
+  const ac = String(a.projectCode || "");
+  const bc = String(b.projectCode || "");
+  if (ac !== bc) return ac.localeCompare(bc);
+
+  const ta = Number(a.__packCreatedAt || 0);
+  const tb = Number(b.__packCreatedAt || 0);
+  if (ta !== tb) return ta - tb;
+
+  const oa = typeof a.order === "number" ? a.order : 0;
+  const ob = typeof b.order === "number" ? b.order : 0;
+  return oa - ob;
+}
+
 function StatPill({ label, value }: { label: string; value: number | string }) {
   return (
     <Box
@@ -101,35 +119,41 @@ export default function PoolPage() {
   const handleBack = () => navigate("/projects");
 
   const flattenFromKey = (key: string): any[] => {
-    const raw = localStorage.getItem(key);
-    if (!raw) return [];
-    let packs: PoolItemPack[] = [];
-    try {
-      packs = JSON.parse(raw) || [];
-    } catch {
-      return [];
-    }
-    const rows: any[] = [];
-    packs.forEach((pack) => {
-      (pack.rows || []).forEach((r: any) => {
-        rows.push({
-          __key: key,
-          __system: pack.system || "unknown",
-          projectCode: r.projectCode,
-          description: r.description,
-          location: r.location,
-          point: r.point,
-          ai: r.ai, ao: r.ao, di: r.di, do: r.do,
-          modbusRtu: r.modbusRtu,
-          modbusTcp: r.modbusTcp,
-          bacnetMstp: r.bacnetMstp,
-          bacnetIp: r.bacnetIp,
-          mbus: r.mbus,
-        });
+  const raw = localStorage.getItem(key);
+  if (!raw) return [];
+  let packs: PoolItemPack[] = [];
+  try {
+    packs = JSON.parse(raw) || [];
+  } catch {
+    return [];
+  }
+  const rows: any[] = [];
+
+  packs.forEach((pack) => {
+    const packCreatedAt = pack.createdAt ? Date.parse(pack.createdAt) : 0;
+
+    (pack.rows || []).forEach((r: any, idx: number) => {
+      rows.push({
+        __key: key,
+        __system: pack.system || "unknown",
+        __packCreatedAt: packCreatedAt,           // payload eklenme zamanı
+        projectCode: r.projectCode,
+        description: r.description,
+        location: r.location,
+        point: r.point,
+        ai: r.ai, ao: r.ao, di: r.di, do: r.do,
+        modbusRtu: r.modbusRtu,
+        modbusTcp: r.modbusTcp,
+        bacnetMstp: r.bacnetMstp,
+        bacnetIp: r.bacnetIp,
+        mbus: r.mbus,
+        order: typeof r.order === "number" ? r.order : idx, // satır ekleme sırası (fallback: idx)
       });
     });
-    return rows;
-  };
+  });
+
+  return rows;
+};
 
   const loadPool = React.useCallback(() => {
     const keys = Object.keys(localStorage).filter(k => k.startsWith("pool:"));
@@ -152,24 +176,14 @@ export default function PoolPage() {
 
     // Eşleşme yoksa ALL'a düş (kırmızı yok, hep yeşil/info)
     if (projectFilter && filtered.length === 0) {
-      const allSorted = [...allRows].sort((a, b) => {
-        const ac = String(a.projectCode || "");
-        const bc = String(b.projectCode || "");
-        if (ac !== bc) return ac.localeCompare(bc);
-        return String(a.point || "").localeCompare(String(b.point || ""));
-      });
+      const allSorted = [...allRows].sort(sortOriginal);
       setFlatRows(allSorted);
       setSnackbar({ open: true, msg: "Pool refreshed (all systems)", color: "#4CAF50" });
       return;
     }
 
-    // Sıra: ProjectCode → Point
-    filtered.sort((a, b) => {
-      const ac = String(a.projectCode || "");
-      const bc = String(b.projectCode || "");
-      if (ac !== bc) return ac.localeCompare(bc);
-      return String(a.point || "").localeCompare(String(b.point || ""));
-    });
+
+    filtered.sort(sortOriginal);
 
     setFlatRows(filtered);
     setSnackbar({

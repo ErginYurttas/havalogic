@@ -9,7 +9,8 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  Snackbar
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -64,7 +65,6 @@ export default function GeneratorPage() {
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
 
-
   const [controlType, setControlType] = useState<string>('');
   const [controlProtocolIntegration, setControlProtocolIntegration] = useState<string>('');
   const [controlPanelIntegrationPoints, setControlPanelIntegrationPoints] = useState<string>('');
@@ -87,261 +87,287 @@ export default function GeneratorPage() {
   const [tableRows, setTableRows] = useState<any[]>([]);
   const [showTable, setShowTable] = useState(false);
 
-  useEffect(() => {
-  if (isLocal) {
-    setControlProtocolIntegration('');
-    setControlPanelIntegrationPoints('');
-    setControlPanelHardPoints('');
-  }
-}, [isLocal]);
-
-
-useEffect(() => {
-  if (isOwnPanel) {
-    setPieces('');
-    setPower('');
-    setVoltage('');
-    setMaintenanceSafety('');
-    setEmergencySafety('');
-    setTankLevelMeasurement('');
-  }
-}, [isOwnPanel]);
+  // Pool snackbar
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState('');
 
   useEffect(() => {
-  if (isNone) {
-    setControlProtocolIntegration('');
-    setControlPanelIntegrationPoints('');
-    setControlPanelHardPoints('');
-  }
-}, [isNone]);
+    if (isLocal) {
+      setControlProtocolIntegration('');
+      setControlPanelIntegrationPoints('');
+      setControlPanelHardPoints('');
+    }
+  }, [isLocal]);
 
+  useEffect(() => {
+    if (isOwnPanel) {
+      setPieces('');
+      setPower('');
+      setVoltage('');
+      setMaintenanceSafety('');
+      setEmergencySafety('');
+      setTankLevelMeasurement('');
+    }
+  }, [isOwnPanel]);
 
-  const handleLogout = () => {
-    navigate('/');
-  };
+  useEffect(() => {
+    if (isNone) {
+      setControlProtocolIntegration('');
+      setControlPanelIntegrationPoints('');
+      setControlPanelHardPoints('');
+    }
+  }, [isNone]);
 
-  const handleBack = () => {
-    navigate('/projects');
-  };
+  const handleLogout = () => navigate('/');
+  const handleBack = () => navigate('/projects');
 
-  
-
-
-
-const renderDropdown = (
-  label: string,
-  value: string,
-  onChange: (e: SelectChangeEvent) => void,
-  options: string[],
-  disabled: boolean = false
-) => (
-  <FormControl fullWidth disabled={disabled}>
-    <InputLabel sx={labelStyles}>{label}</InputLabel>
-    <Select value={value} label={label} onChange={onChange} sx={selectStyles}>
-      {options.map((opt, i) => (
-        <MenuItem key={i} value={opt}>{opt}</MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-);
-
-
+  const renderDropdown = (
+    label: string,
+    value: string,
+    onChange: (e: SelectChangeEvent) => void,
+    options: string[],
+    disabled: boolean = false
+  ) => (
+    <FormControl fullWidth disabled={disabled} variant="outlined">
+      <InputLabel sx={labelStyles}>{label}</InputLabel>
+      <Select value={value} label={label} onChange={onChange} sx={selectStyles}>
+        {options.map((opt, i) => (
+          <MenuItem key={i} value={opt}>{opt}</MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
 
   const handleSaveGenerator = () => {
-  const rows: any[] = [];
-  const pcs = parseInt(pieces) || 1;
-  const multi = pcs > 1;
+    const rows: any[] = [];
+    const pcs = parseInt(pieces) || 1;
+    const multi = pcs > 1;
 
-  // --- Control Type ---
-  if (controlType === 'Local') {
-    for (let i = 1; i <= pcs; i++) {
-      const sfx = multi ? ` ${i}` : '';
-      rows.push(
+    // --- Control Type ---
+    if (controlType === 'Local') {
+      for (let i = 1; i <= pcs; i++) {
+        const sfx = multi ? ` ${i}` : '';
+        rows.push(
+          {
+            projectCode, description, location,
+            point: `Generator Status${sfx}`,
+            ai: 0, ao: 0, di: 1, do: 0,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          },
+          {
+            projectCode, description, location,
+            point: `Generator Fault${sfx}`,
+            ai: 0, ao: 0, di: 1, do: 0,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+          }
+        );
+      }
+    } else if (controlType === 'own Panel') {
+      const val = Number(controlPanelIntegrationPoints) || 0;
+      const integrationRow: any = {
+        projectCode, description, location,
+        point: 'Generator Control Panel Integration',
+        ai: 0, ao: 0, di: 0, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+      };
+
+      switch (controlProtocolIntegration) {
+        case 'Modbus RTU':    integrationRow.modbusRtu  = val; break;
+        case 'Modbus TCP IP': integrationRow.modbusTcp  = val; break;
+        case 'Bacnet MSTP':   integrationRow.bacnetMstp = val; break;
+        case 'Bacnet IP':     integrationRow.bacnetIp   = val; break;
+        default: break;
+      }
+      rows.push(integrationRow);
+    }
+
+    // --- Hard Points ---
+    const hardPointsRows: any[] = [];
+    if (controlPanelHardPoints === 'Statuses') {
+      hardPointsRows.push(
         {
           projectCode, description, location,
-          point: `Generator Status${sfx}`,
+          point: 'Generator Control Panel General Status',
           ai: 0, ao: 0, di: 1, do: 0,
           modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
         },
         {
           projectCode, description, location,
-          point: `Generator Fault${sfx}`,
+          point: 'Generator Control Panel General Fault',
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        }
+      );
+    } else if (controlPanelHardPoints === 'Command') {
+      hardPointsRows.push({
+        projectCode, description, location,
+        point: 'Generator Control Panel General Command',
+        ai: 0, ao: 0, di: 0, do: 1,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+      });
+    } else if (controlPanelHardPoints === 'Statuses and Command') {
+      hardPointsRows.push(
+        {
+          projectCode, description, location,
+          point: 'Generator Control Panel General Status',
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        },
+        {
+          projectCode, description, location,
+          point: 'Generator Control Panel General Fault',
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        },
+        {
+          projectCode, description, location,
+          point: 'Generator Control Panel General Command',
+          ai: 0, ao: 0, di: 0, do: 1,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        }
+      );
+    }
+
+    // --- Maintenance Safety ---
+    const maintenanceRows: any[] = [];
+    if (maintenanceSafety === 'for Each Generator' || maintenanceSafety === 'Each Generator') {
+      for (let i = 1; i <= pcs; i++) {
+        maintenanceRows.push({
+          projectCode, description, location,
+          point: `Generator Maintenance Status${multi ? ` ${i}` : ''}`,
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        });
+      }
+    } else if (maintenanceSafety === 'for All Generators' || maintenanceSafety === 'for All Generator') {
+      maintenanceRows.push({
+        projectCode, description, location,
+        point: 'Generator General Maintenance Status',
+        ai: 0, ao: 0, di: 1, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+      });
+    }
+
+    // --- Emergency Safety ---
+    const emergencyRows: any[] = [];
+    if (emergencySafety === 'for Each Generator' || emergencySafety === 'Each Generator') {
+      for (let i = 1; i <= pcs; i++) {
+        emergencyRows.push({
+          projectCode, description, location,
+          point: `Generator Emergency Status${multi ? ` ${i}` : ''}`,
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        });
+      }
+    } else if (emergencySafety === 'for All Generators' || emergencySafety === 'for All Generator') {
+      emergencyRows.push({
+        projectCode, description, location,
+        point: 'Generator General Emergency Status',
+        ai: 0, ao: 0, di: 1, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+      });
+    }
+
+    // --- Tank Level ---
+    const tankLevelRows: any[] = [];
+    if (tankLevelMeasurement === 'Analog') {
+      tankLevelRows.push({
+        projectCode, description, location,
+        point: 'Generator Fuel Tank Level Status',
+        ai: 1, ao: 0, di: 0, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+      });
+    } else if (tankLevelMeasurement === 'Digital Min. Level') {
+      tankLevelRows.push({
+        projectCode, description, location,
+        point: 'Generator Fuel Tank Min. Level Status',
+        ai: 0, ao: 0, di: 1, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+      });
+    } else if (tankLevelMeasurement === 'Digital Max. Level') {
+      tankLevelRows.push({
+        projectCode, description, location,
+        point: 'Generator Fuel Tank Max. Level Status',
+        ai: 0, ao: 0, di: 1, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+      });
+    } else if (tankLevelMeasurement === 'Digital Min. and Max. Level') {
+      tankLevelRows.push(
+        {
+          projectCode, description, location,
+          point: 'Generator Fuel Tank Min. Level Status',
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+        },
+        {
+          projectCode, description, location,
+          point: 'Generator Fuel Tank Max. Level Status',
           ai: 0, ao: 0, di: 1, do: 0,
           modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
         }
       );
     }
-  } else if (controlType === 'own Panel') {
-    const val = Number(controlPanelIntegrationPoints) || 0;
-    const integrationRow: any = {
-      projectCode, description, location,
-      point: 'Generator Control Panel Integration',
-      ai: 0, ao: 0, di: 0, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+
+    // --- Room Temp ---
+    const roomTempRows: any[] = [];
+    if (roomTemperatureMeasurement === 'Temperature') {
+      roomTempRows.push({
+        projectCode, description, location,
+        point: 'Generator Ambient Temperature',
+        ai: 1, ao: 0, di: 0, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
+      });
+    }
+
+    // birleşik + order
+    const ALL_ROWS = [
+      ...rows,
+      ...hardPointsRows,
+      ...maintenanceRows,
+      ...emergencyRows,
+      ...tankLevelRows,
+      ...roomTempRows
+    ].map((r, i) => ({ ...r, order: i }));
+
+    setTableRows(ALL_ROWS);
+    setShowTable(true);
+  };
+
+  // ---- ADD POOL (Weather/UPS/Water Tank formatı) ----
+  const handleAddPool = () => {
+    const code = (projectCode || '').trim();
+
+    if (!code) {
+      setSnackbarMsg('Please enter Project Code');
+      setSnackbarOpen(true);
+      return;
+    }
+    if (tableRows.length === 0) {
+      setSnackbarMsg('No rows to add. Please generate the table first.');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    const key = `pool:${code}`;
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+
+    const payload = {
+      id: Date.now(),
+      system: 'generator',
+      rows: tableRows,
+      createdAt: new Date().toISOString(),
+      meta: { description, location },
     };
 
-    switch (controlProtocolIntegration) {
-      case 'Modbus RTU':   integrationRow.modbusRtu  = val; break;
-      case 'Modbus TCP IP':integrationRow.modbusTcp  = val; break;
-      case 'Bacnet MSTP':  integrationRow.bacnetMstp = val; break;
-      case 'Bacnet IP':    integrationRow.bacnetIp   = val; break;
-      default: break; 
-    }
+    localStorage.setItem(key, JSON.stringify([...existing, payload]));
 
-    rows.push(integrationRow);
-  }
+    setSnackbarMsg('Data added to Pool');
+    setSnackbarOpen(true);
 
-
-
-  const hardPointsRows: any[] = [];
-  if (controlPanelHardPoints === 'Statuses') {
-    hardPointsRows.push(
-      {
-        projectCode, description, location,
-        point: 'Generator Control Panel General Status',
-        ai: 0, ao: 0, di: 1, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-      },
-      {
-        projectCode, description, location,
-        point: 'Generator Control Panel General Fault',
-        ai: 0, ao: 0, di: 1, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-      }
-    );
-  } else if (controlPanelHardPoints === 'Command') {
-    hardPointsRows.push({
-      projectCode, description, location,
-      point: 'Generator Control Panel General Command',
-      ai: 0, ao: 0, di: 0, do: 1,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-    });
-  } else if (controlPanelHardPoints === 'Statuses and Command') {
-    hardPointsRows.push(
-      {
-        projectCode, description, location,
-        point: 'Generator Control Panel General Status',
-        ai: 0, ao: 0, di: 1, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-      },
-      {
-        projectCode, description, location,
-        point: 'Generator Control Panel General Fault',
-        ai: 0, ao: 0, di: 1, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-      },
-      {
-        projectCode, description, location,
-        point: 'Generator Control Panel General Command',
-        ai: 0, ao: 0, di: 0, do: 1,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-      }
-    );
-  }
-
-
-
-  const maintenanceRows: any[] = [];
-  if (maintenanceSafety === 'for Each Generator' || maintenanceSafety === 'Each Generator') {
-    for (let i = 1; i <= pcs; i++) {
-      maintenanceRows.push({
-        projectCode, description, location,
-        point: `Generator Maintenance Status${multi ? ` ${i}` : ''}`,
-        ai: 0, ao: 0, di: 1, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-      });
-    }
-  } else if (maintenanceSafety === 'for All Generators' || maintenanceSafety === 'for All Generator') {
-    maintenanceRows.push({
-      projectCode, description, location,
-      point: 'Generator General Maintenance Status',
-      ai: 0, ao: 0, di: 1, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-    });
-  }
-
-
-  const emergencyRows: any[] = [];
-  if (emergencySafety === 'for Each Generator' || emergencySafety === 'for Each Generator') {
-    for (let i = 1; i <= pcs; i++) {
-      emergencyRows.push({
-        projectCode, description, location,
-        point: `Generator Emergency Status${multi ? ` ${i}` : ''}`,
-        ai: 0, ao: 0, di: 1, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-      });
-    }
-  } else if (emergencySafety === 'for All Generators' || emergencySafety === 'for All Generators') {
-    emergencyRows.push({
-      projectCode, description, location,
-      point: 'Generator General Emergency Status',
-      ai: 0, ao: 0, di: 1, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-    });
-  }
-
-
-const tankLevelRows: any[] = [];
-
-if (tankLevelMeasurement === 'Analog') {
-  tankLevelRows.push({
-    projectCode, description, location,
-    point: 'Generator Fuel Tank Level Status',
-    ai: 1, ao: 0, di: 0, do: 0,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-  });
-} else if (tankLevelMeasurement === 'Digital Min. Level') {
-  tankLevelRows.push({
-    projectCode, description, location,
-    point: 'Generator Fuel Tank Min. Level Status',
-    ai: 0, ao: 0, di: 1, do: 0,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-  });
-} else if (tankLevelMeasurement === 'Digital Max. Level') {
-  tankLevelRows.push({
-    projectCode, description, location,
-    point: 'Generator Fuel Tank Max. Level Status',
-    ai: 0, ao: 0, di: 1, do: 0,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-  });
-} else if (tankLevelMeasurement === 'Digital Min. and Max. Level') {
-  tankLevelRows.push(
-    {
-      projectCode, description, location,
-      point: 'Generator Fuel Tank Min. Level Status',
-      ai: 0, ao: 0, di: 1, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-    },
-    {
-      projectCode, description, location,
-      point: 'Generator Fuel Tank Max. Level Status',
-      ai: 0, ao: 0, di: 1, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-    }
-  );
-}
-
-  const roomTempRows: any[] = [];
-
-if (roomTemperatureMeasurement === 'Temperature') {
-  roomTempRows.push({
-    projectCode, description, location,
-    point: 'Generator Ambiente Temperature',
-    ai: 1, ao: 0, di: 0, do: 0,
-    modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0,
-  });
-}
-
-  setTableRows([
-    ...rows,
-    ...hardPointsRows,
-    ...maintenanceRows,
-    ...emergencyRows,
-    ...tankLevelRows,
-    ...roomTempRows
-  ]);
-  setShowTable(true);
-};
+    // isteğe bağlı: tabloyu temizle
+    setTableRows([]);
+    setShowTable(false);
+  };
 
   return (
     <Box sx={{ minHeight: '100vh', background: 'radial-gradient(circle at top right, #1A237E, #000000)', color: '#FFFFFF', display: 'flex', flexDirection: 'column' }}>
@@ -384,7 +410,7 @@ if (roomTemperatureMeasurement === 'Temperature') {
                   }
                 }}
               />
-              
+
               <TextField
                 label="Description"
                 value={description}
@@ -405,7 +431,7 @@ if (roomTemperatureMeasurement === 'Temperature') {
                   }
                 }}
               />
-              
+
               <TextField
                 label="Located"
                 value={location}
@@ -427,49 +453,68 @@ if (roomTemperatureMeasurement === 'Temperature') {
                 }}
               />
 
-              {renderDropdown('Control Type',  controlType,  (e) => setControlType(e.target.value as string),  ['none', 'Local', 'own Panel'])}
-              {renderDropdown('Control Protocol Integration', controlProtocolIntegration, (e) => setControlProtocolIntegration(e.target.value), ['Modbus RTU','Modbus TCP IP','Bacnet MSTP','Bacnet IP'],  isLocal || isNone)}
-<TextField
-  label="Control Panel Integration Points"
-  value={controlPanelIntegrationPoints}
-  onChange={(e) => setControlPanelIntegrationPoints(e.target.value)}
-  fullWidth
-  variant="outlined"
-  disabled={isLocal || isNone}
-  InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' }, '&.Mui-disabled': { color: '#888' } } }}
-  sx={{
-    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
-      borderColor: (isLocal || isNone) ? '#555' : '#B0BEC5',
-    },
-    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-      borderColor: (isLocal || isNone) ? '#555' : '#CFD8DC',
-    },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: (isLocal || isNone) ? '#555' : '#90A4AE',
-    },
-  }}
-  InputProps={{
-    sx: {
-      backgroundColor: (isLocal || isNone) ? '#1e1e1e' : 'transparent',
-      '& .MuiInputBase-input': { color: '#ECEFF1' },
-      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' },
-    },
-  }}
-/>
+              {renderDropdown('Control Type', controlType, (e) => setControlType(e.target.value as string), ['none', 'Local', 'own Panel'])}
 
+              {renderDropdown(
+                'Control Protocol Integration',
+                controlProtocolIntegration,
+                (e) => setControlProtocolIntegration(e.target.value),
+                ['Modbus RTU','Modbus TCP IP','Bacnet MSTP','Bacnet IP'],
+                isLocal || isNone
+              )}
 
-              {renderDropdown('Control Panel Hard Points',  controlPanelHardPoints,  (e) => setControlPanelHardPoints(e.target.value),  ['none', 'Statuses', 'Command', 'Statuses and Command'],  isLocal || isNone)}
+              <TextField
+                label="Control Panel Integration Points"
+                value={controlPanelIntegrationPoints}
+                onChange={(e) => setControlPanelIntegrationPoints(e.target.value)}
+                fullWidth
+                variant="outlined"
+                disabled={isLocal || isNone}
+                InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' }, '&.Mui-disabled': { color: '#888' } } }}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: (isLocal || isNone) ? '#555' : '#B0BEC5' },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: (isLocal || isNone) ? '#555' : '#CFD8DC' },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: (isLocal || isNone) ? '#555' : '#90A4AE' },
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: (isLocal || isNone) ? '#1e1e1e' : 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' },
+                  },
+                }}
+              />
+
+              {renderDropdown(
+                'Control Panel Hard Points',
+                controlPanelHardPoints,
+                (e) => setControlPanelHardPoints(e.target.value),
+                ['none', 'Statuses', 'Command', 'Statuses and Command'],
+                isLocal || isNone
+              )}
+
               {renderDropdown('Pieces', pieces, (e) => setPieces(e.target.value), ['1','2','3','4','5','6','7','8'], isOwnPanel)}
               {renderDropdown('Power', power, (e) => setPower(e.target.value), ['0,55','0,75','1,1','1,5','2,2','3','4','5,5','7,5','11','15','18,5','22','30','37','45','55','75','90','110','132','160'], isOwnPanel)}
               {renderDropdown('Voltage', voltage, (e) => setVoltage(e.target.value), ['230','380'], isOwnPanel)}
-              {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value), ['none','for Each Generator','for All Generators'], isOwnPanel)}
-              {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none','Each Generator','for All Generator'], isOwnPanel)}
-              
-              {renderDropdown('Tank Level Measurement', tankLevelMeasurement, (e) => setTankLevelMeasurement(e.target.value), ['none','Analog','Digital Min. Level','Digital Max. Level','Digital Min. and Max. Level'], isOwnPanel)}
-              {renderDropdown('Room Temperature Measurement',  roomTemperatureMeasurement,  (e) => setRoomTemperatureMeasurement(e.target.value as string),  ['none', 'Temperature'])}
 
+              {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value), ['none','for Each Generator','for All Generators'], isOwnPanel)}
+
+              {renderDropdown('Emergency Safety Contacts', emergencySafety, (e) => setEmergencySafety(e.target.value), ['none','for Each Generator','for All Generators'], isOwnPanel)}
+
+              {renderDropdown('Tank Level Measurement', tankLevelMeasurement, (e) => setTankLevelMeasurement(e.target.value), ['none','Analog','Digital Min. Level','Digital Max. Level','Digital Min. and Max. Level'], isOwnPanel)}
+
+              {renderDropdown('Room Temperature Measurement', roomTemperatureMeasurement, (e) => setRoomTemperatureMeasurement(e.target.value as string), ['none', 'Temperature'])}
 
               <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveGenerator}>Send to Table</PrimaryButton>
+
+              <PrimaryButton
+                sx={{ width: '100%' }}
+                onClick={handleAddPool}
+                disabled={!projectCode || tableRows.length === 0}
+              >
+                Add Pool
+              </PrimaryButton>
+
               <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
             </Stack>
           </Box>
@@ -491,8 +536,6 @@ if (roomTemperatureMeasurement === 'Temperature') {
           <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
             {projectCode ? `${projectCode} Output Table` : 'Generator Output Table'}
           </Typography>
-
-          <Box sx={{ overflowX: 'auto', overflowY: 'auto', maxWidth: '100%' }} />
 
           {showTable && tableRows.length > 0 && (
             <table style={{
@@ -539,6 +582,28 @@ if (roomTemperatureMeasurement === 'Temperature') {
           )}
         </Box>
       </Box>
+
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMsg}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{
+          '& .MuiSnackbarContent-root': {
+            backgroundColor: '#4CAF50',
+            color: '#fff',
+            fontWeight: 500,
+            padding: '10px 24px',
+            minWidth: 'auto',
+            justifyContent: 'center',
+            textAlign: 'center',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+          }
+        }}
+      />
     </Box>
   );
 }

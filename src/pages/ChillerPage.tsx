@@ -9,7 +9,8 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  Snackbar
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -91,271 +92,304 @@ export default function ChillerPage() {
   const [tableRows, setTableRows] = useState<any[]>([]);
   const [showTable, setShowTable] = useState(false);
 
-  const handleLogout = () => {
-    navigate('/');
-  };
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState('');
 
-  const handleBack = () => {
-    navigate('/projects');
-  };
+  const handleLogout = () => navigate('/');
+  const handleBack = () => navigate('/projects');
 
-useEffect(() => {
-  if (isLocal) {
-    setControlProtocolIntegration('');
-    setControlPanelIntegrationPoints('');
-    setControlPanelHardPoints('');
-  }
-}, [isLocal]);
+  useEffect(() => {
+    if (isLocal) {
+      setControlProtocolIntegration('');
+      setControlPanelIntegrationPoints('');
+      setControlPanelHardPoints('');
+    }
+  }, [isLocal]);
 
-useEffect(() => {
-  if (isPlant) {
-    setPieces('');
-    setPower('');
-    setVoltage('');
-    setMaintenanceSafety('');
-    setEmergencySafety('');
-    setFlowSafety('');
-    setTemperatureMeasurements('');
-    setChillerIntegration('');
-    setChillerProtocolIntegration('');
-    setChillerIntegrationPoints('');
-  }
-}, [isPlant]);
+  useEffect(() => {
+    if (isPlant) {
+      setPieces('');
+      setPower('');
+      setVoltage('');
+      setMaintenanceSafety('');
+      setEmergencySafety('');
+      setFlowSafety('');
+      setTemperatureMeasurements('');
+      setChillerIntegration('');
+      setChillerProtocolIntegration('');
+      setChillerIntegrationPoints('');
+    }
+  }, [isPlant]);
 
-useEffect(() => {
-  if (isChillerIntegrationNone) {
-    setChillerProtocolIntegration('');
-    setChillerIntegrationPoints('');
-  }
-}, [isChillerIntegrationNone]);
+  useEffect(() => {
+    if (isChillerIntegrationNone) {
+      setChillerProtocolIntegration('');
+      setChillerIntegrationPoints('');
+    }
+  }, [isChillerIntegrationNone]);
 
   const renderDropdown = (
-  label: string,
-  value: string,
-  onChange: (e: SelectChangeEvent) => void,
-  options: string[],
-  disabled: boolean = false
-) => (
-  <FormControl fullWidth disabled={disabled}>
-    <InputLabel sx={labelStyles}>{label}</InputLabel>
-    <Select value={value} label={label} onChange={onChange} sx={selectStyles}>
-      {options.map((option, index) => (
-        <MenuItem key={index} value={option}>
-          {option}
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-);
+    label: string,
+    value: string,
+    onChange: (e: SelectChangeEvent) => void,
+    options: string[],
+    disabled: boolean = false
+  ) => (
+    <FormControl fullWidth disabled={disabled}>
+      <InputLabel sx={labelStyles}>{label}</InputLabel>
+      <Select value={value} label={label} onChange={onChange} sx={selectStyles}>
+        {options.map((option, index) => (
+          <MenuItem key={index} value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
 
   const handleSaveChiller = () => {
-  const rows: any[] = [];
-  const pcs = parseInt(pieces) || 1;
-  const multi = pcs > 1;
+    const rows: any[] = [];
+    const pcs = parseInt(pieces) || 1;
+    const multi = pcs > 1;
 
-  // --- CONTROL TYPE ---
-  if (controlType === 'Local') {
-    for (let i = 1; i <= pcs; i++) {
-      const sfx = multi ? ` ${i}` : '';
-      rows.push(
-        {
+    // --- CONTROL TYPE ---
+    if (controlType === 'Local') {
+      for (let i = 1; i <= pcs; i++) {
+        const sfx = multi ? ` ${i}` : '';
+        rows.push(
+          {
+            projectCode, description, location,
+            point: `Chiller Status${sfx}`,
+            ai: 0, ao: 0, di: 1, do: 0,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+          },
+          {
+            projectCode, description, location,
+            point: `Chiller Fault${sfx}`,
+            ai: 0, ao: 0, di: 1, do: 0,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+          },
+          {
+            projectCode, description, location,
+            point: `Chiller Command${sfx}`,
+            ai: 0, ao: 0, di: 0, do: 1,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+          }
+        );
+      }
+    } else if (controlType === 'Plant') {
+      const val = Number(controlPanelIntegrationPoints) || 0;
+
+      if (
+        ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'].includes(controlProtocolIntegration) &&
+        !isNaN(val) && String(controlPanelIntegrationPoints).trim() !== ''
+      ) {
+        const panelRow: any = {
           projectCode, description, location,
-          point: `Chiller Status${sfx}`,
-          ai: 0, ao: 0, di: 1, do: 0,
+          point: 'Chiller Panel Integration',
+          ai: 0, ao: 0, di: 0, do: 0,
           modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-        },
-        {
+        };
+        switch (controlProtocolIntegration) {
+          case 'Modbus RTU':   panelRow.modbusRtu  = val; break;
+          case 'Modbus TCP IP':panelRow.modbusTcp  = val; break;
+          case 'Bacnet MSTP':  panelRow.bacnetMstp = val; break;
+          case 'Bacnet IP':    panelRow.bacnetIp   = val; break;
+        }
+        rows.push(panelRow);
+      }
+    }
+
+    // --- HARD POINTS (Plant için) ---
+    const hardPointsRows: any[] = [];
+    if (controlType === 'Plant') {
+      if (controlPanelHardPoints === 'Statuses' || controlPanelHardPoints === 'Statuses and Command') {
+        hardPointsRows.push(
+          {
+            projectCode, description, location,
+            point: 'Chiller General Status',
+            ai: 0, ao: 0, di: 1, do: 0,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+          },
+          {
+            projectCode, description, location,
+            point: 'Chiller General Fault',
+            ai: 0, ao: 0, di: 1, do: 0,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+          }
+        );
+      }
+      if (controlPanelHardPoints === 'Command' || controlPanelHardPoints === 'Statuses and Command') {
+        hardPointsRows.push({
           projectCode, description, location,
-          point: `Chiller Fault${sfx}`,
-          ai: 0, ao: 0, di: 1, do: 0,
-          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-        },
-        {
-          projectCode, description, location,
-          point: `Chiller Command${sfx}`,
+          point: 'Chiller General Command',
           ai: 0, ao: 0, di: 0, do: 1,
           modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-        }
-      );
+        });
+      }
     }
-  } else if (controlType === 'Plant') {
-    const val = Number(controlPanelIntegrationPoints) || 0;
 
-    if (
-      ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'].includes(controlProtocolIntegration) &&
-      !isNaN(val) && String(controlPanelIntegrationPoints).trim() !== ''
-    ) {
-      const panelRow: any = {
+    // --- MAINTENANCE ---
+    const maintenanceRows: any[] = [];
+    if (maintenanceSafety === 'for Each Chiller') {
+      for (let i = 1; i <= pcs; i++) {
+        maintenanceRows.push({
+          projectCode, description, location,
+          point: `Chiller Maintenance Status${multi ? ` ${i}` : ''}`,
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        });
+      }
+    } else if (maintenanceSafety === 'for All Chillers') {
+      maintenanceRows.push({
         projectCode, description, location,
-        point: 'Chiller Panel Integration',
+        point: 'Chiller General Maintenance Status',
+        ai: 0, ao: 0, di: 1, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+
+    // --- EMERGENCY ---
+    const emergencyRows: any[] = [];
+    if (emergencySafety === 'for Each Chiller') {
+      for (let i = 1; i <= pcs; i++) {
+        emergencyRows.push({
+          projectCode, description, location,
+          point: `Chiller Emergency Status${multi ? ` ${i}` : ''}`,
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        });
+      }
+    } else if (emergencySafety === 'for All Chillers') {
+      emergencyRows.push({
+        projectCode, description, location,
+        point: 'Chiller General Emergency Status',
+        ai: 0, ao: 0, di: 1, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+
+    // --- FLOW SAFETY ---
+    const flowRows: any[] = [];
+    if (flowSafety === 'for Each Chiller') {
+      for (let i = 1; i <= pcs; i++) {
+        flowRows.push({
+          projectCode, description, location,
+          point: `Chiller Flow Status${multi ? ` ${i}` : ''}`,
+          ai: 0, ao: 0, di: 1, do: 0,
+          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+        });
+      }
+    } else if (flowSafety === 'for All Chillers') {
+      flowRows.push({
+        projectCode, description, location,
+        point: 'Chiller General Flow Status',
+        ai: 0, ao: 0, di: 1, do: 0,
+        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+      });
+    }
+
+    // --- TEMPERATURES ---
+    const temperatureRows: any[] = [];
+    if (temperatureMeasurements !== 'none') {
+      for (let i = 1; i <= pcs; i++) {
+        const sfx = multi ? ` ${i}` : '';
+
+        if (
+          temperatureMeasurements === 'Inlet Temperature' ||
+          temperatureMeasurements === 'Inlet and Outlet Temperature'
+        ) {
+          temperatureRows.push({
+            projectCode, description, location,
+            point: `Chiller Inlet Temperature${sfx}`,
+            ai: 1, ao: 0, di: 0, do: 0,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+          });
+        }
+
+        if (
+          temperatureMeasurements === 'Outlet Temperature' ||
+          temperatureMeasurements === 'Inlet and Outlet Temperature'
+        ) {
+          temperatureRows.push({
+            projectCode, description, location,
+            point: `Chiller Outlet Temperature${sfx}`,
+            ai: 1, ao: 0, di: 0, do: 0,
+            modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+          });
+        }
+      }
+    }
+
+    // --- CHILLER INTEGRATION (own Panel) ---
+    const chillerIntegrationRows: any[] = [];
+    if (
+      chillerIntegration === 'own Panel' &&
+      ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'].includes(chillerProtocolIntegration) &&
+      chillerIntegrationPoints.trim() !== '' &&
+      !isNaN(Number(chillerIntegrationPoints))
+    ) {
+      const pts = Number(chillerIntegrationPoints);
+      const row: any = {
+        projectCode, description, location,
+        point: 'Chiller own Panel Integration Points',
         ai: 0, ao: 0, di: 0, do: 0,
         modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
       };
-      switch (controlProtocolIntegration) {
-        case 'Modbus RTU':   panelRow.modbusRtu  = val; break;
-        case 'Modbus TCP IP':panelRow.modbusTcp  = val; break;
-        case 'Bacnet MSTP':  panelRow.bacnetMstp = val; break;
-        case 'Bacnet IP':    panelRow.bacnetIp   = val; break;
+      switch (chillerProtocolIntegration) {
+        case 'Modbus RTU':   row.modbusRtu  = pts; break;
+        case 'Modbus TCP IP':row.modbusTcp  = pts; break;
+        case 'Bacnet MSTP':  row.bacnetMstp = pts; break;
+        case 'Bacnet IP':    row.bacnetIp   = pts; break;
       }
-      rows.push(panelRow);
-    }
-  }
-
-  // --- HARD POINTS (Plant için uygulanır) ---
-  const hardPointsRows: any[] = [];
-  if (controlType === 'Plant') {
-    if (controlPanelHardPoints === 'Statuses' || controlPanelHardPoints === 'Statuses and Command') {
-      hardPointsRows.push(
-        {
-          projectCode, description, location,
-          point: 'Chiller General Status',
-          ai: 0, ao: 0, di: 1, do: 0,
-          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-        },
-        {
-          projectCode, description, location,
-          point: 'Chiller General Fault',
-          ai: 0, ao: 0, di: 1, do: 0,
-          modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-        }
-      );
-    }
-    if (controlPanelHardPoints === 'Command' || controlPanelHardPoints === 'Statuses and Command') {
-      hardPointsRows.push({
-        projectCode, description, location,
-        point: 'Chiller General Command',
-        ai: 0, ao: 0, di: 0, do: 1,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      });
-    }
-  }
-
-  // --- MAINTENANCE ---
-  const maintenanceRows: any[] = [];
-  if (maintenanceSafety === 'for Each Chiller') {
-    for (let i = 1; i <= pcs; i++) {
-      maintenanceRows.push({
-        projectCode, description, location,
-        point: `Chiller Maintenance Status${multi ? ` ${i}` : ''}`,
-        ai: 0, ao: 0, di: 1, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      });
-    }
-  } else if (maintenanceSafety === 'for All Chillers') {
-    maintenanceRows.push({
-      projectCode, description, location,
-      point: 'Chiller General Maintenance Status',
-      ai: 0, ao: 0, di: 1, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    });
-  }
-
-  // --- EMERGENCY ---
-  const emergencyRows: any[] = [];
-  if (emergencySafety === 'for Each Chiller') {
-    for (let i = 1; i <= pcs; i++) {
-      emergencyRows.push({
-        projectCode, description, location,
-        point: `Chiller Emergency Status${multi ? ` ${i}` : ''}`,
-        ai: 0, ao: 0, di: 1, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      });
-    }
-  } else if (emergencySafety === 'for All Chillers') {
-    emergencyRows.push({
-      projectCode, description, location,
-      point: 'Chiller General Emergency Status',
-      ai: 0, ao: 0, di: 1, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    });
-  }
-
-  // --- FLOW SAFETY ---
-  const flowRows: any[] = [];
-  if (flowSafety === 'for Each Chiller') {
-    for (let i = 1; i <= pcs; i++) {
-      flowRows.push({
-        projectCode, description, location,
-        point: `Chiller Flow Status${multi ? ` ${i}` : ''}`,
-        ai: 0, ao: 0, di: 1, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      });
-    }
-  } else if (flowSafety === 'for All Chillers') {
-    flowRows.push({
-      projectCode, description, location,
-      point: 'Chiller General Flow Status',
-      ai: 0, ao: 0, di: 1, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-    });
-  }
-
-  const temperatureRows: any[] = [];
-if (temperatureMeasurements !== 'none') {
-  for (let i = 1; i <= pcs; i++) {
-    const sfx = multi ? ` ${i}` : '';
-
-    if (
-      temperatureMeasurements === 'Inlet Temperature' ||
-      temperatureMeasurements === 'Inlet and Outlet Temperature'
-    ) {
-      temperatureRows.push({
-        projectCode, description, location,
-        point: `Chiller Inlet Temperature${sfx}`,
-        ai: 1, ao: 0, di: 0, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      });
+      chillerIntegrationRows.push(row);
     }
 
-    if (
-      temperatureMeasurements === 'Outlet Temperature' ||
-      temperatureMeasurements === 'Inlet and Outlet Temperature'
-    ) {
-      temperatureRows.push({
-        projectCode, description, location,
-        point: `Chiller Outlet Temperature${sfx}`,
-        ai: 1, ao: 0, di: 0, do: 0,
-        modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
-      });
-    }
-  }
-}
+    setTableRows([
+      ...rows,
+      ...hardPointsRows,
+      ...maintenanceRows,
+      ...emergencyRows,
+      ...flowRows,
+      ...temperatureRows,
+      ...chillerIntegrationRows
+    ]);
+    setShowTable(true);
+  };
 
-  // --- CHILLER INTEGRATION (own Panel) ---
-  const chillerIntegrationRows: any[] = [];
-  if (
-    chillerIntegration === 'own Panel' &&
-    ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'].includes(chillerProtocolIntegration) &&
-    chillerIntegrationPoints.trim() !== '' &&
-    !isNaN(Number(chillerIntegrationPoints))
-  ) {
-    const pts = Number(chillerIntegrationPoints);
-    const row: any = {
-      projectCode, description, location,
-      point: 'Chiller own Panel Integration Points',
-      ai: 0, ao: 0, di: 0, do: 0,
-      modbusRtu: 0, modbusTcp: 0, bacnetMstp: 0, bacnetIp: 0, mbus: 0
+  // --- ADD POOL (PoolPage ile uyumlu kayıt şeması) ---
+  const handleAddPool = () => {
+    const code = projectCode.trim();
+    if (!code) {
+      setSnackbarMsg('Please enter Project Code');
+      setSnackbarOpen(true);
+      return;
+    }
+    if (tableRows.length === 0) {
+      setSnackbarMsg('No rows to add. Please generate the table first.');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    const key = `pool:${code}`;
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+
+    const payload = {
+      id: Date.now(),
+      system: 'chiller',
+      rows: tableRows,
+      createdAt: new Date().toISOString(),
+      meta: { description, location },
     };
-    switch (chillerProtocolIntegration) {
-      case 'Modbus RTU':   row.modbusRtu  = pts; break;
-      case 'Modbus TCP IP':row.modbusTcp  = pts; break;
-      case 'Bacnet MSTP':  row.bacnetMstp = pts; break;
-      case 'Bacnet IP':    row.bacnetIp   = pts; break;
-    }
-    chillerIntegrationRows.push(row);
-  }
 
-  setTableRows([
-    ...rows,
-    ...hardPointsRows,
-    ...maintenanceRows,
-    ...emergencyRows,
-    ...flowRows,
-    ...temperatureRows,
-    ...chillerIntegrationRows
-  ]);
-  setShowTable(true);
-};
+    localStorage.setItem(key, JSON.stringify([...existing, payload]));
+    setSnackbarMsg('Data added to Pool');
+    setSnackbarOpen(true);
+
+    // kayıt sonrası tabloyu temizle
+    setTableRows([]);
+    setShowTable(false);
+  };
 
   return (
     <Box sx={{ minHeight: '100vh', background: 'radial-gradient(circle at top right, #1A237E, #000000)', color: '#FFFFFF', display: 'flex', flexDirection: 'column' }}>
@@ -379,146 +413,153 @@ if (temperatureMeasurements !== 'none') {
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>Chiller System Input</Typography>
             <Stack spacing={2}>
               <TextField
-  label="Project Code"
-  value={projectCode}
-  onChange={(e) => setProjectCode(e.target.value)}
-  fullWidth
-  variant="outlined"
-  InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
-  sx={{
-    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
-    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
-  }}
-  InputProps={{
-    sx: {
-      backgroundColor: 'transparent',
-      '& .MuiInputBase-input': { color: '#ECEFF1' },
-      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
-    }
-  }}
-/>
+                label="Project Code"
+                value={projectCode}
+                onChange={(e) => setProjectCode(e.target.value)}
+                fullWidth
+                variant="outlined"
+                InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+                  }
+                }}
+              />
 
-<TextField
-  label="Description"
-  value={description}
-  onChange={(e) => setDescription(e.target.value)}
-  fullWidth
-  variant="outlined"
-  InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
-  sx={{
-    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
-    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
-  }}
-  InputProps={{
-    sx: {
-      backgroundColor: 'transparent',
-      '& .MuiInputBase-input': { color: '#ECEFF1' },
-      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
-    }
-  }}
-/>
+              <TextField
+                label="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                fullWidth
+                variant="outlined"
+                InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+                  }
+                }}
+              />
 
-<TextField
-  label="Located"
-  value={location}
-  onChange={(e) => setLocation(e.target.value)}
-  fullWidth
-  variant="outlined"
-  InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
-  sx={{
-    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
-    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
-  }}
-  InputProps={{
-    sx: {
-      backgroundColor: 'transparent',
-      '& .MuiInputBase-input': { color: '#ECEFF1' },
-      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
-    }
-  }}
-/>
+              <TextField
+                label="Located"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                fullWidth
+                variant="outlined"
+                InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' } } }}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' }
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+                  }
+                }}
+              />
 
+              {renderDropdown('Control Type', controlType, (e) => setControlType(e.target.value as string), ['Local', 'Plant'])}
 
-{renderDropdown('Control Type', controlType, (e) => setControlType(e.target.value as string), ['Local', 'Plant'])}
+              {renderDropdown(
+                'Control Protocol Integration',
+                controlProtocolIntegration,
+                (e) => setControlProtocolIntegration(e.target.value as string),
+                ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],
+                isLocal
+              )}
 
-{renderDropdown(
-  'Control Protocol Integration',
-  controlProtocolIntegration,
-  (e) => setControlProtocolIntegration(e.target.value),
-  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],
-  isLocal
-)}
+              <TextField
+                label="Control Panel Integration Points"
+                value={controlPanelIntegrationPoints}
+                onChange={(e) => setControlPanelIntegrationPoints(e.target.value)}
+                fullWidth
+                variant="outlined"
+                disabled={isLocal}
+                InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' }, '&.Mui-disabled': { color: '#888' } } }}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: isLocal ? '#555' : '#B0BEC5' },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: isLocal ? '#555' : '#CFD8DC' },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: isLocal ? '#555' : '#90A4AE' }
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: isLocal ? '#1e1e1e' : 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+                  }
+                }}
+              />
 
-<TextField
-  label="Control Panel Integration Points"
-  value={controlPanelIntegrationPoints}
-  onChange={(e) => setControlPanelIntegrationPoints(e.target.value)}
-  fullWidth
-  variant="outlined"
-  disabled={isLocal}
-  InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' }, '&.Mui-disabled': { color: '#888' } } }}
-  sx={{
-    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: isLocal ? '#555' : '#B0BEC5' },
-    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: isLocal ? '#555' : '#CFD8DC' },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: isLocal ? '#555' : '#90A4AE' }
-  }}
-  InputProps={{
-    sx: {
-      backgroundColor: isLocal ? '#1e1e1e' : 'transparent',
-      '& .MuiInputBase-input': { color: '#ECEFF1' },
-      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
-    }
-  }}
-/>
+              {renderDropdown('Control Panel Hard Points',  controlPanelHardPoints,  (e) => setControlPanelHardPoints(e.target.value as string),  ['none', 'Statuses', 'Command', 'Statuses and Command'],  isLocal)}
+              {renderDropdown('Pieces', pieces, (e) => setPieces(e.target.value as string), ['1','2','3','4','5','6','7','8'], isPlant)}
+              {renderDropdown('Power',  power,  (e) => setPower(e.target.value as string),  ['0,55','0,75','1,1','1,5','2,2','3','4','5,5','7,5','11','15','18,5','22','30','37','45','55','75','90','110','132','160'], isPlant)}
+              {renderDropdown('Voltage', voltage, (e) => setVoltage(e.target.value as string), ['230','380'], isPlant)}
 
-{renderDropdown('Control Panel Hard Points',  controlPanelHardPoints,  (e) => setControlPanelHardPoints(e.target.value),  ['none', 'Statuses', 'Command', 'Statuses and Command'],  isLocal)}
-{renderDropdown('Pieces', pieces, (e) => setPieces(e.target.value), ['1','2','3','4','5','6','7','8'], isPlant)}
-{renderDropdown('Power',  power,  (e) => setPower(e.target.value),  ['0,55','0,75','1,1','1,5','2,2','3','4','5,5','7,5','11','15','18,5','22','30','37','45','55','75','90','110','132','160'], isPlant)}
-{renderDropdown('Voltage', voltage, (e) => setVoltage(e.target.value), ['230','380'], isPlant)}
+              {renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value as string), ['none', 'for Each Chiller', 'for All Chillers'], isPlant)}
+              {renderDropdown('Emergency Safety Contacts',   emergencySafety,   (e) => setEmergencySafety(e.target.value as string),   ['none', 'for Each Chiller', 'for All Chillers'], isPlant)}
+              {renderDropdown('Flow Safety Contacts',        flowSafety,        (e) => setFlowSafety(e.target.value as string),        ['none', 'for Each Chiller', 'for All Chillers'], isPlant)}
 
-{renderDropdown('Maintenance Safety Contacts', maintenanceSafety, (e) => setMaintenanceSafety(e.target.value), ['none', 'for Each Chiller', 'for All Chillers'], isPlant)}
-{renderDropdown('Emergency Safety Contacts',   emergencySafety,   (e) => setEmergencySafety(e.target.value),   ['none', 'for Each Chiller', 'for All Chillers'], isPlant)}
-{renderDropdown('Flow Safety Contacts',        flowSafety,        (e) => setFlowSafety(e.target.value),        ['none', 'for Each Chiller', 'for All Chillers'], isPlant)}
+              {renderDropdown('Temperature Measurement',  temperatureMeasurements,  (e) => setTemperatureMeasurements(e.target.value as string),  ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'],  isPlant)}
 
-{renderDropdown('Temperature Measurement',  temperatureMeasurements,  (e) => setTemperatureMeasurements(e.target.value),  ['none', 'Inlet Temperature', 'Outlet Temperature', 'Inlet and Outlet Temperature'],  isPlant)}
+              {renderDropdown('Chiller Integration', chillerIntegration, (e) => setChillerIntegration(e.target.value as string), ['none','own Panel'], isPlant)}
 
-{renderDropdown('Chiller Integration', chillerIntegration, (e) => setChillerIntegration(e.target.value), ['none','own Panel'], isPlant)}
+              {renderDropdown(
+                'Chiller Protocol Integration',
+                chillerProtocolIntegration,
+                (e) => setChillerProtocolIntegration(e.target.value as string),
+                ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],
+                chillerIntegrDisabled
+              )}
 
-{renderDropdown(
-  'Chiller Protocol Integration',
-  chillerProtocolIntegration,
-  (e) => setChillerProtocolIntegration(e.target.value),
-  ['Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP'],
-  chillerIntegrDisabled
-)}
-
-<TextField
-  label="Chiller Integration Points"
-  value={chillerIntegrationPoints}
-  onChange={(e) => setChillerIntegrationPoints(e.target.value)}
-  fullWidth
-  variant="outlined"
-  disabled={chillerIntegrDisabled}
-  InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' }, '&.Mui-disabled': { color: '#888' } } }}
-  sx={{
-    '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: chillerIntegrDisabled ? '#555' : '#B0BEC5' },
-    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: chillerIntegrDisabled ? '#555' : '#CFD8DC' },
-    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: chillerIntegrDisabled ? '#555' : '#90A4AE' }
-  }}
-  InputProps={{
-    sx: {
-      backgroundColor: chillerIntegrDisabled ? '#1e1e1e' : 'transparent',
-      '& .MuiInputBase-input': { color: '#ECEFF1' },
-      '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
-    }
-  }}
-/>
-
+              <TextField
+                label="Chiller Integration Points"
+                value={chillerIntegrationPoints}
+                onChange={(e) => setChillerIntegrationPoints(e.target.value)}
+                fullWidth
+                variant="outlined"
+                disabled={chillerIntegrDisabled}
+                InputLabelProps={{ sx: { color: '#90A4AE', '&.Mui-focused': { color: '#B0BEC5' }, '&.Mui-disabled': { color: '#888' } } }}
+                sx={{
+                  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: chillerIntegrDisabled ? '#555' : '#B0BEC5' },
+                  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: chillerIntegrDisabled ? '#555' : '#CFD8DC' },
+                  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: chillerIntegrDisabled ? '#555' : '#90A4AE' }
+                }}
+                InputProps={{
+                  sx: {
+                    backgroundColor: chillerIntegrDisabled ? '#1e1e1e' : 'transparent',
+                    '& .MuiInputBase-input': { color: '#ECEFF1' },
+                    '&.Mui-disabled .MuiInputBase-input': { WebkitTextFillColor: '#888', color: '#888' }
+                  }
+                }}
+              />
 
               <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveChiller}>Send to Table</PrimaryButton>
+
+              <PrimaryButton
+                sx={{ width: '100%' }}
+                onClick={handleAddPool}
+                disabled={!projectCode || tableRows.length === 0}
+              >
+                Add Pool
+              </PrimaryButton>
+
               <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
             </Stack>
           </Box>
@@ -568,19 +609,19 @@ if (temperatureMeasurements !== 'none') {
               <tbody>
                 {tableRows.map((row, index) => (
                   <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#f0f4f8', transition: 'background 0.3s', cursor: 'default' }}>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.projectCode}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.description}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.location}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.point}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.ai}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.ao}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.di}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.do}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.modbusRtu}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.modbusTcp}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.bacnetMstp}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.bacnetIp}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.mbus}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.projectCode}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.description}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.location}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.point}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.ai}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.ao}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.di}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.do}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.modbusRtu}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.modbusTcp}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.bacnetMstp}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.bacnetIp}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.mbus}</td>
                   </tr>
                 ))}
               </tbody>
@@ -588,6 +629,28 @@ if (temperatureMeasurements !== 'none') {
           )}
         </Box>
       </Box>
+
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMsg}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{
+          '& .MuiSnackbarContent-root': {
+            backgroundColor: '#4CAF50',
+            color: '#fff',
+            fontWeight: 500,
+            padding: '10px 24px',
+            minWidth: 'auto',
+            justifyContent: 'center',
+            textAlign: 'center',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+          }
+        }}
+      />
     </Box>
   );
 }
