@@ -281,12 +281,14 @@ export default function BoilerPage() {
     // Maintenance Safety
     const maintenanceRows: any[] = [];
     if (maintenanceSafety === 'for Each Boiler' && controlType) {
-      for (let i = 1; i <= n; i++) {
+      const n2 = parseInt(pieces) || 1;
+      const multi2 = n2 > 1;
+      for (let i = 1; i <= n2; i++) {
         maintenanceRows.push({
           projectCode,
           description,
           location,
-          point: `Boiler Maintenance Status${multi ? ` ${i}` : ''}`,
+          point: `Boiler Maintenance Status${multi2 ? ` ${i}` : ''}`,
           ai: 0,
           ao: 0,
           di: 1,
@@ -319,12 +321,14 @@ export default function BoilerPage() {
     // Emergency Safety
     const emergencyRows: any[] = [];
     if (emergencySafety === 'for Each Boiler' && controlType) {
-      for (let i = 1; i <= n; i++) {
+      const n3 = parseInt(pieces) || 1;
+      const multi3 = n3 > 1;
+      for (let i = 1; i <= n3; i++) {
         emergencyRows.push({
           projectCode,
           description,
           location,
-          point: `Boiler Emergency Status${multi ? ` ${i}` : ''}`,
+          point: `Boiler Emergency Status${multi3 ? ` ${i}` : ''}`,
           ai: 0,
           ao: 0,
           di: 1,
@@ -357,12 +361,14 @@ export default function BoilerPage() {
     // High Temperature
     const highTempRows: any[] = [];
     if (hightemperatureSafety === 'for Each Boiler' && controlType !== 'none') {
-      for (let i = 1; i <= n; i++) {
+      const n4 = parseInt(pieces) || 1;
+      const multi4 = n4 > 1;
+      for (let i = 1; i <= n4; i++) {
         highTempRows.push({
           projectCode,
           description,
           location,
-          point: `Boiler High Temperature Status${multi ? ` ${i}` : ''}`,
+          point: `Boiler High Temperature Status${multi4 ? ` ${i}` : ''}`,
           ai: 0,
           ao: 0,
           di: 1,
@@ -395,12 +401,14 @@ export default function BoilerPage() {
     // Gas Leakage
     const gasLeakRows: any[] = [];
     if (gasleakageSafety === 'for Each Boiler' && controlType !== 'none') {
-      for (let i = 1; i <= n; i++) {
+      const n5 = parseInt(pieces) || 1;
+      const multi5 = n5 > 1;
+      for (let i = 1; i <= n5; i++) {
         gasLeakRows.push({
           projectCode,
           description,
           location,
-          point: `Boiler Gas Leakage Status${multi ? ` ${i}` : ''}`,
+          point: `Boiler Gas Leakage Status${multi5 ? ` ${i}` : ''}`,
           ai: 0,
           ao: 0,
           di: 1,
@@ -655,6 +663,10 @@ export default function BoilerPage() {
     localStorage.setItem(key, JSON.stringify([...existing, payload]));
     setSnackbarMsg('Data added to Pool');
     setSnackbarOpen(true);
+
+    // <<< EKLENDİ: Pool'a ekledikten sonra tabloyu temizle & gizle
+    setTableRows([]);
+    setShowTable(false);
   };
 
   return (

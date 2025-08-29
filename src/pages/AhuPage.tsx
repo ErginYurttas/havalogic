@@ -9,8 +9,10 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  Snackbar
 } from '@mui/material';
+
 import { SelectChangeEvent } from '@mui/material/Select';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { styled } from '@mui/system';
@@ -166,6 +168,10 @@ export default function AhuPage() {
 
   const [showTable, setShowTable] = useState(false);
   const [tableRows, setTableRows] = useState<any[]>([]);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState('');
+
 
   const [isPackaged, setIsPackaged] = useState(false);
 
@@ -3904,6 +3910,56 @@ setShowTable(true);
   };
 
 
+  // Anahtar: tablodaki Project Code'a göre yaz (input'a güvenme)
+const handleAddPool = () => {
+  if (!tableRows || tableRows.length === 0) {
+    setSnackbarMsg('No rows to add. Please generate the table first.');
+    setSnackbarOpen(true);
+    return;
+  }
+
+  const codes = Array.from(new Set(
+    tableRows
+      .map((r: any) => (r.projectCode ?? '').trim())
+      .filter((c: string) => c.length > 0)
+  ));
+
+  if (codes.length === 0) {
+    setSnackbarMsg('Rows have no Project Code. Please fill and try again.');
+    setSnackbarOpen(true);
+    return;
+  }
+
+  if (codes.length > 1) {
+    setSnackbarMsg(`Multiple Project Codes in table: ${codes.join(', ')}. Please keep a single Project Code.`);
+    setSnackbarOpen(true);
+    return;
+  }
+
+  const code = codes[0]; // tek proje kodu
+  const key = `pool:${code}`;
+  const existing = JSON.parse(localStorage.getItem(key) || '[]');
+
+  const payload = {
+    id: Date.now(),
+    system: 'ahu',         // <-- AHU için sistem adı
+    rows: tableRows,
+    createdAt: new Date().toISOString(),
+    meta: { description, location }
+  };
+
+  localStorage.setItem(key, JSON.stringify([...existing, payload]));
+
+  setSnackbarMsg(`Added ${tableRows.length} row(s) to Pool`);
+  setSnackbarOpen(true);
+
+  // temizle
+  setTableRows([]);
+  setShowTable(false);
+};
+
+
+
   return (
     <Box sx={{ minHeight: '100vh', background: 'radial-gradient(circle at top right, #1A237E, #000000)', color: '#FFFFFF', display: 'flex', flexDirection: 'column' }}>
       {/* Navbar */}
@@ -4332,6 +4388,17 @@ setShowTable(true);
 
 
 <PrimaryButton sx={{ width: '100%' }} onClick={handleSaveAhu}>Send to Table</PrimaryButton>
+
+<PrimaryButton
+  sx={{ width: '100%' }}
+  onClick={handleAddPool}
+  disabled={tableRows.length === 0}
+>
+  Add Pool
+</PrimaryButton>
+
+
+
 <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
 </Stack>
 </Box>
@@ -4561,6 +4628,28 @@ setShowTable(true);
   )}
 </Box>
       </Box>
+
+<Snackbar
+  open={snackbarOpen}
+  autoHideDuration={2000}
+  onClose={() => setSnackbarOpen(false)}
+  message={snackbarMsg}
+  anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+  sx={{
+    '& .MuiSnackbarContent-root': {
+      backgroundColor: '#4CAF50',
+      color: '#fff',
+      fontWeight: 500,
+      padding: '10px 24px',
+      minWidth: 'auto',
+      justifyContent: 'center',
+      textAlign: 'center',
+      borderRadius: '8px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+    }
+  }}
+/>
+
     </Box>
   );
 }
