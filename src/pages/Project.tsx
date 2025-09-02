@@ -73,10 +73,16 @@ export default function Project() {
   };
 
   const handleSystemSelect = (system: string) => {
-    const route = system.toLowerCase().replace(/\s/g, '').replace('(', '').replace(')', '');
-    navigate(`/${route}`);
-    handleClose();
+  const routeMap: Record<string, string> = {
+    'Energy Viewing': 'energy', 
   };
+
+  const normalized =
+    routeMap[system] ||
+    system.toLowerCase().replace(/\s/g, '').replace(/[()]/g, '');
+  navigate(`/${normalized}`);
+  handleClose();
+};
 
   const handleGoPool = () => {
   const projectKey =

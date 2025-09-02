@@ -12,7 +12,8 @@ import ChillerPage from './pages/ChillerPage';
 import CollectorPage from './pages/CollectorPage';
 import CoolingTowerPage from './pages/CoolingTowerPage';
 import DatacenterPage from './pages/DatacenterPage';
-import EnergyPage from './pages/EnergyPage';
+import EnergyViewingPage from './pages/EnergyPage'; // ✅ isim düzeltildi
+
 import FanPage from './pages/FanPage';
 import FcuPage from './pages/FcuPage';
 import GeneratorPage from './pages/GeneratorPage';
@@ -46,7 +47,7 @@ function App() {
         <Route path="/collector" element={<CollectorPage />} />
         <Route path="/coolingtower" element={<CoolingTowerPage />} />
         <Route path="/datacenter" element={<DatacenterPage />} />
-        <Route path="/energy" element={<EnergyPage />} />
+        <Route path="/energy" element={<EnergyViewingPage />} />
         <Route path="/fan" element={<FanPage />} />
         <Route path="/fcu" element={<FcuPage />} />
         <Route path="/generator" element={<GeneratorPage />} />

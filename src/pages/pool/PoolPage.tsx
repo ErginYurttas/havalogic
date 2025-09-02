@@ -270,7 +270,7 @@ export default function PoolPage() {
                 borderCollapse: "collapse",
                 backgroundColor: "#ffffff",
                 fontSize: "0.875rem",
-                fontFamily: `'Segoe UI','Roboto','Helvetica','Arial',sans-serif'`,
+                fontFamily: "'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif",
                 borderRadius: "12px",
                 overflow: "hidden",
                 color: "#333",

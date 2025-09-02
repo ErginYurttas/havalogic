@@ -543,7 +543,7 @@ export default function GeneratorPage() {
               borderCollapse: 'collapse',
               backgroundColor: '#ffffff',
               fontSize: '0.875rem',
-              fontFamily: `'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif'`,
+              fontFamily: "'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif",
               borderRadius: '12px',
               overflow: 'hidden',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
