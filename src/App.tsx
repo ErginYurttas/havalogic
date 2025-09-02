@@ -29,6 +29,9 @@ import VavPage from './pages/VavPage';
 import WaterTankPage from './pages/WaterTankPage';
 import WeatherPage from './pages/WeatherPage';
 
+import ManualEntryPage from './pages/ManualEntryPage';
+
+
 // ✅ PoolPage importunu ekledik
 import PoolPage from './pages/pool/PoolPage';
 
@@ -62,6 +65,9 @@ function App() {
         <Route path="/vav" element={<VavPage />} /> 
         <Route path="/watertank" element={<WaterTankPage />} />
         <Route path="/weather" element={<WeatherPage />} /> 
+
+        <Route path="/manualentry" element={<ManualEntryPage />} />
+
 
         {/* ✅ Yeni Pool route */}
         <Route path="/pool" element={<PoolPage />} />
