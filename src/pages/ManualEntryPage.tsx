@@ -46,24 +46,55 @@ const labelStyles = {
   '&.Mui-focused': { color: '#B0BEC5' }
 };
 
+// ---- Tipler ve yardımcılar ----
+type ManualRow = {
+  projectCode: string;
+  description: string;
+  location: string;
+  point: string;
+  ai: number; ao: number; di: number; do: number;
+  modbusRtu: number; modbusTcp: number; bacnetMstp: number; bacnetIp: number; mbus: number;
+};
+
+type ManualDraft = {
+  projectCode: string;
+  description: string;
+  location: string;
+  point: string;
+  ai: string; ao: string; di: string; do: string;
+  modbusRtu: string; modbusTcp: string; bacnetMstp: string; bacnetIp: string; mbus: string;
+};
+
+// Duplicate: **aynı isimli satır** (Point Name bazlı, case/boşluk normalize)
+const getPointKey = (r: Pick<ManualRow, 'point'>) => r.point.trim().toLowerCase();
+const findDuplicatePoints = (rows: ManualRow[]) => {
+  const seen = new Set<string>();
+  const dups = new Set<string>();
+  for (const r of rows) {
+    const k = getPointKey(r);
+    if (seen.has(k)) dups.add(k); else seen.add(k);
+  }
+  return Array.from(dups);
+};
+
 export default function ManualEntryPage() {
   const navigate = useNavigate();
   const loggedInUser = localStorage.getItem('loggedInUser');
 
   // Tablo state
-  const [tableRows, setTableRows] = useState<any[]>([]);
+  const [tableRows, setTableRows] = useState<ManualRow[]>([]);
   const [showTable, setShowTable] = useState(false);
 
-  // Snackbar (Collector ile aynı yapı)
+  // Snackbar
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState('');
 
-  // Wizard (popup) state
+  // Wizard (popup)
   const [openWizard, setOpenWizard] = useState(false);
   const [step, setStep] = useState(0);
 
   // Tek satır taslağı
-  const [draft, setDraft] = useState({
+  const [draft, setDraft] = useState<ManualDraft>({
     projectCode: '',
     description: '',
     location: '',
@@ -88,8 +119,8 @@ export default function ManualEntryPage() {
   const handleLogout = () => navigate('/');
   const handleBack = () => navigate('/projects');
 
-  // Wizard adımları (sırayla sorulacak alanlar)
-  const steps: { key: keyof typeof draft; label: string; type?: 'number' | 'text' }[] = [
+  // Wizard adımları
+  const steps: { key: keyof ManualDraft; label: string; type?: 'number' | 'text' }[] = [
     { key: 'projectCode', label: 'Project Code' },
     { key: 'description', label: 'Description' },
     { key: 'location', label: 'Located' },
@@ -128,14 +159,9 @@ export default function ManualEntryPage() {
   };
 
   const handleNext = () => {
-    // Basit doğrulama: text alanları boş olmasın, number alanları boşsa 0 kabul edelim
     const val = draft[current.key];
-    if (!current.type) {
-      if (String(val).trim() === '') return; // boş text geçme
-    }
-    if (step < steps.length - 1) {
-      setStep(step + 1);
-    }
+    if (!current.type && String(val).trim() === '') return;
+    if (step < steps.length - 1) setStep(step + 1);
   };
 
   const handleBackStep = () => {
@@ -147,13 +173,12 @@ export default function ManualEntryPage() {
   };
 
   const handleFinishAddRow = () => {
-    // number dönüşümleri
     const toNum = (v: string) => {
       const n = Number(v);
       return Number.isFinite(n) ? n : 0;
     };
 
-    const row = {
+    const row: ManualRow = {
       projectCode: draft.projectCode.trim(),
       description: draft.description.trim(),
       location: draft.location.trim(),
@@ -174,55 +199,85 @@ export default function ManualEntryPage() {
     setOpenWizard(false);
   };
 
+  // --- Tek satır silme (tablodaki Delete butonu) ---
+  const handleDeleteRow = (rowIndex: number) => {
+    setTableRows(prev => {
+      const next = prev.filter((_, i) => i !== rowIndex);
+      if (next.length === 0) setShowTable(false);
+      return next;
+    });
+    setSnackbarMsg('Row deleted');
+    setSnackbarOpen(true);
+  };
+
+  // --- Tabloyu tamamen temizle ---
+  const handleClearTable = () => {
+    setTableRows([]);
+    setShowTable(false);
+    setSnackbarMsg('Table cleared');
+    setSnackbarOpen(true);
+  };
+
   const handleAddPool = () => {
-    if (!tableRows || tableRows.length === 0) {
-      setSnackbarMsg('No rows to add. Please generate the table first.');
-      setSnackbarOpen(true);
-      return;
-    }
+  if (!tableRows || tableRows.length === 0) {
+    setSnackbarMsg('No rows to add. Please generate the table first.');
+    setSnackbarOpen(true);
+    return;
+  }
 
-    const codes = Array.from(
-      new Set(
-        tableRows
-          .map((r: any) => (r.projectCode ?? '').trim())
-          .filter((c: string) => c.length > 0)
-      )
-    );
+  // 0) Duplicate kontrolü: Aynı isimli satır (Point Name) varsa engelle
+  const seen = new Set<string>();
+  const dupNames = new Set<string>();
+  for (const r of tableRows) {
+    const k = String(r.point ?? '').trim().toLowerCase();
+    if (!k) continue;
+    if (seen.has(k)) dupNames.add((r.point ?? '').trim());
+    else seen.add(k);
+  }
+  if (dupNames.size > 0) {
+    setSnackbarMsg(`Duplicate row names detected: ${Array.from(dupNames).join(', ')}. Remove duplicates and try again.`);
+    setSnackbarOpen(true);
+    return;
+  }
 
-    if (codes.length === 0) {
-      setSnackbarMsg('Rows have no Project Code. Please fill and try again.');
-      setSnackbarOpen(true);
-      return;
-    }
-    if (codes.length > 1) {
-      setSnackbarMsg(`Multiple Project Codes in table: ${codes.join(', ')}. Please keep a single Project Code.`);
-      setSnackbarOpen(true);
-      return;
-    }
+  // 1) Project Code boş olan satırlar varsa engelle (görmezden gelmeyelim)
+  const emptyCodeCount = tableRows.filter((r: any) => !String(r.projectCode ?? '').trim()).length;
+  if (emptyCodeCount > 0) {
+    setSnackbarMsg('Some rows have empty Project Code. Please fill or remove them.');
+    setSnackbarOpen(true);
+    return;
+  }
 
-    const code = codes[0];
+  // 2) Satırları projectCode'a göre grupla ve HER grup için ayrı havuza yaz
+  const groups: Record<string, any[]> = {};
+  for (const r of tableRows) {
+    const code = String(r.projectCode ?? '').trim();
+    (groups[code] ??= []).push(r);
+  }
+
+  const now = new Date().toISOString();
+  const codes = Object.keys(groups);
+
+  codes.forEach((code, idx) => {
     const key = `pool:${code}`;
     const existing = JSON.parse(localStorage.getItem(key) || '[]');
-
     const payload = {
-      id: Date.now(),
+      id: Date.now() + idx,
       system: 'manualentry',
-      rows: tableRows,
-      createdAt: new Date().toISOString(),
-      meta: {
-        // manual entry için description/location satır bazlı olabilir; ekstra meta koymuyoruz
-      }
+      rows: groups[code],
+      createdAt: now,
+      meta: {} // Manual entry: description/location satır bazlı
     };
-
     localStorage.setItem(key, JSON.stringify([...existing, payload]));
+  });
 
-    setSnackbarMsg(`Added ${tableRows.length} row(s) to Pool`);
-    setSnackbarOpen(true);
+  // 3) Başarılıysa tabloyu temizle ve kapat
+  setTableRows([]);
+  setShowTable(false);
+  setSnackbarMsg(`Added ${tableRows.length} row(s) to Pool (${codes.join(', ')})`);
+  setSnackbarOpen(true);
+};
 
-    // İsteğe bağlı: tabloyu temizlemek istersen burayı aç
-    // setTableRows([]);
-    // setShowTable(false);
-  };
 
   return (
     <Box sx={{ minHeight: '100vh', background: 'radial-gradient(circle at top right, #1A237E, #000000)', color: '#FFFFFF', display: 'flex', flexDirection: 'column' }}>
@@ -257,7 +312,17 @@ export default function ManualEntryPage() {
                 Add Pool
               </PrimaryButton>
 
-              <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>Back to Project Overview</PrimaryButton>
+              <PrimaryButton
+                sx={{ width: '100%' }}
+                onClick={handleClearTable}
+                disabled={tableRows.length === 0}
+              >
+                Clear Table
+              </PrimaryButton>
+
+              <PrimaryButton sx={{ width: '100%' }} onClick={handleBack}>
+                Back to Project Overview
+              </PrimaryButton>
             </Stack>
           </Box>
         </Container>
@@ -276,7 +341,7 @@ export default function ManualEntryPage() {
           color: 'white'
         }}>
           <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-            {tableRows.length > 0 ? 'Manual Entry Output Table' : 'Manual Entry Output Table'}
+            Manual Entry Output Table
           </Typography>
 
           {showTable && tableRows.length > 0 && (
@@ -285,7 +350,7 @@ export default function ManualEntryPage() {
               borderCollapse: 'collapse',
               backgroundColor: '#ffffff',
               fontSize: '0.875rem',
-              fontFamily: `'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif'`,
+              fontFamily: "'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif",
               borderRadius: '12px',
               overflow: 'hidden',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
@@ -294,7 +359,12 @@ export default function ManualEntryPage() {
             }}>
               <thead>
                 <tr style={{ backgroundColor: '#1976d2', color: 'white' }}>
-                  {['Project Code', 'Description', 'Located', 'Point Name', 'AI', 'AO', 'DI', 'DO', 'Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP', 'Mbus'].map((header, i) => (
+                  {[
+                    'Project Code', 'Description', 'Located', 'Point Name',
+                    'AI', 'AO', 'DI', 'DO',
+                    'Modbus RTU', 'Modbus TCP IP', 'Bacnet MSTP', 'Bacnet IP', 'Mbus',
+                    'Actions'
+                  ].map((header, i) => (
                     <th key={i} style={{ border: '1px solid #e0e0e0', padding: '10px', fontWeight: 500, fontSize: '0.85rem', textAlign: 'left' }}>
                       {header}
                     </th>
@@ -303,20 +373,28 @@ export default function ManualEntryPage() {
               </thead>
               <tbody>
                 {tableRows.map((row, index) => (
-                  <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#f0f4f8', transition: 'background 0.3s', cursor: 'default' }}>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.projectCode}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.description}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.location}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.point}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.ai}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.ao}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.di}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.do}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.modbusRtu}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.modbusTcp}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.bacnetMstp}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.bacnetIp}</td>
-                    <td style={{ border: '1px solid #e0e0e0', padding: '8px', fontSize: '0.82rem', color: '#424242' }}>{row.mbus}</td>
+                  <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#f0f4f8' }}>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.projectCode}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.description}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.location}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.point}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.ai}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.ao}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.di}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.do}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.modbusRtu}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.modbusTcp}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.bacnetMstp}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.bacnetIp}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>{row.mbus}</td>
+                    <td style={{ border: '1px solid #e0e0e0', padding: '8px' }}>
+                      <PrimaryButton
+                        onClick={() => handleDeleteRow(index)}
+                        sx={{ minWidth: '100px', padding: '8px 16px', fontSize: '0.8125rem' }}
+                      >
+                        Delete
+                      </PrimaryButton>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -339,27 +417,23 @@ export default function ManualEntryPage() {
             label={current.label}
             type={current.type === 'number' ? 'number' : 'text'}
             value={draft[current.key]}
-            onChange={(e) => {
-              const v = e.target.value;
-              setDraft((d) => ({ ...d, [current.key]: v }));
-            }}
+            onChange={(e) => setDraft(d => ({ ...d, [current.key]: e.target.value }))}
             InputLabelProps={{ sx: labelStyles }}
             sx={textFieldSx}
           />
         </DialogContent>
         <DialogActions sx={{ p: 2, gap: 1 }}>
-  <PrimaryButton onClick={handleCancelWizard}>Cancel</PrimaryButton>
-  <PrimaryButton onClick={handleBackStep} disabled={step === 0}>Back</PrimaryButton>
-  {step < steps.length - 1 ? (
-    <PrimaryButton onClick={handleNext}>Next</PrimaryButton>
-  ) : (
-    <PrimaryButton onClick={handleFinishAddRow}>Finish & Add Row</PrimaryButton>
-  )}
-</DialogActions>
-
+          <PrimaryButton onClick={handleCancelWizard}>Cancel</PrimaryButton>
+          <PrimaryButton onClick={handleBackStep} disabled={step === 0}>Back</PrimaryButton>
+          {step < steps.length - 1 ? (
+            <PrimaryButton onClick={handleNext}>Next</PrimaryButton>
+          ) : (
+            <PrimaryButton onClick={handleFinishAddRow}>Finish & Add Row</PrimaryButton>
+          )}
+        </DialogActions>
       </Dialog>
 
-      {/* Snackbar (CollectorPage ile aynı yeşil stil) */}
+      {/* Snackbar */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={2000}
@@ -368,7 +442,7 @@ export default function ManualEntryPage() {
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         sx={{
           '& .MuiSnackbarContent-root': {
-            backgroundColor: '#4CAF50',
+            backgroundColor: '#FFA500',
             color: '#fff',
             fontWeight: 500,
             padding: '10px 24px',
