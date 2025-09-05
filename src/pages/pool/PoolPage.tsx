@@ -2,7 +2,7 @@ import React from "react";
 import {
   Box, Container, Typography, Stack, Button, Snackbar,
   Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Select, MenuItem, InputLabel, FormControl, Chip, IconButton
+  Select, MenuItem, InputLabel, FormControl, Chip, IconButton
 } from "@mui/material";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import CloseIcon from "@mui/icons-material/Close";
@@ -24,6 +24,8 @@ type CatalogItem = {
   brand?: string;
   family?: string;
   measuring?: string;
+  /** NEW: Signal Type (e.g., 0-10V, 4-20mA) */
+  signal?: string;
   model?: string;
   category?: string;
   mounting?: string;
@@ -93,6 +95,8 @@ const CODE_KEYS = ["code","kod","sku","id","product_code","ürün_kodu","item_co
 const FAMILY_KEYS = ["family","product_family","series","seri","seri_adı","family_name"];
 const MEASURING_KEYS = ["measuring","measurement","measure","ölçüm","sensing","sensing_type"];
 const MODEL_KEYS = ["model","model_no","model_code","model name","ürün_modeli"];
+// NEW: Signal keys
+const SIGNAL_KEYS = ["signal type","signal","signaltype","i/o","io","sinyal","sinyal türü"];
 
 // ========== COMPONENT ==========
 export default function PoolPage() {
@@ -110,7 +114,7 @@ export default function PoolPage() {
   });
 
   // --- MATERIAL EKLERİ ---
-  const [materialMode, setMaterialMode] = React.useState(false);
+  const [materialMode, setMaterialMode] = React.useState(false); // Choise Material toggle
   const [selectorOpen, setSelectorOpen] = React.useState(false);
   const [selectorRowKey, setSelectorRowKey] = React.useState("");
   const [selectorRowInfo, setSelectorRowInfo] = React.useState<any>(null);
@@ -118,14 +122,21 @@ export default function PoolPage() {
   const [catalog, setCatalog] = React.useState<CatalogItem[]>([]);
   const [brandFilter, setBrandFilter] = React.useState("");
   const [familyFilter, setFamilyFilter] = React.useState("");
-  const [measuringFilter, setMeasuringFilter] = React.useState(""); // generic yok
+  const [measuringFilter, setMeasuringFilter] = React.useState("");
+  /** NEW: Signal filter */
+  const [signalFilter, setSignalFilter] = React.useState("");
   const [modelFilter, setModelFilter] = React.useState("");
-  const [searchTerm, setSearchTerm] = React.useState("");
+
+  // Import için gizli input
+  const importTableInputRef = React.useRef<HTMLInputElement>(null);
+
+  const dialogExcelInputRef = React.useRef<HTMLInputElement>(null);
 
   // Üst filtre değişince sağdakileri sıfırla
-  React.useEffect(() => { setFamilyFilter(""); setMeasuringFilter(""); setModelFilter(""); }, [brandFilter]);
-  React.useEffect(() => { setMeasuringFilter(""); setModelFilter(""); }, [familyFilter]);
-  React.useEffect(() => { setModelFilter(""); }, [measuringFilter]);
+  React.useEffect(() => { setFamilyFilter(""); setMeasuringFilter(""); setSignalFilter(""); setModelFilter(""); }, [brandFilter]);
+  React.useEffect(() => { setMeasuringFilter(""); setSignalFilter(""); setModelFilter(""); }, [familyFilter]);
+  React.useEffect(() => { setSignalFilter(""); setModelFilter(""); }, [measuringFilter]);
+  React.useEffect(() => { setModelFilter(""); }, [signalFilter]);
 
   // Satır bazlı malzeme eşlemesi
   const [materialsByRow, setMaterialsByRow] = React.useState<RowSelectionMap>({});
@@ -275,6 +286,7 @@ export default function PoolPage() {
           const category = findVal(CATEGORY_KEYS);
           const family = findVal(FAMILY_KEYS) || category;
           const measuring = findVal(MEASURING_KEYS);
+          const signal = findVal(SIGNAL_KEYS); // NEW
           const mounting = findVal(MOUNT_KEYS);
           const model = findVal(MODEL_KEYS);
           const code = findVal(CODE_KEYS);
@@ -286,6 +298,7 @@ export default function PoolPage() {
             brand,
             family,
             measuring,
+            signal,
             model,
             category,
             mounting,
@@ -307,21 +320,17 @@ export default function PoolPage() {
     }
   };
 
-  // Katalogu filtrele
+  // Filtrelenmiş katalog (tüm koşullar)
   const filteredCatalog = React.useMemo(() => {
     return catalog.filter(it => {
       if (brandFilter && normalize(it.brand || "") !== normalize(brandFilter)) return false;
       if (familyFilter && normalize(it.family || it.category || "") !== normalize(familyFilter)) return false;
       if (measuringFilter && normalize(it.measuring || "") !== normalize(measuringFilter)) return false;
+      if (signalFilter && normalize(it.signal || "") !== normalize(signalFilter)) return false;
       if (modelFilter && normalize(it.model || it.code || it.name || "") !== normalize(modelFilter)) return false;
-      if (searchTerm) {
-        const s = normalize(searchTerm);
-        const blob = `${it.brand||""} ${it.family||it.category||""} ${it.measuring||""} ${it.model||""} ${it.mounting||""} ${it.name||""} ${it.code||""}`.toLowerCase();
-        if (!blob.includes(s)) return false;
-      }
       return true;
     });
-  }, [catalog, brandFilter, familyFilter, measuringFilter, modelFilter, searchTerm]);
+  }, [catalog, brandFilter, familyFilter, measuringFilter, signalFilter, modelFilter]);
 
   // Distinct yardımcı + kademeli seçenek üretimi
   const distinct = (arr: string[]) =>
@@ -339,11 +348,19 @@ export default function PoolPage() {
     () => (measuringFilter ? scopedByFamily.filter(it => normalize(it.measuring || "") === normalize(measuringFilter)) : scopedByFamily),
     [scopedByFamily, measuringFilter]
   );
+  /** NEW: scope by signal */
+  const scopedBySignal = React.useMemo(
+    () => (signalFilter ? scopedByMeasuring.filter(it => normalize(it.signal || "") === normalize(signalFilter)) : scopedByMeasuring),
+    [scopedByMeasuring, signalFilter]
+  );
 
   const distinctBrands = React.useMemo(() => distinct(catalog.map(c => c.brand || "")), [catalog]);
   const distinctFamilies = React.useMemo(() => distinct(scopedByBrand.map(c => c.family || c.category || "")), [scopedByBrand]);
   const distinctMeasurings = React.useMemo(() => distinct(scopedByFamily.map(c => c.measuring || "")), [scopedByFamily]);
-  const distinctModels = React.useMemo(() => distinct(scopedByMeasuring.map(c => c.model || c.code || c.name || "")), [scopedByMeasuring]);
+  /** NEW: distinct signals */
+  const distinctSignals = React.useMemo(() => distinct(scopedByMeasuring.map(c => c.signal || "")), [scopedByMeasuring]);
+  /** CHG: models are now based on signal scope */
+  const distinctModels = React.useMemo(() => distinct(scopedBySignal.map(c => c.model || c.code || c.name || "")), [scopedBySignal]);
 
   // --- Satır tıklama: seçim penceresini aç ---
   const openSelectorFor = (row: any, idx: number) => {
@@ -382,14 +399,100 @@ export default function PoolPage() {
     setSnackbar({ open: true, msg: "Materials linked to row", color: "#4CAF50" });
   };
 
-  // Material sütunu: seçili ürünlerin adlarını yaz
+  // Material sütununda: sadece MODEL göster
   const renderMaterialCell = React.useCallback((rowKey: string) => {
     const items = selectedForRow(rowKey);
     if (!items.length) return <em style={{ color: '#888' }}>—</em>;
-    const label = (it: CatalogItem) => (it.name || it.code || it.model || it.brand || "item");
-    const text = items.map(label).join(", ");
-    return <span>{text}</span>;
+    const toModel = (it: CatalogItem) => (it.model && it.model.trim()) || "—";
+    return <span>{items.map(toModel).join(", ")}</span>;
   }, [materialsByRow]);
+
+  // Export'ta model kullanmak için
+  const modelOnly = (it: CatalogItem) => (it.model && it.model.trim()) || "";
+
+  const exportTableToExcel = async () => {
+    try {
+      const XLSX: any = await import("xlsx");
+      const data = flatRows.map((row, idx) => {
+        const rowKey = buildRowKey(row, idx);
+        const items = (materialsByRow[rowKey] || []);
+        return {
+          System: row.__system ?? "",
+          ProjectCode: row.projectCode ?? "",
+          Description: row.description ?? "",
+          Location: row.location ?? "",
+          Point: row.point ?? "",
+          // SADECE model isimleri, tek sütunda:
+          Material: items.map(modelOnly).filter(Boolean).join("; "),
+          AI: row.ai ?? 0,
+          AO: row.ao ?? 0,
+          DI: row.di ?? 0,
+          DO: row.do ?? 0,
+          ModbusRTU: row.modbusRtu ?? 0,
+          ModbusTCP: row.modbusTcp ?? 0,
+          BacnetMSTP: row.bacnetMstp ?? 0,
+          BacnetIP: row.bacnetIp ?? 0,
+          Mbus: row.mbus ?? 0,
+        };
+      });
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Pool");
+
+      const d = new Date();
+      const pad = (n:number)=>String(n).padStart(2,'0');
+      const fname = `PoolExport_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}.xlsx`;
+      XLSX.writeFile(wb, fname);
+      setSnackbar({ open: true, msg: "Exported Excel", color: "#4CAF50" });
+    } catch {
+      setSnackbar({ open: true, msg: "Export failed", color: "#E53935" });
+    }
+  };
+
+  const onImportTableFile = async (file: File) => {
+    try {
+      const XLSX: any = await import("xlsx");
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: "array" });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(ws, { defval: "", raw: false }) as Record<string, any>[];
+      const lc = (k:string) => k.toLowerCase().replace(/\s+/g, "");
+
+      const rows: any[] = [];
+      const matMap: RowSelectionMap = {};
+
+      json.forEach((r, i) => {
+        const m: Record<string, any> = {};
+        Object.keys(r).forEach(k => { m[lc(k)] = r[k]; });
+
+        const row: any = {
+          __key: "import",
+          __system: m["system"] || "",
+          __packCreatedAt: Date.now(),
+          projectCode: m["projectcode"] ?? m["project"] ?? "",
+          description: m["description"] || "",
+          location: m["location"] || "",
+          point: m["point"] || "",
+          ai: Number(m["ai"]||0), ao: Number(m["ao"]||0),
+          di: Number(m["di"]||0), do: Number(m["do"]||0),
+          modbusRtu: Number(m["modbusrtu"]||0), modbusTcp: Number(m["modbustcp"]||0),
+          bacnetMstp: Number(m["bacnetmstp"]||0), bacnetIp: Number(m["bacnetip"]||0),
+          mbus: Number(m["mbus"]||0),
+          order: i,
+        };
+        rows.push(row);
+      });
+
+      rows.sort(sortOriginal);
+      setFlatRows(rows);
+      setMaterialsByRow(matMap);
+      persistMaterials(matMap);
+      setMaterialMode(true);
+      setSnackbar({ open: true, msg: `Imported ${rows.length} rows`, color: "#4CAF50" });
+    } catch {
+      setSnackbar({ open: true, msg: "Import failed", color: "#E53935" });
+    }
+  };
 
   // ========== RENDER ==========
   return (
@@ -530,9 +633,7 @@ export default function PoolPage() {
 
       {/* Alt buton barı */}
       <Box sx={{ p: 2, borderTop: "1px solid rgba(255,255,255,0.1)", display: "flex", justifyContent: "flex-end", gap: 2 }}>
-        <PrimaryButton onClick={toggleMaterialMode}>
-          Choise Material ( Ürün seç )
-        </PrimaryButton>
+        <PrimaryButton onClick={toggleMaterialMode}>Choise Material</PrimaryButton>
         <PrimaryButton onClick={loadPool}>Refresh</PrimaryButton>
         <PrimaryButton onClick={() => {
           Object.keys(localStorage).forEach((k) => {
@@ -549,6 +650,22 @@ export default function PoolPage() {
             setSnackbar({ open: true, msg: "Copy failed", color: "#4CAF50" });
           }
         }} disabled={flatRows.length === 0}>Copy</PrimaryButton>
+
+        {/* Export / Import */}
+        <PrimaryButton onClick={exportTableToExcel} disabled={flatRows.length === 0}>Export</PrimaryButton>
+        <input
+          ref={importTableInputRef}
+          type="file"
+          hidden
+          accept=".xlsx"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) onImportTableFile(f);
+            (e.target as HTMLInputElement).value = ""; // aynı dosyayı tekrar seçebilelim
+          }}
+        />
+        <PrimaryButton onClick={() => importTableInputRef.current?.click()}>Import</PrimaryButton>
+
         <PrimaryButton onClick={handleBack}>Back</PrimaryButton>
       </Box>
 
@@ -559,14 +676,14 @@ export default function PoolPage() {
           <IconButton onClick={closeSelector} size="small"><CloseIcon /></IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          {/* Filtreler + Excel yükleme */}
+          {/* Filtreler */}
           <Stack
             direction={{ xs: "column", md: "row" }}
             spacing={2}
             alignItems={{ xs: "stretch", md: "center" }}
             sx={{ mb: 2, flexWrap: 'wrap' }}
           >
-            {/* ORDER: Brand -> Family -> Measuring -> Model -> Search -> Upload */}
+            {/* ORDER: Brand -> Family -> Measuring -> Signal -> Model */}
             <FormControl size="small" sx={{ minWidth: 180 }}>
               <InputLabel>Brand</InputLabel>
               <Select label="Brand" value={brandFilter} onChange={(e) => setBrandFilter(String(e.target.value))}>
@@ -591,6 +708,15 @@ export default function PoolPage() {
               </Select>
             </FormControl>
 
+            {/* NEW: Signal Type */}
+            <FormControl size="small" sx={{ minWidth: 180 }}>
+              <InputLabel>Signal</InputLabel>
+              <Select label="Signal" value={signalFilter} onChange={(e) => setSignalFilter(String(e.target.value))}>
+                <MenuItem value="">(All)</MenuItem>
+                {distinctSignals.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+              </Select>
+            </FormControl>
+
             <FormControl size="small" sx={{ minWidth: 180 }}>
               <InputLabel>Model</InputLabel>
               <Select label="Model" value={modelFilter} onChange={(e) => setModelFilter(String(e.target.value))}>
@@ -598,19 +724,6 @@ export default function PoolPage() {
                 {distinctModels.map(mo => <MenuItem key={mo} value={mo}>{mo}</MenuItem>)}
               </Select>
             </FormControl>
-
-            <TextField
-              label="Search (brand, family, measuring, model, code...)"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              size="small"
-              sx={{ minWidth: 260 }}
-            />
-            <Box sx={{ flexGrow: 1 }} />
-            <Button variant="outlined" component="label" sx={{ alignSelf: { xs: "stretch", md: "center" } }}>
-              Upload Excel (.xlsx)
-              <input type="file" hidden accept=".xlsx" onChange={(e) => { const f = e.target.files?.[0]; if (f) onExcelFile(f); }} />
-            </Button>
           </Stack>
 
           {/* Katalog listesi */}
@@ -625,14 +738,14 @@ export default function PoolPage() {
             }}>
               <thead>
                 <tr style={{ backgroundColor: "#1976d2", color: "white" }}>
-                  {["Select","Brand","Family","Measuring","Model","Mounting","Code","Sheet"].map(h => (
+                  {["Select","Brand","Family","Measuring","Signal Type","Model","Mounting"].map(h => (
                     <th key={h} style={{ padding: "8px", textAlign: "left", borderBottom: "1px solid #e0e0e0" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filteredCatalog.length === 0 ? (
-                  <tr><td colSpan={8} style={{ padding: 12, color: "#777" }}>List is empty. Upload an Excel file or clear filters.</td></tr>
+                  <tr><td colSpan={7} style={{ padding: 12, color: "#777" }}>List is empty. Upload an Excel file or clear filters.</td></tr>
                 ) : filteredCatalog.map((it, i) => {
                   const curr = selectedForRow(selectorRowKey);
                   const checked = !!curr.find(c => c.id === it.id);
@@ -654,10 +767,9 @@ export default function PoolPage() {
                       <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{it.brand || "—"}</td>
                       <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{it.family || it.category || "—"}</td>
                       <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{it.measuring || "—"}</td>
+                      <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{it.signal || "—"}</td>
                       <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{it.model || "—"}</td>
                       <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{it.mounting || "—"}</td>
-                      <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{it.code || "—"}</td>
-                      <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{it.sheet || ""}</td>
                     </tr>
                   );
                 })}
@@ -673,7 +785,7 @@ export default function PoolPage() {
                 <Chip
                   key={`sel-${it.id}`}
                   size="small"
-                  label={`${it.brand || ""} ${it.name || it.code || ""}`.trim() || it.id}
+                  label={`${it.brand || ""} ${(it.model || it.name || "").trim()}`.trim() || it.id}
                   onDelete={() => {
                     const prev = selectedForRow(selectorRowKey);
                     const next = prev.filter(x => x.id !== it.id);
@@ -687,9 +799,30 @@ export default function PoolPage() {
             </Stack>
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={closeSelector}>Close</Button>
-        </DialogActions>
+
+        {/* Dialog alt butonlar: Upload Excel & Close */}
+        <DialogActions sx={{ px: 3, py: 2, gap: 1.5 }}>
+  {/* Gizli file input */}
+  <input
+    ref={dialogExcelInputRef}
+    type="file"
+    hidden
+    accept=".xlsx"
+    onChange={(e) => {
+      const f = e.target.files?.[0];
+      if (f) onExcelFile(f);
+      (e.target as HTMLInputElement).value = ""; // aynı dosyayı tekrar seçebilmek için
+    }}
+  />
+
+  {/* Programatik tetikleme */}
+  <ModernButton onClick={() => dialogExcelInputRef.current?.click()}>
+    Upload Excel
+  </ModernButton>
+
+  {/* Kapanış, senin PrimaryButton formatında ve 'Close' yazımıyla */}
+  <PrimaryButton onClick={closeSelector}>Close</PrimaryButton>
+</DialogActions>
       </Dialog>
 
       {/* Snackbar */}
