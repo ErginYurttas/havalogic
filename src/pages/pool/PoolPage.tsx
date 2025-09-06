@@ -2,9 +2,13 @@ import React from "react";
 import {
   Box, Container, Typography, Stack, Button, Snackbar,
   Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Select, MenuItem, InputLabel, FormControl, Chip, IconButton,
+  TextField, Select, MenuItem, InputLabel, FormControl, IconButton,
   Tabs, Tab
 } from "@mui/material";
+//import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
+//import CalculateOutlinedIcon from "@mui/icons-material/CalculateOutlined";
+//import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
+import { Divider } from "@mui/material";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import CloseIcon from "@mui/icons-material/Close";
 import { styled } from "@mui/system";
@@ -74,39 +78,47 @@ const PrimaryButton = styled(ModernButton)({
   '&:hover': { backgroundColor: '#1565c0', borderColor: 'transparent' }
 });
 
-// Collector sayfasındaki mavi odak yerine gri tonlar (dialoglar beyaz zeminde)
+// Açık zemin: nötr gri sınırlar, mavi yok
 const selectStyles = {
   color: '#1b1b1b',
-  '.MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
-  '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
-  '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+  '.MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+  '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
   '&.Mui-disabled': { color: '#888', backgroundColor: '#f5f5f5' },
-  '&.Mui-disabled .MuiOutlinedInput-notchedOutline': { borderColor: '#CCC' },
-  svg: { color: '#90A4AE' }
+  '&.Mui-disabled .MuiOutlinedInput-notchedOutline': { borderColor: '#DDDDDD' },
+  '& .MuiSvgIcon-root': { color: '#9E9E9E' },
 };
 
 const labelStyles = {
-  color: '#90A4AE',
-  '&.Mui-focused': { color: '#B0BEC5' }
+  color: '#9E9E9E',
+  '&.Mui-focused': { color: '#9E9E9E' },
 };
 
+// Koyu zemin: açık yazı ve açık/nötr gri sınırlar, mavi yok
 const selectStylesDark = {
   color: '#fff',
-  '.MuiOutlinedInput-notchedOutline': { borderColor: '#555' },
-  '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#777' },
-  '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90caf9' },
-  // asıl kritik kısım: seçili değer yazısı
+  '.MuiOutlinedInput-notchedOutline': { borderColor: '#9E9E9E' },
+  '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#BDBDBD' },
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#E0E0E0' },
   '& .MuiSelect-select, & .MuiInputBase-input': { color: '#fff', WebkitTextFillColor: '#fff' },
-  // ok ikonu
-  '& .MuiSvgIcon-root': { color: '#fff' },
-  // disabled görünümü
+  '& .MuiSvgIcon-root': { color: '#E0E0E0' },
   '&.Mui-disabled': { color: '#888', backgroundColor: '#1e1e1e' },
   '&.Mui-disabled .MuiOutlinedInput-notchedOutline': { borderColor: '#444' },
 };
 
 const labelStylesDark = {
-  color: '#B0BEC5',
+  color: '#BDBDBD',
   '&.Mui-focused': { color: '#E0E0E0' },
+};
+
+// Koyu zemin TextField görünümü: açık yazı + nötr gri sınırlar (mavi yok)
+const textFieldStylesDark = {
+  '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': { borderColor: '#9E9E9E' },
+  '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#BDBDBD' },
+  '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#E0E0E0' },
+  '& .MuiInputBase-input': { color: '#fff', WebkitTextFillColor: '#fff' },
+  '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline': { borderColor: '#444' },
+  '& .MuiInputBase-root.Mui-disabled': { backgroundColor: '#1e1e1e' },
 };
 
 const normalize = (s: string) => (s ?? "").trim().toLowerCase();
@@ -825,7 +837,9 @@ export default function PoolPage() {
 
       {/* Alt buton barı */}
       <Box sx={{ p: 2, borderTop: "1px solid rgba(255,255,255,0.1)", display: "flex", justifyContent: "flex-end", gap: 2, flexWrap: "wrap" }}>
-        <PrimaryButton onClick={toggleMaterialMode}>Choise Material</PrimaryButton>
+        <PrimaryButton onClick={toggleMaterialMode}>
+  {materialMode ? 'Hide Material' : 'Choose Material'}
+</PrimaryButton>
         <PrimaryButton onClick={loadPool}>Refresh</PrimaryButton>
         <PrimaryButton onClick={() => {
           Object.keys(localStorage).forEach((k) => {
@@ -839,18 +853,18 @@ export default function PoolPage() {
             await navigator.clipboard.writeText(JSON.stringify(flatRows, null, 2));
             setSnackbar({ open: true, msg: "Copied to clipboard", color: "#4CAF50" });
           } catch {
-            setSnackbar({ open: true, msg: "Copy failed", color: "#4CAF50" });
-          }
+  setSnackbar({ open: true, msg: "Copy failed (browser blocked clipboard)", color: "#E53935" });
+}
         }} disabled={flatRows.length === 0}>Copy</PrimaryButton>
 
         {/* Export / Import */}
         <PrimaryButton onClick={exportTableToExcel} disabled={flatRows.length === 0}>Export</PrimaryButton>
-        <input
-          ref={importTableInputRef}
-          type="file"
-          hidden
-          accept=".xlsx"
-          onChange={(e) => {
+       <input
+  ref={importTableInputRef}
+  type="file"
+  hidden
+  accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+  onChange={(e) => {
             const f = e.target.files?.[0];
             if (f) onImportTableFile(f);
             (e.target as HTMLInputElement).value = "";
@@ -1001,11 +1015,11 @@ export default function PoolPage() {
         <DialogActions sx={{ px: 3, py: 2, gap: 1.5 }}>
           {/* Hidden file input for Catalog upload */}
           <input
-            ref={dialogExcelInputRef}
-            type="file"
-            hidden
-            accept=".xlsx"
-            onChange={(e) => {
+  ref={dialogExcelInputRef}
+  type="file"
+  hidden
+  accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+  onChange={(e) => {
               const f = e.target.files?.[0];
               if (f) onExcelFile(f);
               (e.target as HTMLInputElement).value = "";
@@ -1028,6 +1042,7 @@ export default function PoolPage() {
           <Tabs value={assignTab} onChange={(_, v) => setAssignTab(v)} sx={{ mb: 2 }}>
           <Tab label="Assignments" sx={{ textTransform: 'none', fontWeight: 600 }} />
           <Tab label="Panels" sx={{ textTransform: 'none', fontWeight: 600 }} />
+          <Tab label="Hardware (Controller & IO)" sx={{ textTransform: 'none', fontWeight: 600 }} />
           </Tabs>
 
 
@@ -1036,12 +1051,12 @@ export default function PoolPage() {
               {/* Üst bar: System Filter + Bulk assign */}
               <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems={{ xs: "stretch", md: "center" }} sx={{ mb: 2 }}>
                 <FormControl size="small" sx={{ minWidth: 180 }}>
-  <InputLabel sx={labelStylesDark}>System Filter</InputLabel>
+  <InputLabel sx={labelStyles}>System Filter</InputLabel>
   <Select
     label="System Filter"
     value={systemFilter}
     onChange={(e)=>setSystemFilter(String(e.target.value))}
-    sx={selectStylesDark}
+    sx={selectStyles}
     MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
   >
     <MenuItem value="">(All)</MenuItem>
@@ -1052,12 +1067,12 @@ export default function PoolPage() {
                 <Box sx={{ flexGrow: 1 }} />
 
                 <FormControl size="small" sx={{ minWidth: 220 }}>
-  <InputLabel sx={labelStylesDark}>Assign selected to</InputLabel>
+  <InputLabel sx={labelStyles}>Assign selected to</InputLabel>
   <Select
     label="Assign selected to"
     value={bulkPanelId}
     onChange={(e)=>setBulkPanelId(String(e.target.value))}
-    sx={selectStylesDark}
+    sx={selectStyles}
     MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
   >
     <MenuItem value="">(Choose Panel)</MenuItem>
@@ -1193,6 +1208,18 @@ export default function PoolPage() {
               </Box>
             </Box>
           )}
+
+{assignTab === 2 && (
+  <HardwareTab
+  flatRows={flatRows}
+  assignments={assignments}
+  projectKeyForStorage={projectKeyForStorage}
+  labelStylesDark={labelStylesDark}
+  selectStylesDark={selectStylesDark}
+  setSnackbar={setSnackbar}
+/>
+)}
+
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <PrimaryButton onClick={closeAssignDialog}>Close</PrimaryButton>
@@ -1246,3 +1273,443 @@ function StatPill({ label, value }: { label: string; value: number | string }) {
     </Box>
   );
 }
+
+// ================== HARDWARE TAB (DROP-IN) ==================
+type HardwareTabProps = {
+  flatRows: any[];
+  assignments: AssignmentsMap;
+  projectKeyForStorage: string;
+  labelStylesDark: any;
+  selectStylesDark: any;
+  setSnackbar: (s: {open: boolean; msg: string; color?: string}) => void;
+};
+
+function HardwareTab({
+  flatRows, assignments, projectKeyForStorage,
+  labelStylesDark, selectStylesDark, setSnackbar
+}: HardwareTabProps) {
+  // ---- küçük yardımcılar
+const isPLC = (m: ModuleRow) => /plc|controller|cpu/i.test(m.Family || "");
+  const isGateway = (m: ModuleRow) =>
+    /gateway/i.test(m.Family || "") || !!String(m.GW_Proto || "");
+  const hasIOCap = (m: ModuleRow) =>
+    num(m.AI_cap,0)+num(m.AO_cap,0)+num(m.DI_cap,0)+num(m.DO_cap,0)+num(m.UI_cap,0) > 0;
+  const isIOModule = (m: ModuleRow) =>
+    /io/i.test(m.Family || "") || hasIOCap(m);
+
+  const num = (v:any, d=0) => {
+    const n = typeof v === "number" ? v : parseFloat(String(v).replace(",", "."));
+    return Number.isFinite(n) ? n : d;
+  };
+  const yes = (v:any) => String(v||"").trim().toLowerCase()==="yes";
+  const effWidth = (m:any) => { const w = num(m.Width_mm,0); if (w>0) return w; const din=num(m.DIN_Modules,0); return din>0? din*17.5 : 120; };
+
+  // ---- rowsByPanel: atanan satırlardan IO toplamlarını üret
+  const rowsByPanel = React.useMemo(() => {
+    const map = new Map<number, { panelName: string; io: {AI:number;AO:number;DI:number;DO:number} }>();
+    const n = (x:any)=> Number.isFinite(x)? x : num(x,0);
+    for (const r of flatRows) {
+      const code = String(r.projectCode||"").trim();
+      if (!code) continue;
+      const asg = assignments[code];
+      if (!asg) continue;
+      if (!map.has(asg.panelId)) map.set(asg.panelId, { panelName: asg.panelName, io:{AI:0,AO:0,DI:0,DO:0} });
+      const b = map.get(asg.panelId)!;
+      b.io.AI += n(r.ai); b.io.AO += n(r.ao); b.io.DI += n(r.di); b.io.DO += n(r.do);
+    }
+    return map;
+  }, [flatRows, assignments]);
+
+  // ---- Module List yükleme / saklama
+  type ModuleRow = {
+    Brand:string; Family:string; Model:string; Description?:string;
+    UnitPrice?:number; Currency?:string;
+    AI_cap?:number; AO_cap?:number; DI_cap?:number; DO_cap?:number; UI_cap?:number;
+    Supports_BACnet_IP?:string; Supports_BACnet_MSTP?:string; Supports_Modbus_TCP?:string; Supports_Modbus_RTU?:string; Supports_MBus?:string;
+    GW_Proto?:string; GW_Device_Capacity?:number; GW_Ports?:number;
+    PLC_Max_Slots?:number; PLC_Ethernet?:string; PLC_Redundant?:string; PLC_Webserver?:string;
+    Width_mm?:number; Height_mm?:number; Depth_mm?:number; Weight_kg?:number; DIN_Modules?:number;
+  };
+
+  const MODULE_LIST_KEY = "moduleList:v1";
+  const [moduleList, setModuleList] = React.useState<ModuleRow[]>([]);
+  React.useEffect(()=>{ try{ const raw=localStorage.getItem(MODULE_LIST_KEY); if(raw) setModuleList(JSON.parse(raw)); }catch{} },[]);
+  const persistModuleList = (arr:ModuleRow[]) => { try{ localStorage.setItem(MODULE_LIST_KEY, JSON.stringify(arr)); }catch{} };
+
+  // sağlam dinamik import
+  const loadXLSX = React.useCallback(async()=>{
+    const mod:any = await import("xlsx");
+    return mod?.default ?? mod;
+  },[]);
+
+  const moduleExcelRef = React.useRef<HTMLInputElement>(null);
+  const onModuleExcel = async (file: File) => {
+    try {
+      const XLSX = await loadXLSX();
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: "array", cellDates: true, dense: true });
+      const ws = wb.Sheets["Data"] || wb.Sheets[wb.SheetNames[0]];
+      if (!ws) throw new Error("No 'Data' sheet");
+      const rows = XLSX.utils.sheet_to_json(ws, { defval: "" }) as any[];
+      const list: ModuleRow[] = rows.map(r => ({
+        Brand: r["Brand"]??"", Family: r["Family"]??"", Model: r["Model"]??"", Description: r["Description"]??"",
+        UnitPrice: num(r["UnitPrice"],0), Currency: r["Currency"]??"",
+        AI_cap: num(r["AI_cap"],0), AO_cap: num(r["AO_cap"],0), DI_cap: num(r["DI_cap"],0), DO_cap: num(r["DO_cap"],0),
+        UI_cap: num(r["UI_cap"],0),
+        Supports_BACnet_IP: r["Supports_BACnet_IP"]??"", Supports_BACnet_MSTP: r["Supports_BACnet_MSTP"]??"",
+        Supports_Modbus_TCP: r["Supports_Modbus_TCP"]??"", Supports_Modbus_RTU: r["Supports_Modbus_RTU"]??"", Supports_MBus: r["Supports_MBus"]??"",
+        GW_Proto: r["GW_Proto"]??"", GW_Device_Capacity: num(r["GW_Device_Capacity"],0), GW_Ports: num(r["GW_Ports"],0),
+        PLC_Max_Slots: num(r["PLC_Max_Slots"], NaN), PLC_Ethernet: r["PLC_Ethernet"]??"", PLC_Redundant: r["PLC_Redundant"]??"", PLC_Webserver: r["PLC_Webserver"]??"",
+        Width_mm: num(r["Width_mm"],0), Height_mm: num(r["Height_mm"],0), Depth_mm: num(r["Depth_mm"],0), Weight_kg: num(r["Weight_kg"],0), DIN_Modules: num(r["DIN_Modules"],0),
+      }));
+      setModuleList(list);
+      persistModuleList(list);
+      setSnackbar({ open:true, msg:`Module List loaded (${list.length})`, color:"#4CAF50" });
+    } catch(e) {
+      console.error("[Module Excel Import] Error:", e);
+      setSnackbar({ open:true, msg:"Could not read Module List", color:"#E53935" });
+    }
+  };
+
+  // ---- panel donanım kaydı
+  type HardwarePick = {
+    plc?: ModuleRow;
+    modules: Array<{ item: ModuleRow; qty: number; uiAllocAI?: number; uiAllocDI?: number }>;
+    gateways: Array<{ item: ModuleRow; qty: number }>;
+    summary: { cost:number; width:number; slotsUsed:number; slotsLimit?:number };
+  };
+  const HARDWARE_KEY = `panelHardware:${projectKeyForStorage}`;
+  const [hardware, setHardware] = React.useState<Record<number, HardwarePick>>({});
+  React.useEffect(()=>{ try{ const raw=localStorage.getItem(HARDWARE_KEY); setHardware(raw? JSON.parse(raw): {});}catch{ setHardware({}); } },[HARDWARE_KEY]);
+  const persistHardware = (next:Record<number,HardwarePick>) => { try{ localStorage.setItem(HARDWARE_KEY, JSON.stringify(next)); }catch{} };
+
+  // ---- UI State
+  const [panelId, setPanelId] = React.useState<number | ''>('');
+  const [spare, setSpare] = React.useState<number>(10);
+  const [objective, setObjective] = React.useState<"cost"|"width"|"balanced">("cost");
+  const [uiPolicy, setUiPolicy] = React.useState<"AI_FIRST"|"DI_FIRST">("AI_FIRST");
+  const [bacnetIpDevices, setBacnetIpDevices] = React.useState<number>(0);
+  const [bacnetMstpDevices, setBacnetMstpDevices] = React.useState<number>(0);
+  const [modbusTcpDevices, setModbusTcpDevices] = React.useState<number>(0);
+  const [modbusRtuDevices, setModbusRtuDevices] = React.useState<number>(0);
+  const [mBusDevices, setMBusDevices]       = React.useState<number>(0);
+
+  // ---- optimizer
+  function pickBest(plcs: ModuleRow[], needs:{AI:number;AO:number;DI:number;DO:number}) : HardwarePick | null {
+    const ioMods = moduleList.filter(isIOModule);
+    if (plcs.length===0) return null;
+
+    let best: HardwarePick | null = null;
+
+    for (const plc of plcs) {
+      // protokoller/gateway
+      const gw: Array<{ item: ModuleRow; qty: number }> = [];
+const byProto = (proto:string)=> moduleList.find(x=> isGateway(x) && String(x.GW_Proto)===proto);
+const gwCapacity = (g: ModuleRow) => {
+  // Kapasite önceliği: cihaz kapasitesi > port sayısı > 1
+  const capDev  = num(g.GW_Device_Capacity, 0);
+  const capPort = num(g.GW_Ports, 0);
+  return (capDev > 0 ? capDev : (capPort > 0 ? capPort : 1));
+};
+
+// BACnet IP
+if (bacnetIpDevices > 0 && !yes(plc.Supports_BACnet_IP)) {
+  const g = byProto("BACnet IP");
+  if (g) gw.push({ item: g, qty: Math.ceil(bacnetIpDevices / gwCapacity(g)) });
+}
+
+// BACnet MSTP
+if (bacnetMstpDevices > 0 && !yes(plc.Supports_BACnet_MSTP)) {
+  const g = byProto("BACnet MSTP");
+  if (g) gw.push({ item: g, qty: Math.ceil(bacnetMstpDevices / gwCapacity(g)) });
+}
+
+// Modbus TCP
+if (modbusTcpDevices > 0 && !yes(plc.Supports_Modbus_TCP)) {
+  const g = byProto("Modbus TCP");
+  if (g) gw.push({ item: g, qty: Math.ceil(modbusTcpDevices / gwCapacity(g)) });
+}
+
+// Modbus RTU
+if (modbusRtuDevices > 0 && !yes(plc.Supports_Modbus_RTU)) {
+  const g = byProto("Modbus RTU");
+  if (g) gw.push({ item: g, qty: Math.ceil(modbusRtuDevices / gwCapacity(g)) });
+}
+
+// M-Bus
+if (mBusDevices > 0 && !yes(plc.Supports_MBus)) {
+  const g = byProto("M-Bus");
+  if (g) gw.push({ item: g, qty: Math.ceil(mBusDevices / gwCapacity(g)) });
+}
+
+      // dahili IO + UI tahsisi
+      let remAI = Math.max(0, needs.AI - num(plc.AI_cap,0));
+      let remAO = Math.max(0, needs.AO - num(plc.AO_cap,0));
+      let remDI = Math.max(0, needs.DI - num(plc.DI_cap,0));
+      let remDO = Math.max(0, needs.DO - num(plc.DO_cap,0));
+      let plcUI = num(plc.UI_cap,0);
+
+      if (uiPolicy==="AI_FIRST") {
+        const a = Math.min(plcUI, remAI); remAI -= a; plcUI -= a;
+        const d = Math.min(plcUI, remDI); remDI -= d; plcUI -= d;
+      } else {
+        const d = Math.min(plcUI, remDI); remDI -= d; plcUI -= d;
+        const a = Math.min(plcUI, remAI); remAI -= a; plcUI -= a;
+      }
+
+      const modules: Array<{ item: ModuleRow; qty: number; uiAllocAI?: number; uiAllocDI?: number }> = [];
+      let slotsUsed = 0;
+      const slotsLimit = Number.isFinite(num(plc.PLC_Max_Slots, NaN)) ? num(plc.PLC_Max_Slots, NaN) : undefined;
+
+      // Greedy paketleme (AO -> DO -> AI -> DI), UI’lı modüller AI/DI’ye tahsis edilebilir
+      const choose = (kind:"AO"|"DO"|"AI"|"DI") => {
+        const target = { AO: remAO, DO: remDO, AI: remAI, DI: remDI }[kind];
+        if (target<=0) return;
+        // aday modüller
+        const cands = ioMods.filter(m=>{
+          if (kind==="AO") return num(m.AO_cap,0)>0;
+          if (kind==="DO") return num(m.DO_cap,0)>0;
+          if (kind==="AI") return num(m.AI_cap,0)>0 || num(m.UI_cap,0)>0;
+          if (kind==="DI") return num(m.DI_cap,0)>0 || num(m.UI_cap,0)>0;
+          return false;
+        });
+        if (cands.length===0) return;
+
+        const sortScore = (m:ModuleRow) => {
+          const cap =
+            kind==="AO" ? num(m.AO_cap,0) :
+            kind==="DO" ? num(m.DO_cap,0) :
+            (num(m.AI_cap,0) || num(m.UI_cap,0));
+          const p = cap>0 ? (num(m.UnitPrice,9999)/cap) : 1e9;
+          const w = cap>0 ? (effWidth(m)/cap) : 1e9;
+          return objective==="cost" ? p : objective==="width" ? w : (0.6*p+0.4*w);
+        };
+
+        // modül ekle, hedefi sıfırlayana kadar
+        let remaining = target;
+        while (remaining>0) {
+          const best = [...cands].sort((a,b)=> sortScore(a)-sortScore(b))[0];
+          if (!best) break;
+          modules.push({ item: best, qty: 1,
+            uiAllocAI: (kind==="AI" && num(best.UI_cap,0)>0 && num(best.AI_cap,0)===0) ? Math.min(remaining, num(best.UI_cap,0)) : 0,
+            uiAllocDI: (kind==="DI" && num(best.UI_cap,0)>0 && num(best.DI_cap,0)===0) ? Math.min(remaining, num(best.UI_cap,0)) : 0
+          });
+          slotsUsed += 1;
+          if (kind==="AO") remaining = Math.max(0, remaining - num(best.AO_cap,0));
+          if (kind==="DO") remaining = Math.max(0, remaining - num(best.DO_cap,0));
+          if (kind==="AI") remaining = Math.max(0, remaining - (num(best.AI_cap,0) || num(best.UI_cap,0)));
+          if (kind==="DI") remaining = Math.max(0, remaining - (num(best.DI_cap,0) || num(best.UI_cap,0)));
+
+          if (slotsLimit && slotsUsed > slotsLimit) { remaining = 1; break; } // limit aştı -> başarısız say
+          if (modules.length>200) break; // güvenlik
+        }
+
+        // kalanları geri yaz
+        if (kind==="AO") remAO = remaining;
+        if (kind==="DO") remDO = remaining;
+        if (kind==="AI") remAI = remaining;
+        if (kind==="DI") remDI = remaining;
+      };
+
+      choose("AO"); choose("DO"); choose("AI"); choose("DI");
+
+      // Tam karşılanmadıysa bu PLC elenir
+      if (remAI>0 || remAO>0 || remDI>0 || remDO>0) continue;
+      if (slotsLimit && slotsUsed > slotsLimit) continue;
+
+      // maliyet/genişlik topla
+      let cost = num(plc.UnitPrice,0), width = effWidth(plc);
+      for (const m of modules) { cost += num(m.item.UnitPrice,0)*m.qty; width += effWidth(m.item)*m.qty; }
+      for (const g of gw) { cost += num(g.item.UnitPrice,0)*g.qty; width += effWidth(g.item)*g.qty; }
+
+      const pick: HardwarePick = {
+        plc, modules, gateways: gw,
+        summary: { cost, width, slotsUsed, slotsLimit }
+      };
+
+      // karşılaştırma
+      const better = (a:HardwarePick|null, b:HardwarePick) => {
+        if (!a) return true;
+        if (objective==="cost") return b.summary.cost < a.summary.cost;
+        if (objective==="width") return b.summary.width < a.summary.width;
+        const aScore = 0.6*a.summary.cost + 0.4*a.summary.width;
+        const bScore = 0.6*b.summary.cost + 0.4*b.summary.width;
+        return bScore < aScore;
+      };
+      if (better(best, pick)) best = pick;
+    }
+
+    return best;
+  }
+
+  const calculate = () => {
+    if (panelId==='') return;
+    if (moduleList.length===0) { setSnackbar({open:true, msg:"Load Module List first", color:"#E53935"}); return; }
+
+    const b = rowsByPanel.get(panelId as number);
+    if (!b) { setSnackbar({open:true, msg:"No IO data for this panel", color:"#E53935"}); return; }
+
+    const needs = {
+      AI: Math.ceil(b.io.AI*(1+spare/100)),
+      AO: Math.ceil(b.io.AO*(1+spare/100)),
+      DI: Math.ceil(b.io.DI*(1+spare/100)),
+      DO: Math.ceil(b.io.DO*(1+spare/100)),
+    };
+
+    const plcs = moduleList.filter(isPLC);
+    const res = pickBest(plcs, needs);
+    if (!res) { setSnackbar({open:true, msg:"No feasible configuration", color:"#E53935"}); return; }
+
+    const next = { ...hardware, [panelId as number]: res };
+    setHardware(next);
+  };
+
+  const save = () => {
+    if (panelId==='') return;
+    if (!hardware[panelId as number]) { setSnackbar({open:true, msg:"Nothing to save. Calculate first.", color:"#E53935"}); return; }
+    persistHardware(hardware);
+    setSnackbar({open:true, msg:"Hardware saved to panel", color:"#4CAF50"});
+  };
+
+  // ---- render
+  return (
+    <Box>
+      {/* Üst satır: panel seç + module list yükle */}
+      <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="center" sx={{ mb: 2 }}>
+        <FormControl size="small" sx={{ minWidth: 240 }}>
+  <InputLabel sx={labelStylesDark}>Select Panel</InputLabel>
+  <Select
+    label="Select Panel"
+    value={panelId === '' ? '' : String(panelId)}
+    onChange={(e)=> setPanelId(e.target.value ? Number(e.target.value) : '')}
+    sx={selectStylesDark}
+    MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
+  >
+    <MenuItem value="">(Choose)</MenuItem>
+    {Array.from(rowsByPanel.entries()).map(([pid, v]) => (
+      <MenuItem key={pid} value={String(pid)}>
+        {v.panelName}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
+
+        <Box sx={{ flexGrow: 1 }} />
+
+        <input
+          ref={moduleExcelRef}
+          type="file"
+          hidden
+          accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+          onChange={(e)=>{ const f=e.target.files?.[0]; if(f) onModuleExcel(f); (e.target as HTMLInputElement).value=""; }}
+        />
+        <ModernButton onClick={()=>moduleExcelRef.current?.click()}>
+        Upload Excel
+        </ModernButton>
+      </Stack>
+
+      {/* Parametreler */}
+      <Box sx={{ display:'grid', gridTemplateColumns:'repeat(12,1fr)', gap:2, mb:2 }}>
+        <TextField
+  label="Spare %"
+  type="number"
+  value={spare}
+  onChange={(e)=> {
+    const n = Math.round(Number(e.target.value));
+    const clamped = Math.min(50, Math.max(0, isFinite(n) ? n : 0));
+    setSpare(clamped);
+  }}
+  size="small"
+  sx={{ gridColumn:'span 2', ...textFieldStylesDark }}
+  InputProps={{ inputProps:{ step:1, min:0, max:50 } }}
+  InputLabelProps={{ sx: { color: '#BDBDBD', '&.Mui-focused': { color: '#E0E0E0' } } }}
+/>
+        <FormControl size="small" sx={{ gridColumn:'span 3' }}>
+  <InputLabel sx={labelStylesDark}>Objective</InputLabel>
+  <Select
+    label="Objective"
+    value={objective}
+    onChange={(e)=> setObjective(e.target.value as any)}
+    sx={selectStylesDark}
+    MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
+  >
+    <MenuItem value="cost">Min Cost</MenuItem>
+    <MenuItem value="width">Min Width</MenuItem>
+    <MenuItem value="balanced">Balanced</MenuItem>
+  </Select>
+</FormControl>
+        <FormControl size="small" sx={{ gridColumn:'span 3' }}>
+  <InputLabel sx={labelStylesDark}>UI Allocation</InputLabel>
+  <Select
+    label="UI Allocation"
+    value={uiPolicy}
+    onChange={(e)=> setUiPolicy(e.target.value as any)}
+    sx={selectStylesDark}
+    MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
+  >
+    <MenuItem value="AI_FIRST">UI → AI first</MenuItem>
+    <MenuItem value="DI_FIRST">UI → DI first</MenuItem>
+  </Select>
+</FormControl>
+
+        <Box sx={{ gridColumn:'span 12' }}>
+  <Stack direction="row" spacing={1.5} alignItems="center" sx={{ flexWrap:'wrap' }}>
+    <Box sx={{ flexGrow:1 }} />
+    <PrimaryButton onClick={calculate}>Calculate</PrimaryButton>
+    <PrimaryButton onClick={save}>Save</PrimaryButton>
+  </Stack>
+</Box>
+      </Box>
+
+      {/* Sonuç */}
+      <Box sx={{ border:"1px solid #eee", borderRadius:1, overflow:"hidden" }}>
+        {panelId!=='' && hardware[panelId as number] ? (
+          <Box sx={{ p:2, bgcolor:"#fff", color:"#333" }}>
+            {(() => {
+              const pick = hardware[panelId as number]!;
+              return (
+                <Stack spacing={2}>
+                  <Typography variant="subtitle1" sx={{ fontWeight:700 }}>Selected Controller</Typography>
+                  <Box>
+                    <strong>{pick.plc?.Brand} {pick.plc?.Model}</strong> — {pick.plc?.Description || "-"}
+                    <Box sx={{ mt:0.5, fontSize:13, color:"#555" }}>
+                      Cost: {pick.summary.cost.toFixed(2)} • Width: {pick.summary.width.toFixed(1)} mm
+                      {pick.summary.slotsLimit ? ` • Slots: ${pick.summary.slotsUsed}/${pick.summary.slotsLimit}` : ` • Slots: ${pick.summary.slotsUsed}`}
+                    </Box>
+                  </Box>
+
+                  <Divider />
+
+                  <Typography variant="subtitle1" sx={{ fontWeight:700 }}>I/O Modules</Typography>
+                  {pick.modules.length===0 ? <Typography variant="body2">—</Typography> : (
+                    <Stack spacing={0.5}>
+                      {pick.modules.map((x,i)=>(
+                        <Box key={i}>
+                          {x.qty} × <strong>{x.item.Brand} {x.item.Model}</strong>
+                          {(x.uiAllocAI||x.uiAllocDI) ? <em style={{ color:"#666" }}> (UI→AI {x.uiAllocAI||0}, UI→DI {x.uiAllocDI||0})</em> : null}
+                        </Box>
+                      ))}
+                    </Stack>
+                  )}
+
+                  <Typography variant="subtitle1" sx={{ fontWeight:700, mt:1 }}>Gateways</Typography>
+                  {pick.gateways.length===0 ? <Typography variant="body2">—</Typography> : (
+                    <Stack spacing={0.5}>
+                      {pick.gateways.map((g,i)=>(
+                        <Box key={i}>{g.qty} × <strong>{g.item.Brand} {g.item.Model}</strong> ({g.item.GW_Proto})</Box>
+                      ))}
+                    </Stack>
+                  )}
+                </Stack>
+              );
+            })()}
+          </Box>
+        ) : (
+          <Box sx={{ p:2, bgcolor:"#fff", color:"#666" }}>Choose a panel and press <strong>Calculate</strong>.</Box>
+        )}
+      </Box>
+    </Box>
+  );
+}
+// ================== END HARDWARE TAB ==================
+
