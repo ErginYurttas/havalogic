@@ -1289,7 +1289,8 @@ function HardwareTab({
   labelStylesDark, selectStylesDark, setSnackbar
 }: HardwareTabProps) {
   // ---- küçük yardımcılar
-const isPLC = (m: ModuleRow) => /plc|controller|cpu/i.test(m.Family || "");
+const isPLC = (m: ModuleRow) =>
+  /plc|controller|cpu|station|automation/i.test(`${m.Family} ${m.Model}`);
   const isGateway = (m: ModuleRow) =>
     /gateway/i.test(m.Family || "") || !!String(m.GW_Proto || "");
   const hasIOCap = (m: ModuleRow) =>
@@ -1301,8 +1302,63 @@ const isPLC = (m: ModuleRow) => /plc|controller|cpu/i.test(m.Family || "");
     const n = typeof v === "number" ? v : parseFloat(String(v).replace(",", "."));
     return Number.isFinite(n) ? n : d;
   };
-  const yes = (v:any) => String(v||"").trim().toLowerCase()==="yes";
+  const yes = (v:any) => /^(yes|y|true|1|evet)$/i.test(String(v).trim());
   const effWidth = (m:any) => { const w = num(m.Width_mm,0); if (w>0) return w; const din=num(m.DIN_Modules,0); return din>0? din*17.5 : 120; };
+
+
+  /* === ADD: ortak proto yardımcıları === */
+const normProto = (s?: string) =>
+  String(s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+
+const PROTO_ALIASES: Record<string,string[]> = {
+  bacnetip:   ["bacnetip","bacnet-ip","bacnet ip"],
+  bacnetmstp: ["bacnetmstp","bacnet-mstp","bacnet mstp","mstp"],
+  modbustcp:  ["modbustcp","modbus-tcp","modbus tcp","modbustcpip"],
+  modbusrtu:  ["modbusrtu","modbus-rtu","modbus rtu","rtu"],
+  mbus:       ["mbus","m-bus","m bus"]
+};
+
+const matchesProto = (value: string, wanted: string) => {
+  const key = normProto(wanted);
+  const aliases = PROTO_ALIASES[key] || [key];
+  const v = normProto(value);
+  return aliases.includes(v);
+};
+
+
+// Panelde atanmış satırlardan IO ve protokol toplamlarını çıkar (spare uygulanır)
+function computeNeedsAndProtocols(pid: number, sparePct: number) {
+  // Bu panele atanmış satırlar
+  const rows = flatRows.filter(r => {
+    const code = String(r.projectCode || "").trim();
+    const asg = assignments[code];
+    return asg?.panelId === pid;
+  });
+
+  // Güvenli toplama (alan adları: ai, ao, di, do, bacnetIp, bacnetMstp, modbusTcp, modbusRtu, mbus)
+  const s = (k: "ai"|"ao"|"di"|"do"|"bacnetIp"|"bacnetMstp"|"modbusTcp"|"modbusRtu"|"mbus") =>
+    rows.reduce((acc, r) => acc + num((r as any)[k], 0), 0);
+
+  // IO ihtiyaçları (spare ile, yukarı yuvarlanır)
+  const needs = {
+    AI: Math.ceil(s("ai") * (1 + sparePct / 100)),
+    AO: Math.ceil(s("ao") * (1 + sparePct / 100)),
+    DI: Math.ceil(s("di") * (1 + sparePct / 100)),
+    DO: Math.ceil(s("do") * (1 + sparePct / 100)),
+  };
+
+  // Protokol toplamları (sparesiz)
+  const proto = {
+    bacnetIp:   s("bacnetIp"),
+    bacnetMstp: s("bacnetMstp"),
+    modbusTcp:  s("modbusTcp"),
+    modbusRtu:  s("modbusRtu"),
+    mbus:       s("mbus"),
+  };
+
+  return { needs, proto };
+}
+
 
   // ---- rowsByPanel: atanan satırlardan IO toplamlarını üret
   const rowsByPanel = React.useMemo(() => {
@@ -1354,8 +1410,14 @@ const isPLC = (m: ModuleRow) => /plc|controller|cpu/i.test(m.Family || "");
       const list: ModuleRow[] = rows.map(r => ({
         Brand: r["Brand"]??"", Family: r["Family"]??"", Model: r["Model"]??"", Description: r["Description"]??"",
         UnitPrice: num(r["UnitPrice"],0), Currency: r["Currency"]??"",
-        AI_cap: num(r["AI_cap"],0), AO_cap: num(r["AO_cap"],0), DI_cap: num(r["DI_cap"],0), DO_cap: num(r["DO_cap"],0),
-        UI_cap: num(r["UI_cap"],0),
+        AI_cap: num(r["AI_cap"] ?? r["AI"] ?? r["AI Channels"] ?? r["AI Ch"] ?? 0, 0),
+AO_cap: num(r["AO_cap"] ?? r["AO"] ?? r["AO Channels"] ?? r["AO Ch"] ?? 0, 0),
+DI_cap: num(r["DI_cap"] ?? r["DI"] ?? r["DI Channels"] ?? r["DI Ch"] ?? 0, 0),
+DO_cap: num(r["DO_cap"] ?? r["DO"] ?? r["DO Channels"] ?? r["DO Ch"] ?? 0, 0),
+UI_cap: num(
+  r["UI_cap"] ?? r["UI"] ?? r["Universal"] ?? r["Universal IO"] ?? r["Universal_IO"] ?? r["U/I"] ?? 0,
+  0
+),
         Supports_BACnet_IP: r["Supports_BACnet_IP"]??"", Supports_BACnet_MSTP: r["Supports_BACnet_MSTP"]??"",
         Supports_Modbus_TCP: r["Supports_Modbus_TCP"]??"", Supports_Modbus_RTU: r["Supports_Modbus_RTU"]??"", Supports_MBus: r["Supports_MBus"]??"",
         GW_Proto: r["GW_Proto"]??"", GW_Device_Capacity: num(r["GW_Device_Capacity"],0), GW_Ports: num(r["GW_Ports"],0),
@@ -1388,149 +1450,241 @@ const isPLC = (m: ModuleRow) => /plc|controller|cpu/i.test(m.Family || "");
   const [spare, setSpare] = React.useState<number>(10);
   const [objective, setObjective] = React.useState<"cost"|"width"|"balanced">("cost");
   const [uiPolicy, setUiPolicy] = React.useState<"AI_FIRST"|"DI_FIRST">("AI_FIRST");
-  const [bacnetIpDevices, setBacnetIpDevices] = React.useState<number>(0);
-  const [bacnetMstpDevices, setBacnetMstpDevices] = React.useState<number>(0);
-  const [modbusTcpDevices, setModbusTcpDevices] = React.useState<number>(0);
-  const [modbusRtuDevices, setModbusRtuDevices] = React.useState<number>(0);
-  const [mBusDevices, setMBusDevices]       = React.useState<number>(0);
+  
 
-  // ---- optimizer
-  function pickBest(plcs: ModuleRow[], needs:{AI:number;AO:number;DI:number;DO:number}) : HardwarePick | null {
+    // ---- optimizer
+  function pickBest(
+    plcs: ModuleRow[],
+    needs: { AI:number; AO:number; DI:number; DO:number },
+    proto: { bacnetIp:number; bacnetMstp:number; modbusTcp:number; modbusRtu:number; mbus:number }
+  ): HardwarePick | null {
     const ioMods = moduleList.filter(isIOModule);
-    if (plcs.length===0) return null;
+    if (plcs.length === 0) return null;
 
     let best: HardwarePick | null = null;
 
     for (const plc of plcs) {
-      // protokoller/gateway
+      // Gerekirse gateway ekle (PLC desteklemiyorsa ve gateway yoksa bu PLC elenir)
       const gw: Array<{ item: ModuleRow; qty: number }> = [];
-const byProto = (proto:string)=> moduleList.find(x=> isGateway(x) && String(x.GW_Proto)===proto);
-const gwCapacity = (g: ModuleRow) => {
-  // Kapasite önceliği: cihaz kapasitesi > port sayısı > 1
-  const capDev  = num(g.GW_Device_Capacity, 0);
-  const capPort = num(g.GW_Ports, 0);
-  return (capDev > 0 ? capDev : (capPort > 0 ? capPort : 1));
+
+// === gateway helper (self-contained, alias-tolerant) ===
+const _normProto = (s?: string) =>
+  String(s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+
+const _PROTO_ALIASES: Record<string,string[]> = {
+  bacnetip:   ["bacnetip","bacnet-ip","bacnet ip","bacnettcpip","bacnet"],
+  bacnetmstp: ["bacnetmstp","bacnet-mstp","bacnet mstp","mstp"],
+  modbustcp:  ["modbustcp","modbus-tcp","modbus tcp","modbustcpip","modbus"],
+  modbusrtu:  ["modbusrtu","modbus-rtu","modbus rtu","rtu"],
+  mbus:       ["mbus","m-bus","m bus"]
 };
 
-// BACnet IP
-if (bacnetIpDevices > 0 && !yes(plc.Supports_BACnet_IP)) {
-  const g = byProto("BACnet IP");
-  if (g) gw.push({ item: g, qty: Math.ceil(bacnetIpDevices / gwCapacity(g)) });
-}
+const _matchesProto = (value: string, wanted: string) => {
+  const key = _normProto(wanted);
+  const aliases = _PROTO_ALIASES[key] || [key];
+  const v = _normProto(value);
+  return aliases.includes(v);
+};
 
-// BACnet MSTP
-if (bacnetMstpDevices > 0 && !yes(plc.Supports_BACnet_MSTP)) {
-  const g = byProto("BACnet MSTP");
-  if (g) gw.push({ item: g, qty: Math.ceil(bacnetMstpDevices / gwCapacity(g)) });
-}
+const byProto = (name: string) =>
+  moduleList.find(x => isGateway(x) && _matchesProto(String(x.GW_Proto || ""), name));
 
-// Modbus TCP
-if (modbusTcpDevices > 0 && !yes(plc.Supports_Modbus_TCP)) {
-  const g = byProto("Modbus TCP");
-  if (g) gw.push({ item: g, qty: Math.ceil(modbusTcpDevices / gwCapacity(g)) });
-}
+const gwCapacity = (g: ModuleRow) => {
+  const capDev  = num(g.GW_Device_Capacity, 0);
+  const capPort = num(g.GW_Ports, 0);
+  return capDev > 0 ? capDev : (capPort > 0 ? capPort : 1);
+};
 
-// Modbus RTU
-if (modbusRtuDevices > 0 && !yes(plc.Supports_Modbus_RTU)) {
-  const g = byProto("Modbus RTU");
-  if (g) gw.push({ item: g, qty: Math.ceil(modbusRtuDevices / gwCapacity(g)) });
-}
+let bad = false;
+const needGW = (protoName: string, demand: number, plcFlag: keyof ModuleRow) => {
+  if (demand <= 0) return;
+  if (yes((plc as any)[plcFlag])) return; // PLC native destekliyor → gateway gerekmez
+  const g = byProto(protoName);
+  if (!g) { bad = true; return; }         // gateway yok → bu PLC elenir
+  gw.push({ item: g, qty: Math.ceil(demand / gwCapacity(g)) });
+};
 
-// M-Bus
-if (mBusDevices > 0 && !yes(plc.Supports_MBus)) {
-  const g = byProto("M-Bus");
-  if (g) gw.push({ item: g, qty: Math.ceil(mBusDevices / gwCapacity(g)) });
-}
+needGW("BACnet IP",   proto.bacnetIp,   "Supports_BACnet_IP");
+needGW("BACnet MSTP", proto.bacnetMstp, "Supports_BACnet_MSTP");
+needGW("Modbus TCP",  proto.modbusTcp,  "Supports_Modbus_TCP");
+needGW("Modbus RTU",  proto.modbusRtu,  "Supports_Modbus_RTU");
+needGW("M-Bus",       proto.mbus,       "Supports_MBus");
+if (bad) continue;
 
-      // dahili IO + UI tahsisi
+
+      // Dahili IO + UI tahsisi
       let remAI = Math.max(0, needs.AI - num(plc.AI_cap,0));
       let remAO = Math.max(0, needs.AO - num(plc.AO_cap,0));
       let remDI = Math.max(0, needs.DI - num(plc.DI_cap,0));
       let remDO = Math.max(0, needs.DO - num(plc.DO_cap,0));
       let plcUI = num(plc.UI_cap,0);
 
-      if (uiPolicy==="AI_FIRST") {
-        const a = Math.min(plcUI, remAI); remAI -= a; plcUI -= a;
-        const d = Math.min(plcUI, remDI); remDI -= d; plcUI -= d;
-      } else {
-        const d = Math.min(plcUI, remDI); remDI -= d; plcUI -= d;
-        const a = Math.min(plcUI, remAI); remAI -= a; plcUI -= a;
-      }
+// UI kanallarını AI/DI/AO arasında paylaştır
+const alloc = (want: "AI"|"DI"|"AO") => {
+  if (plcUI <= 0) return;
+  if (want === "AI") { const x = Math.min(plcUI, remAI); remAI -= x; plcUI -= x; return; }
+  if (want === "DI") { const x = Math.min(plcUI, remDI); remDI -= x; plcUI -= x; return; }
+  if (want === "AO") { const x = Math.min(plcUI, remAO); remAO -= x; plcUI -= x; return; }
+};
+
+if (uiPolicy === "AI_FIRST") {
+  alloc("AI"); alloc("DI"); alloc("AO");
+} else {
+  alloc("DI"); alloc("AI"); alloc("AO");
+}
 
       const modules: Array<{ item: ModuleRow; qty: number; uiAllocAI?: number; uiAllocDI?: number }> = [];
       let slotsUsed = 0;
-      const slotsLimit = Number.isFinite(num(plc.PLC_Max_Slots, NaN)) ? num(plc.PLC_Max_Slots, NaN) : undefined;
+      const maxSlotsNum = num(plc.PLC_Max_Slots, NaN);
+      const slotsLimit = Number.isFinite(maxSlotsNum) && maxSlotsNum > 0 ? maxSlotsNum : undefined;
 
-      // Greedy paketleme (AO -> DO -> AI -> DI), UI’lı modüller AI/DI’ye tahsis edilebilir
-      const choose = (kind:"AO"|"DO"|"AI"|"DI") => {
-        const target = { AO: remAO, DO: remDO, AI: remAI, DI: remDI }[kind];
-        if (target<=0) return;
-        // aday modüller
-        const cands = ioMods.filter(m=>{
-          if (kind==="AO") return num(m.AO_cap,0)>0;
-          if (kind==="DO") return num(m.DO_cap,0)>0;
-          if (kind==="AI") return num(m.AI_cap,0)>0 || num(m.UI_cap,0)>0;
-          if (kind==="DI") return num(m.DI_cap,0)>0 || num(m.UI_cap,0)>0;
-          return false;
-        });
-        if (cands.length===0) return;
+      // === REPLACE BEGIN ===
+// Çoklu-karşılama bilinçli seçim: seçilen modül birden fazla ihtiyacı aynı anda düşürür
+const choose = (kind: "AO"|"DO"|"AI"|"DI") => {
+  const unitRemaining = () => ({ AO: remAO, DO: remDO, AI: remAI, DI: remDI }[kind]);
+  let guard = 0;
 
-        const sortScore = (m:ModuleRow) => {
-          const cap =
-            kind==="AO" ? num(m.AO_cap,0) :
-            kind==="DO" ? num(m.DO_cap,0) :
-            (num(m.AI_cap,0) || num(m.UI_cap,0));
-          const p = cap>0 ? (num(m.UnitPrice,9999)/cap) : 1e9;
-          const w = cap>0 ? (effWidth(m)/cap) : 1e9;
-          return objective==="cost" ? p : objective==="width" ? w : (0.6*p+0.4*w);
-        };
+  while (unitRemaining() > 0 && guard < 100) {
+    // En az bir ihtiyaca katkı sağlayan adaylar
+    const cands = ioMods.filter(m =>
+      (num(m.AO_cap,0)>0 && remAO>0) ||
+      (num(m.DO_cap,0)>0 && remDO>0) ||
+      (num(m.AI_cap,0)>0 && remAI>0) ||
+      (num(m.DI_cap,0)>0 && remDI>0) ||
+      (num(m.UI_cap,0)>0 && (remAI>0 || remDI>0 || remAO>0))
+    );
+    if (cands.length === 0) break;
 
-        // modül ekle, hedefi sıfırlayana kadar
-        let remaining = target;
-        while (remaining>0) {
-          const best = [...cands].sort((a,b)=> sortScore(a)-sortScore(b))[0];
-          if (!best) break;
-          modules.push({ item: best, qty: 1,
-            uiAllocAI: (kind==="AI" && num(best.UI_cap,0)>0 && num(best.AI_cap,0)===0) ? Math.min(remaining, num(best.UI_cap,0)) : 0,
-            uiAllocDI: (kind==="DI" && num(best.UI_cap,0)>0 && num(best.DI_cap,0)===0) ? Math.min(remaining, num(best.UI_cap,0)) : 0
-          });
-          slotsUsed += 1;
-          if (kind==="AO") remaining = Math.max(0, remaining - num(best.AO_cap,0));
-          if (kind==="DO") remaining = Math.max(0, remaining - num(best.DO_cap,0));
-          if (kind==="AI") remaining = Math.max(0, remaining - (num(best.AI_cap,0) || num(best.UI_cap,0)));
-          if (kind==="DI") remaining = Math.max(0, remaining - (num(best.DI_cap,0) || num(best.UI_cap,0)));
+// === PREF: Siemens TXM kuralları (model bazlı ağırlık) ===
+// kind: "AO" | "DO" | "AI" | "DI"
+// a*: bu modül 1 adet alınınca karşıladığı miktarlar
+// rem*: kalan ihtiyaçlar
+const prefFactor = (
+  m: ModuleRow,
+  kind: "AO"|"DO"|"AI"|"DI",
+  a: { aAI:number; aDI:number; aAO:number; aDO:number },
+  rem: { AI:number; DI:number; AO:number; DO:number }
+) => {
+  let f = 1;
+  const model = String(m.Model||"");
+  const is8U   = /TXM1\.8U/i.test(model);
+  const is8D   = /TXM1\.8D/i.test(model);
+  const is16D  = /TXM1\.16D/i.test(model);
+  const is6R   = /TXM1\.6R/i.test(model);
+  const is4D3R = /TXM1\.4D3R/i.test(model);
 
-          if (slotsLimit && slotsUsed > slotsLimit) { remaining = 1; break; } // limit aştı -> başarısız say
-          if (modules.length>200) break; // güvenlik
-        }
+  // AI/AO: önce TXM1.8U
+  if ((kind==="AI" || kind==="AO") && is8U) f *= 0.85;
 
-        // kalanları geri yaz
-        if (kind==="AO") remAO = remaining;
-        if (kind==="DO") remDO = remaining;
-        if (kind==="AI") remAI = remaining;
-        if (kind==="DI") remDI = remaining;
-      };
+  // DO: önce TXM1.6R
+  if (kind==="DO" && is6R) f *= 0.85;
 
-      choose("AO"); choose("DO"); choose("AI"); choose("DI");
+  // DI: önce TXM1.8D / TXM1.16D (yüksek DI'da 16D daha mantıklı)
+  if (kind==="DI") {
+    if (rem.DI >= 9 && is16D)      f *= 0.80; // çok DI varsa 16D
+    else if (is8D)                 f *= 0.85; // az DI'da 8D
+  }
 
-      // Tam karşılanmadıysa bu PLC elenir
+  // Kombine: 4DI+3DO varsa TXM1.4D3R’ye bonus (modül sayısını azaltır)
+  if (is4D3R && rem.DI>=4 && rem.DO>=3) f *= 0.75;
+
+  // 8U birden fazla ihtiyacı aynı anda düşürüyorsa ekstra teşvik
+  if (is8U && ((a.aAI>0 && a.aDI>0) || (a.aAI>0 && a.aAO>0))) f *= 0.90;
+
+  return f;
+};
+
+
+
+    const evalCand = (m: ModuleRow) => {
+      // Bu modül 1 adet alındığında mevcut ihtiyaçları ne kadar düşürür?
+      let aAI = Math.min(remAI, num(m.AI_cap,0));
+      let aDI = Math.min(remDI, num(m.DI_cap,0));
+      let aAO = Math.min(remAO, num(m.AO_cap,0));
+      let aDO = Math.min(remDO, num(m.DO_cap,0));
+
+      // UI tahsisi (AI/DI'ye, politika ve kalan ihtiyaca göre)
+      let ui = num(m.UI_cap,0);
+const applyUI = (want: "AI"|"DI"|"AO") => {
+  if (ui <= 0) return;
+  if (want === "AI") { const need = Math.max(0, remAI - aAI); const x = Math.min(need, ui); aAI += x; ui -= x; return; }
+  if (want === "DI") { const need = Math.max(0, remDI - aDI); const x = Math.min(need, ui); aDI += x; ui -= x; return; }
+  if (want === "AO") { const need = Math.max(0, remAO - aAO); const x = Math.min(need, ui); aAO += x; ui -= x; return; }
+};
+
+if (ui > 0) {
+  if (uiPolicy === "AI_FIRST") {
+    applyUI("AI"); applyUI("DI"); applyUI("AO");
+  } else {
+    applyUI("DI"); applyUI("AI"); applyUI("AO");
+  }
+}
+
+      const primary = kind==="AO"?aAO:kind==="DO"?aDO:kind==="AI"?aAI:aDI;
+      const others  = (aAI + aDI + aAO + aDO) - primary;
+
+      // Çoklu karşılama teşviki: diğer kapsamalara da kredi ver
+      const effUnits = primary + 0.6*others;
+
+      const price = num(m.UnitPrice, 9999);
+      const width = effWidth(m);
+      const base  = (objective==="cost") ? price
+                   : (objective==="width") ? width
+                   : (0.6*price + 0.4*width);
+
+      const factor = prefFactor(m, kind, {aAI, aDI, aAO, aDO}, {AI: remAI, DI: remDI, AO: remAO, DO: remDO});
+      const score  = (base * factor) / Math.max(1, effUnits);
+
+      // UI'dan gelen tahsisleri raporlamak için
+      const uiAllocAI = Math.max(0, aAI - Math.min(remAI, num(m.AI_cap,0)));
+      const uiAllocDI = Math.max(0, aDI - Math.min(remDI, num(m.DI_cap,0)));
+
+      return { m, aAI, aDI, aAO, aDO, uiAllocAI, uiAllocDI, score };
+    };
+
+    const evaluated = cands.map(evalCand).filter(e => (e.aAI+e.aDI+e.aAO+e.aDO) > 0);
+    if (evaluated.length === 0) break;
+
+    evaluated.sort((a,b)=> a.score - b.score);
+    const pickM = evaluated[0];
+
+    modules.push({
+      item: pickM.m,
+      qty: 1,
+      uiAllocAI: pickM.uiAllocAI,
+      uiAllocDI: pickM.uiAllocDI
+    });
+
+    // Tüm ihtiyaçları aynı anda düşür
+    remAI = Math.max(0, remAI - pickM.aAI);
+    remAO = Math.max(0, remAO - pickM.aAO);
+    remDI = Math.max(0, remDI - pickM.aDI);
+    remDO = Math.max(0, remDO - pickM.aDO);
+
+    slotsUsed += 1;
+    if (slotsLimit && slotsUsed > slotsLimit) break;
+    if (modules.length > 200) break;
+    guard++;
+  }
+};
+
+// Seçim sırası aynı kalıyor
+choose("AO"); choose("DO"); choose("AI"); choose("DI");
+// === REPLACE END ===
+
+
       if (remAI>0 || remAO>0 || remDI>0 || remDO>0) continue;
       if (slotsLimit && slotsUsed > slotsLimit) continue;
 
-      // maliyet/genişlik topla
       let cost = num(plc.UnitPrice,0), width = effWidth(plc);
       for (const m of modules) { cost += num(m.item.UnitPrice,0)*m.qty; width += effWidth(m.item)*m.qty; }
-      for (const g of gw) { cost += num(g.item.UnitPrice,0)*g.qty; width += effWidth(g.item)*g.qty; }
+      for (const g of gw)     { cost += num(g.item.UnitPrice,0)*g.qty;   width += effWidth(g.item)*g.qty; }
 
-      const pick: HardwarePick = {
-        plc, modules, gateways: gw,
-        summary: { cost, width, slotsUsed, slotsLimit }
-      };
+      const pick: HardwarePick = { plc, modules, gateways: gw, summary: { cost, width, slotsUsed, slotsLimit } };
 
-      // karşılaştırma
       const better = (a:HardwarePick|null, b:HardwarePick) => {
         if (!a) return true;
-        if (objective==="cost") return b.summary.cost < a.summary.cost;
+        if (objective==="cost")  return b.summary.cost  < a.summary.cost;
         if (objective==="width") return b.summary.width < a.summary.width;
         const aScore = 0.6*a.summary.cost + 0.4*a.summary.width;
         const bScore = 0.6*b.summary.cost + 0.4*b.summary.width;
@@ -1542,23 +1696,69 @@ if (mBusDevices > 0 && !yes(plc.Supports_MBus)) {
     return best;
   }
 
+  
+
+
   const calculate = () => {
-    if (panelId==='') return;
-    if (moduleList.length===0) { setSnackbar({open:true, msg:"Load Module List first", color:"#E53935"}); return; }
+    if (panelId === '') return;
+    if (moduleList.length === 0) {
+      setSnackbar({ open:true, msg:"Load Module List first", color:"#E53935" });
+      return;
+    }
 
-    const b = rowsByPanel.get(panelId as number);
-    if (!b) { setSnackbar({open:true, msg:"No IO data for this panel", color:"#E53935"}); return; }
-
-    const needs = {
-      AI: Math.ceil(b.io.AI*(1+spare/100)),
-      AO: Math.ceil(b.io.AO*(1+spare/100)),
-      DI: Math.ceil(b.io.DI*(1+spare/100)),
-      DO: Math.ceil(b.io.DO*(1+spare/100)),
-    };
-
+    const { needs, proto } = computeNeedsAndProtocols(panelId as number, spare);
     const plcs = moduleList.filter(isPLC);
-    const res = pickBest(plcs, needs);
-    if (!res) { setSnackbar({open:true, msg:"No feasible configuration", color:"#E53935"}); return; }
+
+// IO modülleri ve “var mı?” öniyeterlilik
+const ioMods = moduleList.filter(isIOModule);
+const have = {
+  // AO: UI kanalları da AO’yu karşılayabiliyorsa kabul
+  AO: ioMods.some(m => num(m.AO_cap,0)>0 || num(m.UI_cap,0)>0)
+    || plcs.some(p => num(p.AO_cap,0)>0 || num(p.UI_cap,0)>0),
+
+  // DO: UI kabul etmiyoruz
+  DO: ioMods.some(m => num(m.DO_cap,0)>0)
+    || plcs.some(p => num(p.DO_cap,0)>0),
+
+  // AI/DI: UI kabul
+  AI: ioMods.some(m => num(m.AI_cap,0)>0 || num(m.UI_cap,0)>0)
+    || plcs.some(p => num(p.AI_cap,0)>0 || num(p.UI_cap,0)>0),
+
+  DI: ioMods.some(m => num(m.DI_cap,0)>0 || num(m.UI_cap,0)>0)
+    || plcs.some(p => num(p.DI_cap,0)>0 || num(p.UI_cap,0)>0),
+};
+
+// İhtiyaç var ama listede karşılığı yoksa erken çık
+if (needs.AO>0 && !have.AO) { setSnackbar({open:true, msg:"Module List AO/UI ile karşılayamıyor.", color:"#E53935"}); return; }
+if (needs.DO>0 && !have.DO) { setSnackbar({open:true, msg:"Module List'te DO modülü yok.",          color:"#E53935"}); return; }
+if (needs.AI>0 && !have.AI) { setSnackbar({open:true, msg:"Module List AI/UI ile karşılayamıyor.",  color:"#E53935"}); return; }
+if (needs.DI>0 && !have.DI) { setSnackbar({open:true, msg:"Module List DI/UI ile karşılayamıyor.",  color:"#E53935"}); return; }
+
+// Protokoller: PLC native değilse uygun gateway var mı?
+const gwExists = (name: string) =>
+  moduleList.some(x => isGateway(x) && matchesProto(String(x.GW_Proto||""), name));
+
+if (proto.modbusRtu>0 && !plcs.some(p=>yes((p as any).Supports_Modbus_RTU)) && !gwExists("modbus rtu")) {
+  setSnackbar({open:true,msg:"Modbus RTU gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
+}
+if (proto.modbusTcp>0 && !plcs.some(p=>yes((p as any).Supports_Modbus_TCP)) && !gwExists("modbus tcp")) {
+  setSnackbar({open:true,msg:"Modbus TCP gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
+}
+if (proto.bacnetIp>0 && !plcs.some(p=>yes((p as any).Supports_BACnet_IP)) && !gwExists("bacnet ip")) {
+  setSnackbar({open:true,msg:"BACnet/IP gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
+}
+if (proto.bacnetMstp>0 && !plcs.some(p=>yes((p as any).Supports_BACnet_MSTP)) && !gwExists("bacnet mstp")) {
+  setSnackbar({open:true,msg:"BACnet MSTP gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
+}
+if (proto.mbus>0 && !plcs.some(p=>yes((p as any).Supports_MBus)) && !gwExists("m-bus")) {
+  setSnackbar({open:true,msg:"M-Bus gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
+}
+
+    const res = pickBest(plcs, needs, proto);
+    if (!res) {
+      setSnackbar({ open:true, msg:"No feasible configuration", color:"#E53935" });
+      return;
+    }
 
     const next = { ...hardware, [panelId as number]: res };
     setHardware(next);
@@ -1570,6 +1770,8 @@ if (mBusDevices > 0 && !yes(plc.Supports_MBus)) {
     persistHardware(hardware);
     setSnackbar({open:true, msg:"Hardware saved to panel", color:"#4CAF50"});
   };
+
+
 
   // ---- render
   return (
