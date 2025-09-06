@@ -2,7 +2,8 @@ import React from "react";
 import {
   Box, Container, Typography, Stack, Button, Snackbar,
   Dialog, DialogTitle, DialogContent, DialogActions,
-  Select, MenuItem, InputLabel, FormControl, Chip, IconButton
+  TextField, Select, MenuItem, InputLabel, FormControl, Chip, IconButton,
+  Tabs, Tab
 } from "@mui/material";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import CloseIcon from "@mui/icons-material/Close";
@@ -24,17 +25,34 @@ type CatalogItem = {
   brand?: string;
   family?: string;
   measuring?: string;
-  /** NEW: Signal Type (e.g., 0-10V, 4-20mA) */
-  signal?: string;
   model?: string;
   category?: string;
   mounting?: string;
   name?: string;
   code?: string;
+  signal?: string;            // Signal Type (0-10V / 4-20mA vb.)
   raw?: Record<string, string>;
 };
 
 type RowSelectionMap = Record<string, CatalogItem[]>;
+
+type SavedPanelRecord = {
+  id: number;
+  projectKey: string;
+  createdAt: string;
+  panel: {
+    name?: string;
+    description?: string;
+    located?: string;
+    supplyType?: string;
+    voltage?: string;
+    formType?: string;
+    brand?: string;
+    color?: string;
+  };
+};
+
+type AssignmentsMap = Record<string, { panelId: number; panelName: string }>;
 
 // ========== STYLES ==========
 const ModernButton = styled(Button)({
@@ -55,6 +73,41 @@ const PrimaryButton = styled(ModernButton)({
   borderColor: 'transparent',
   '&:hover': { backgroundColor: '#1565c0', borderColor: 'transparent' }
 });
+
+// Collector sayfasındaki mavi odak yerine gri tonlar (dialoglar beyaz zeminde)
+const selectStyles = {
+  color: '#1b1b1b',
+  '.MuiOutlinedInput-notchedOutline': { borderColor: '#B0BEC5' },
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90A4AE' },
+  '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#CFD8DC' },
+  '&.Mui-disabled': { color: '#888', backgroundColor: '#f5f5f5' },
+  '&.Mui-disabled .MuiOutlinedInput-notchedOutline': { borderColor: '#CCC' },
+  svg: { color: '#90A4AE' }
+};
+
+const labelStyles = {
+  color: '#90A4AE',
+  '&.Mui-focused': { color: '#B0BEC5' }
+};
+
+const selectStylesDark = {
+  color: '#fff',
+  '.MuiOutlinedInput-notchedOutline': { borderColor: '#555' },
+  '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#777' },
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90caf9' },
+  // asıl kritik kısım: seçili değer yazısı
+  '& .MuiSelect-select, & .MuiInputBase-input': { color: '#fff', WebkitTextFillColor: '#fff' },
+  // ok ikonu
+  '& .MuiSvgIcon-root': { color: '#fff' },
+  // disabled görünümü
+  '&.Mui-disabled': { color: '#888', backgroundColor: '#1e1e1e' },
+  '&.Mui-disabled .MuiOutlinedInput-notchedOutline': { borderColor: '#444' },
+};
+
+const labelStylesDark = {
+  color: '#B0BEC5',
+  '&.Mui-focused': { color: '#E0E0E0' },
+};
 
 const normalize = (s: string) => (s ?? "").trim().toLowerCase();
 
@@ -95,8 +148,7 @@ const CODE_KEYS = ["code","kod","sku","id","product_code","ürün_kodu","item_co
 const FAMILY_KEYS = ["family","product_family","series","seri","seri_adı","family_name"];
 const MEASURING_KEYS = ["measuring","measurement","measure","ölçüm","sensing","sensing_type"];
 const MODEL_KEYS = ["model","model_no","model_code","model name","ürün_modeli"];
-// NEW: Signal keys
-const SIGNAL_KEYS = ["signal type","signal","signaltype","i/o","io","sinyal","sinyal türü"];
+const SIGNAL_KEYS = ["signal type","signal","signaltype","sinyal","sinyal_tipi","signal_type"];
 
 // ========== COMPONENT ==========
 export default function PoolPage() {
@@ -105,6 +157,7 @@ export default function PoolPage() {
   const params = new URLSearchParams(location.search);
 
   const projectFilter = (params.get("project") || "").trim();
+  const projectKeyForStorage = projectFilter || "__all__";
 
   const [flatRows, setFlatRows] = React.useState<any[]>([]);
   const [snackbar, setSnackbar] = React.useState<{ open: boolean; msg: string; color?: string }>({
@@ -114,7 +167,7 @@ export default function PoolPage() {
   });
 
   // --- MATERIAL EKLERİ ---
-  const [materialMode, setMaterialMode] = React.useState(false); // Choise Material toggle
+  const [materialMode, setMaterialMode] = React.useState(false); // Choose Material toggle
   const [selectorOpen, setSelectorOpen] = React.useState(false);
   const [selectorRowKey, setSelectorRowKey] = React.useState("");
   const [selectorRowInfo, setSelectorRowInfo] = React.useState<any>(null);
@@ -123,14 +176,11 @@ export default function PoolPage() {
   const [brandFilter, setBrandFilter] = React.useState("");
   const [familyFilter, setFamilyFilter] = React.useState("");
   const [measuringFilter, setMeasuringFilter] = React.useState("");
-  /** NEW: Signal filter */
   const [signalFilter, setSignalFilter] = React.useState("");
   const [modelFilter, setModelFilter] = React.useState("");
 
   // Import için gizli input
   const importTableInputRef = React.useRef<HTMLInputElement>(null);
-
-  const dialogExcelInputRef = React.useRef<HTMLInputElement>(null);
 
   // Üst filtre değişince sağdakileri sıfırla
   React.useEffect(() => { setFamilyFilter(""); setMeasuringFilter(""); setSignalFilter(""); setModelFilter(""); }, [brandFilter]);
@@ -286,11 +336,11 @@ export default function PoolPage() {
           const category = findVal(CATEGORY_KEYS);
           const family = findVal(FAMILY_KEYS) || category;
           const measuring = findVal(MEASURING_KEYS);
-          const signal = findVal(SIGNAL_KEYS); // NEW
           const mounting = findVal(MOUNT_KEYS);
           const model = findVal(MODEL_KEYS);
           const code = findVal(CODE_KEYS);
           const name = findVal(NAME_KEYS) || model || code || "";
+          const signal = findVal(SIGNAL_KEYS);
 
           const item: CatalogItem = {
             id: `${sheetName}#${i}`,
@@ -298,12 +348,12 @@ export default function PoolPage() {
             brand,
             family,
             measuring,
-            signal,
             model,
             category,
             mounting,
             name,
             code,
+            signal,
             raw: row as any
           };
           return item;
@@ -348,7 +398,6 @@ export default function PoolPage() {
     () => (measuringFilter ? scopedByFamily.filter(it => normalize(it.measuring || "") === normalize(measuringFilter)) : scopedByFamily),
     [scopedByFamily, measuringFilter]
   );
-  /** NEW: scope by signal */
   const scopedBySignal = React.useMemo(
     () => (signalFilter ? scopedByMeasuring.filter(it => normalize(it.signal || "") === normalize(signalFilter)) : scopedByMeasuring),
     [scopedByMeasuring, signalFilter]
@@ -357,9 +406,7 @@ export default function PoolPage() {
   const distinctBrands = React.useMemo(() => distinct(catalog.map(c => c.brand || "")), [catalog]);
   const distinctFamilies = React.useMemo(() => distinct(scopedByBrand.map(c => c.family || c.category || "")), [scopedByBrand]);
   const distinctMeasurings = React.useMemo(() => distinct(scopedByFamily.map(c => c.measuring || "")), [scopedByFamily]);
-  /** NEW: distinct signals */
   const distinctSignals = React.useMemo(() => distinct(scopedByMeasuring.map(c => c.signal || "")), [scopedByMeasuring]);
-  /** CHG: models are now based on signal scope */
   const distinctModels = React.useMemo(() => distinct(scopedBySignal.map(c => c.model || c.code || c.name || "")), [scopedBySignal]);
 
   // --- Satır tıklama: seçim penceresini aç ---
@@ -399,16 +446,15 @@ export default function PoolPage() {
     setSnackbar({ open: true, msg: "Materials linked to row", color: "#4CAF50" });
   };
 
-  // Material sütununda: sadece MODEL göster
+  // Material sütunu: seçili ürün adlarını virgül ile yaz
   const renderMaterialCell = React.useCallback((rowKey: string) => {
     const items = selectedForRow(rowKey);
     if (!items.length) return <em style={{ color: '#888' }}>—</em>;
-    const toModel = (it: CatalogItem) => (it.model && it.model.trim()) || "—";
-    return <span>{items.map(toModel).join(", ")}</span>;
+    const label = (it: CatalogItem) => (it.name || it.code || it.model || it.brand || "item");
+    return <span>{items.map(label).join(", ")}</span>;
   }, [materialsByRow]);
 
-  // Export'ta model kullanmak için
-  const modelOnly = (it: CatalogItem) => (it.model && it.model.trim()) || "";
+  const labelOf = (it: CatalogItem) => (it.name || it.code || it.model || it.brand || "item");
 
   const exportTableToExcel = async () => {
     try {
@@ -420,10 +466,10 @@ export default function PoolPage() {
           System: row.__system ?? "",
           ProjectCode: row.projectCode ?? "",
           Description: row.description ?? "",
-          Location: row.location ?? "",
+          Located: row.location ?? "",
           Point: row.point ?? "",
-          // SADECE model isimleri, tek sütunda:
-          Material: items.map(modelOnly).filter(Boolean).join("; "),
+          // SADECE okunabilir liste kalsın:
+          MaterialNames: items.map(labelOf).join("; "),
           AI: row.ai ?? 0,
           AO: row.ao ?? 0,
           DI: row.di ?? 0,
@@ -493,6 +539,152 @@ export default function PoolPage() {
       setSnackbar({ open: true, msg: "Import failed", color: "#E53935" });
     }
   };
+
+  // ======== ASSIGNMENTS DIALOG (Assign Rows to Panels) ========
+  const [assignOpen, setAssignOpen] = React.useState(false);
+  const [assignTab, setAssignTab] = React.useState(0); // 0: Assignments, 1: Panels
+  const [panels, setPanels] = React.useState<SavedPanelRecord[]>([]);
+  const [assignments, setAssignments] = React.useState<AssignmentsMap>({});
+  const [selectedCodes, setSelectedCodes] = React.useState<string[]>([]);
+  const [bulkPanelId, setBulkPanelId] = React.useState<string>("");
+  const [systemFilter, setSystemFilter] = React.useState<string>("");
+
+  const ASSIGN_KEY = `assignments:${projectKeyForStorage}`;
+
+  const loadPanels = React.useCallback(() => {
+    // Proje belirtilmişse yalnız o projenin panellerini yükle; değilse tümünü
+    const want = (projectFilter || "").trim();
+    const keys = Object.keys(localStorage).filter(k => k.startsWith("panels:"));
+    const targetKeys = want ? keys.filter(k => k === `panels:${want}`) : keys;
+
+    const list: SavedPanelRecord[] = [];
+    for (const k of targetKeys) {
+      try {
+        const arr = JSON.parse(localStorage.getItem(k) || "[]");
+        if (Array.isArray(arr)) {
+          for (const rec of arr) {
+            if (rec && typeof rec === "object" && rec.panel) list.push(rec as SavedPanelRecord);
+          }
+        }
+      } catch {}
+    }
+    // Tarihe göre artan
+    list.sort((a, b) => (Date.parse(a.createdAt) || 0) - (Date.parse(b.createdAt) || 0));
+    setPanels(list);
+  }, [projectFilter]);
+
+  const loadAssignments = React.useCallback(() => {
+    try {
+      const raw = localStorage.getItem(ASSIGN_KEY);
+      const obj = raw ? JSON.parse(raw) : {};
+      if (obj && typeof obj === "object") setAssignments(obj as AssignmentsMap);
+      else setAssignments({});
+    } catch {
+      setAssignments({});
+    }
+  }, [ASSIGN_KEY]);
+
+  const persistAssignments = React.useCallback((next: AssignmentsMap) => {
+    try {
+      localStorage.setItem(ASSIGN_KEY, JSON.stringify(next));
+    } catch {}
+  }, [ASSIGN_KEY]);
+
+  const openAssignDialog = () => {
+    setAssignTab(0);
+    setSelectedCodes([]);
+    setBulkPanelId("");
+    loadPanels();
+    loadAssignments();
+    setAssignOpen(true);
+  };
+  const closeAssignDialog = () => setAssignOpen(false);
+
+  // Project Code -> { count, systems }
+  const codeGroups = React.useMemo(() => {
+    const map = new Map<string, { count: number; systems: Set<string> }>();
+    for (const r of flatRows) {
+      const code = String(r.projectCode || "").trim();
+      if (!code) continue;
+      const s = String(r.__system || "unknown").trim();
+      if (!map.has(code)) map.set(code, { count: 0, systems: new Set<string>() });
+      const entry = map.get(code)!;
+      entry.count += 1;
+      entry.systems.add(s);
+    }
+    // filtre uygula
+    const result = Array.from(map.entries())
+      .map(([code, v]) => ({ code, count: v.count, systems: Array.from(v.systems).sort() }))
+      .sort((a, b) => a.code.localeCompare(b.code, "tr"));
+    return result.filter(g => !systemFilter || g.systems.includes(systemFilter));
+  }, [flatRows, systemFilter]);
+
+  const distinctSystems = React.useMemo(() => {
+    const set = new Set<string>();
+    for (const r of flatRows) set.add(String(r.__system || "unknown").trim());
+    return Array.from(set).sort((a,b)=>a.localeCompare(b,"tr"));
+  }, [flatRows]);
+
+  const handleToggleCode = (code: string, checked: boolean) => {
+    setSelectedCodes(prev => {
+      const s = new Set(prev);
+      if (checked) s.add(code); else s.delete(code);
+      return Array.from(s);
+    });
+  };
+
+  const handleAssignSingle = (code: string, panelIdStr: string) => {
+    const idNum = Number(panelIdStr);
+    if (!Number.isFinite(idNum)) {
+      // clear
+      const next = { ...assignments };
+      delete next[code];
+      setAssignments(next);
+      persistAssignments(next);
+      setSnackbar({ open: true, msg: `Cleared assignment for ${code}`, color: "#4CAF50" });
+      return;
+    }
+    const p = panels.find(x => x.id === idNum);
+    if (!p) return;
+    const next = { ...assignments, [code]: { panelId: p.id, panelName: p.panel.name || `#${p.id}` } };
+    setAssignments(next);
+    persistAssignments(next);
+    setSnackbar({ open: true, msg: `Assigned ${code} → ${p.panel.name || `#${p.id}`}`, color: "#4CAF50" });
+  };
+
+  const handleClearSingle = (code: string) => {
+    const next = { ...assignments };
+    delete next[code];
+    setAssignments(next);
+    persistAssignments(next);
+    setSnackbar({ open: true, msg: `Cleared assignment for ${code}`, color: "#4CAF50" });
+  };
+
+  const handleBulkApply = () => {
+    const idNum = Number(bulkPanelId);
+    if (!Number.isFinite(idNum) || selectedCodes.length === 0) return;
+    const p = panels.find(x => x.id === idNum);
+    if (!p) return;
+    const next = { ...assignments };
+    for (const code of selectedCodes) {
+      next[code] = { panelId: p.id, panelName: p.panel.name || `#${p.id}` };
+    }
+    setAssignments(next);
+    persistAssignments(next);
+    setSnackbar({ open: true, msg: `Assigned ${selectedCodes.length} code(s) → ${p.panel.name || `#${p.id}`}`, color: "#4CAF50" });
+  };
+
+  const deletePanel = (id: number, projectKey: string) => {
+    const key = `panels:${projectKey}`;
+    const arr = JSON.parse(localStorage.getItem(key) || "[]");
+    const next = Array.isArray(arr) ? arr.filter((r: any) => r?.id !== id) : [];
+    localStorage.setItem(key, JSON.stringify(next));
+    setSnackbar({ open: true, msg: "Panel deleted", color: "#4CAF50" });
+    loadPanels();
+  };
+
+  // Material dialog içi Upload Excel (Catalog) için ref
+  const dialogExcelInputRef = React.useRef<HTMLInputElement>(null);
 
   // ========== RENDER ==========
   return (
@@ -632,7 +824,7 @@ export default function PoolPage() {
       </Container>
 
       {/* Alt buton barı */}
-      <Box sx={{ p: 2, borderTop: "1px solid rgba(255,255,255,0.1)", display: "flex", justifyContent: "flex-end", gap: 2 }}>
+      <Box sx={{ p: 2, borderTop: "1px solid rgba(255,255,255,0.1)", display: "flex", justifyContent: "flex-end", gap: 2, flexWrap: "wrap" }}>
         <PrimaryButton onClick={toggleMaterialMode}>Choise Material</PrimaryButton>
         <PrimaryButton onClick={loadPool}>Refresh</PrimaryButton>
         <PrimaryButton onClick={() => {
@@ -661,10 +853,13 @@ export default function PoolPage() {
           onChange={(e) => {
             const f = e.target.files?.[0];
             if (f) onImportTableFile(f);
-            (e.target as HTMLInputElement).value = ""; // aynı dosyayı tekrar seçebilelim
+            (e.target as HTMLInputElement).value = "";
           }}
         />
         <PrimaryButton onClick={() => importTableInputRef.current?.click()}>Import</PrimaryButton>
+
+        {/* Assign Wizard (with Panels tab) */}
+        <PrimaryButton onClick={openAssignDialog}>Assign to Panel</PrimaryButton>
 
         <PrimaryButton onClick={handleBack}>Back</PrimaryButton>
       </Box>
@@ -685,41 +880,65 @@ export default function PoolPage() {
           >
             {/* ORDER: Brand -> Family -> Measuring -> Signal -> Model */}
             <FormControl size="small" sx={{ minWidth: 180 }}>
-              <InputLabel>Brand</InputLabel>
-              <Select label="Brand" value={brandFilter} onChange={(e) => setBrandFilter(String(e.target.value))}>
+              <InputLabel sx={labelStyles}>Brand</InputLabel>
+              <Select
+                label="Brand"
+                value={brandFilter}
+                onChange={(e) => setBrandFilter(String(e.target.value))}
+                sx={selectStyles}
+              >
                 <MenuItem value="">(All)</MenuItem>
                 {distinctBrands.map(b => <MenuItem key={b} value={b}>{b}</MenuItem>)}
               </Select>
             </FormControl>
 
             <FormControl size="small" sx={{ minWidth: 180 }}>
-              <InputLabel>Family</InputLabel>
-              <Select label="Family" value={familyFilter} onChange={(e) => setFamilyFilter(String(e.target.value))}>
+              <InputLabel sx={labelStyles}>Family</InputLabel>
+              <Select
+                label="Family"
+                value={familyFilter}
+                onChange={(e) => setFamilyFilter(String(e.target.value))}
+                sx={selectStyles}
+              >
                 <MenuItem value="">(All)</MenuItem>
                 {distinctFamilies.map(f => <MenuItem key={f} value={f}>{f}</MenuItem>)}
               </Select>
             </FormControl>
 
             <FormControl size="small" sx={{ minWidth: 180 }}>
-              <InputLabel>Measuring</InputLabel>
-              <Select label="Measuring" value={measuringFilter} onChange={(e) => setMeasuringFilter(String(e.target.value))}>
+              <InputLabel sx={labelStyles}>Measuring</InputLabel>
+              <Select
+                label="Measuring"
+                value={measuringFilter}
+                onChange={(e) => setMeasuringFilter(String(e.target.value))}
+                sx={selectStyles}
+              >
                 <MenuItem value="">(All)</MenuItem>
                 {distinctMeasurings.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}
               </Select>
             </FormControl>
 
-            {/* NEW: Signal Type */}
             <FormControl size="small" sx={{ minWidth: 180 }}>
-              <InputLabel>Signal</InputLabel>
-              <Select label="Signal" value={signalFilter} onChange={(e) => setSignalFilter(String(e.target.value))}>
+              <InputLabel sx={labelStyles}>Signal Type</InputLabel>
+              <Select
+                label="Signal Type"
+                value={signalFilter}
+                onChange={(e) => setSignalFilter(String(e.target.value))}
+                sx={selectStyles}
+              >
                 <MenuItem value="">(All)</MenuItem>
                 {distinctSignals.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
               </Select>
             </FormControl>
 
             <FormControl size="small" sx={{ minWidth: 180 }}>
-              <InputLabel>Model</InputLabel>
-              <Select label="Model" value={modelFilter} onChange={(e) => setModelFilter(String(e.target.value))}>
+              <InputLabel sx={labelStyles}>Model</InputLabel>
+              <Select
+                label="Model"
+                value={modelFilter}
+                onChange={(e) => setModelFilter(String(e.target.value))}
+                sx={selectStyles}
+              >
                 <MenuItem value="">(All)</MenuItem>
                 {distinctModels.map(mo => <MenuItem key={mo} value={mo}>{mo}</MenuItem>)}
               </Select>
@@ -776,53 +995,208 @@ export default function PoolPage() {
               </tbody>
             </table>
           </Box>
-
-          {/* Seçili ürünler özeti */}
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>Selected Items</Typography>
-            <Stack direction="row" spacing={1} flexWrap="wrap">
-              {selectedForRow(selectorRowKey).map((it) => (
-                <Chip
-                  key={`sel-${it.id}`}
-                  size="small"
-                  label={`${it.brand || ""} ${(it.model || it.name || "").trim()}`.trim() || it.id}
-                  onDelete={() => {
-                    const prev = selectedForRow(selectorRowKey);
-                    const next = prev.filter(x => x.id !== it.id);
-                    saveSelectionForRow(selectorRowKey, next);
-                  }}
-                />
-              ))}
-              {selectedForRow(selectorRowKey).length === 0 && (
-                <Typography variant="body2" sx={{ color: "#777" }}>No selection yet.</Typography>
-              )}
-            </Stack>
-          </Box>
         </DialogContent>
 
         {/* Dialog alt butonlar: Upload Excel & Close */}
         <DialogActions sx={{ px: 3, py: 2, gap: 1.5 }}>
-  {/* Gizli file input */}
-  <input
-    ref={dialogExcelInputRef}
-    type="file"
-    hidden
-    accept=".xlsx"
-    onChange={(e) => {
-      const f = e.target.files?.[0];
-      if (f) onExcelFile(f);
-      (e.target as HTMLInputElement).value = ""; // aynı dosyayı tekrar seçebilmek için
-    }}
-  />
+          {/* Hidden file input for Catalog upload */}
+          <input
+            ref={dialogExcelInputRef}
+            type="file"
+            hidden
+            accept=".xlsx"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) onExcelFile(f);
+              (e.target as HTMLInputElement).value = "";
+            }}
+          />
+          <ModernButton onClick={() => dialogExcelInputRef.current?.click()}>
+            Upload Excel
+          </ModernButton>
+          <PrimaryButton onClick={closeSelector}>Close</PrimaryButton>
+        </DialogActions>
+      </Dialog>
 
-  {/* Programatik tetikleme */}
-  <ModernButton onClick={() => dialogExcelInputRef.current?.click()}>
-    Upload Excel
-  </ModernButton>
+      {/* Assignments Wizard (Tabs: Assignments / Panels) */}
+      <Dialog open={assignOpen} onClose={closeAssignDialog} fullWidth maxWidth="lg">
+        <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          Assign to Panel {projectFilter ? `– ${projectFilter}` : ""}
+          <IconButton onClick={closeAssignDialog} size="small"><CloseIcon /></IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          <Tabs value={assignTab} onChange={(_, v) => setAssignTab(v)} sx={{ mb: 2 }}>
+          <Tab label="Assignments" sx={{ textTransform: 'none', fontWeight: 600 }} />
+          <Tab label="Panels" sx={{ textTransform: 'none', fontWeight: 600 }} />
+          </Tabs>
 
-  {/* Kapanış, senin PrimaryButton formatında ve 'Close' yazımıyla */}
-  <PrimaryButton onClick={closeSelector}>Close</PrimaryButton>
-</DialogActions>
+
+          {assignTab === 0 && (
+            <Box>
+              {/* Üst bar: System Filter + Bulk assign */}
+              <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems={{ xs: "stretch", md: "center" }} sx={{ mb: 2 }}>
+                <FormControl size="small" sx={{ minWidth: 180 }}>
+  <InputLabel sx={labelStylesDark}>System Filter</InputLabel>
+  <Select
+    label="System Filter"
+    value={systemFilter}
+    onChange={(e)=>setSystemFilter(String(e.target.value))}
+    sx={selectStylesDark}
+    MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
+  >
+    <MenuItem value="">(All)</MenuItem>
+    {distinctSystems.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+  </Select>
+</FormControl>
+
+                <Box sx={{ flexGrow: 1 }} />
+
+                <FormControl size="small" sx={{ minWidth: 220 }}>
+  <InputLabel sx={labelStylesDark}>Assign selected to</InputLabel>
+  <Select
+    label="Assign selected to"
+    value={bulkPanelId}
+    onChange={(e)=>setBulkPanelId(String(e.target.value))}
+    sx={selectStylesDark}
+    MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
+  >
+    <MenuItem value="">(Choose Panel)</MenuItem>
+    {panels.map(p => (
+      <MenuItem key={p.id} value={String(p.id)}>{p.panel.name || `#${p.id}`}</MenuItem>
+    ))}
+  </Select>
+</FormControl>
+                <PrimaryButton onClick={handleBulkApply} disabled={selectedCodes.length === 0 || !bulkPanelId}>
+                  Apply
+                </PrimaryButton>
+              </Stack>
+
+              {panels.length === 0 && (
+                <Box sx={{ mb: 2, p: 1.5, border: "1px dashed #B0BEC5", borderRadius: 1, bgcolor: "#fafafa", color: "#333" }}>
+                  No panels found. Use the <strong>Panels</strong> tab to create panels in Project page and return here.
+                </Box>
+              )}
+
+              {/* Project Code grouped table */}
+              <Box sx={{ border: "1px solid #eee", borderRadius: 1, overflow: "hidden" }}>
+                <table
+                  style={{
+                    width: "100%", borderCollapse: "collapse", fontSize: 13,
+                    fontFamily: "'Segoe UI','Roboto','Helvetica','Arial',sans-serif",
+                    color: "#333", backgroundColor: "#fff"
+                  }}
+                >
+                  <thead>
+                    <tr style={{ backgroundColor: "#1976d2", color: "white" }}>
+                      {["Select","Project Code","Systems","Points","Assigned Panel","Actions"].map(h => (
+                        <th key={h} style={{ padding: 8, textAlign: "left", borderBottom: "1px solid #e0e0e0" }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {codeGroups.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} style={{ padding: 12, color: "#777" }}>
+                          No project codes found. Use <strong>Refresh</strong> or add systems to Pool.
+                        </td>
+                      </tr>
+                    ) : codeGroups.map((g, i) => {
+                      const assigned = assignments[g.code];
+                      const assignedIdStr = assigned ? String(assigned.panelId) : "";
+                      return (
+                        <tr key={g.code} style={{ backgroundColor: i % 2 === 0 ? "#f9f9f9" : "#f0f4f8" }}>
+                          <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>
+                            <input
+                              type="checkbox"
+                              checked={selectedCodes.includes(g.code)}
+                              onChange={(e)=>handleToggleCode(g.code, e.target.checked)}
+                            />
+                          </td>
+                          <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0", fontWeight: 600 }}>{g.code}</td>
+                          <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{g.systems.join(", ")}</td>
+                          <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{g.count}</td>
+                          <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>
+                            <FormControl size="small" sx={{ minWidth: 200 }}>
+                              <Select
+                                value={assignedIdStr}
+                                onChange={(e)=>handleAssignSingle(g.code, String(e.target.value))}
+                                displayEmpty
+                                sx={selectStyles}
+                              >
+                                <MenuItem value="">{assigned ? "(Clears assignment)" : "(None)"}</MenuItem>
+                                {panels.map(p => (
+                                  <MenuItem key={p.id} value={String(p.id)}>
+                                    {p.panel.name || `#${p.id}`}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          </td>
+                          <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>
+                            <PrimaryButton onClick={()=>handleClearSingle(g.code)}>
+                              Clear
+                            </PrimaryButton>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </Box>
+            </Box>
+          )}
+
+          {assignTab === 1 && (
+            <Box>
+              {/* Panels list (same style) */}
+              <Box sx={{ border: "1px solid #eee", borderRadius: 1, overflow: "hidden" }}>
+                <table style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                  fontSize: 13,
+                  fontFamily: "'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif",
+                  color: "#333",
+                  backgroundColor: "#ffffff"
+                }}>
+                  <thead>
+                    <tr style={{ backgroundColor: "#1976d2", color: "white" }}>
+                      {["Panel Name","Located","Supply Type","Voltage","Form Type","Brand","Color","Actions"].map(h => (
+                        <th key={h} style={{ padding: "8px", textAlign: "left", borderBottom: "1px solid #e0e0e0" }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {panels.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} style={{ padding: 12, color: "#777" }}>
+                          No panels found. Use Project → Create Panel to add.
+                        </td>
+                      </tr>
+                    ) : panels.map((p, i) => (
+                      <tr key={p.id} style={{ backgroundColor: i % 2 === 0 ? "#f9f9f9" : "#f0f4f8" }}>
+                        <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{p.panel.name || "—"}</td>
+                        <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{p.panel.located || "—"}</td>
+                        <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{p.panel.supplyType || "—"}</td>
+                        <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{p.panel.voltage || "—"}</td>
+                        <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{p.panel.formType || "—"}</td>
+                        <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{p.panel.brand || "—"}</td>
+                        <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>{p.panel.color || "—"}</td>
+                        <td style={{ padding: 6, borderBottom: "1px solid #f0f0f0" }}>
+                          <PrimaryButton onClick={() => deletePanel(p.id, p.projectKey)}>
+                            Delete
+                          </PrimaryButton>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <PrimaryButton onClick={closeAssignDialog}>Close</PrimaryButton>
+        </DialogActions>
       </Dialog>
 
       {/* Snackbar */}
