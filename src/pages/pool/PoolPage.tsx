@@ -3,7 +3,7 @@ import {
   Box, Container, Typography, Stack, Button, Snackbar,
   Dialog, DialogTitle, DialogContent, DialogActions,
   TextField, Select, MenuItem, InputLabel, FormControl, IconButton,
-  Tabs, Tab
+  Tabs, Tab, FormHelperText
 } from "@mui/material";
 //import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 //import CalculateOutlinedIcon from "@mui/icons-material/CalculateOutlined";
@@ -698,6 +698,7 @@ export default function PoolPage() {
   // Material dialog içi Upload Excel (Catalog) için ref
   const dialogExcelInputRef = React.useRef<HTMLInputElement>(null);
 
+
   // ========== RENDER ==========
   return (
     <Box sx={{ minHeight: "100vh", background: "radial-gradient(circle at top right, #1A237E, #000000)", color: "#FFFFFF", display: "flex", flexDirection: "column" }}>
@@ -838,8 +839,8 @@ export default function PoolPage() {
       {/* Alt buton barı */}
       <Box sx={{ p: 2, borderTop: "1px solid rgba(255,255,255,0.1)", display: "flex", justifyContent: "flex-end", gap: 2, flexWrap: "wrap" }}>
         <PrimaryButton onClick={toggleMaterialMode}>
-  {materialMode ? 'Hide Material' : 'Choose Material'}
-</PrimaryButton>
+          {materialMode ? 'Hide Material' : 'Choose Material'}
+        </PrimaryButton>
         <PrimaryButton onClick={loadPool}>Refresh</PrimaryButton>
         <PrimaryButton onClick={() => {
           Object.keys(localStorage).forEach((k) => {
@@ -853,18 +854,18 @@ export default function PoolPage() {
             await navigator.clipboard.writeText(JSON.stringify(flatRows, null, 2));
             setSnackbar({ open: true, msg: "Copied to clipboard", color: "#4CAF50" });
           } catch {
-  setSnackbar({ open: true, msg: "Copy failed (browser blocked clipboard)", color: "#E53935" });
-}
+            setSnackbar({ open: true, msg: "Copy failed (browser blocked clipboard)", color: "#E53935" });
+          }
         }} disabled={flatRows.length === 0}>Copy</PrimaryButton>
 
         {/* Export / Import */}
         <PrimaryButton onClick={exportTableToExcel} disabled={flatRows.length === 0}>Export</PrimaryButton>
-       <input
-  ref={importTableInputRef}
-  type="file"
-  hidden
-  accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-  onChange={(e) => {
+        <input
+          ref={importTableInputRef}
+          type="file"
+          hidden
+          accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+          onChange={(e) => {
             const f = e.target.files?.[0];
             if (f) onImportTableFile(f);
             (e.target as HTMLInputElement).value = "";
@@ -1015,11 +1016,11 @@ export default function PoolPage() {
         <DialogActions sx={{ px: 3, py: 2, gap: 1.5 }}>
           {/* Hidden file input for Catalog upload */}
           <input
-  ref={dialogExcelInputRef}
-  type="file"
-  hidden
-  accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-  onChange={(e) => {
+            ref={dialogExcelInputRef}
+            type="file"
+            hidden
+            accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+            onChange={(e) => {
               const f = e.target.files?.[0];
               if (f) onExcelFile(f);
               (e.target as HTMLInputElement).value = "";
@@ -1040,47 +1041,46 @@ export default function PoolPage() {
         </DialogTitle>
         <DialogContent dividers>
           <Tabs value={assignTab} onChange={(_, v) => setAssignTab(v)} sx={{ mb: 2 }}>
-          <Tab label="Assignments" sx={{ textTransform: 'none', fontWeight: 600 }} />
-          <Tab label="Panels" sx={{ textTransform: 'none', fontWeight: 600 }} />
-          <Tab label="Hardware (Controller & IO)" sx={{ textTransform: 'none', fontWeight: 600 }} />
+            <Tab label="Assignments" sx={{ textTransform: 'none', fontWeight: 600 }} />
+            <Tab label="Panels" sx={{ textTransform: 'none', fontWeight: 600 }} />
+            <Tab label="Hardware (Controller & IO)" sx={{ textTransform: 'none', fontWeight: 600 }} />
           </Tabs>
-
 
           {assignTab === 0 && (
             <Box>
               {/* Üst bar: System Filter + Bulk assign */}
               <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems={{ xs: "stretch", md: "center" }} sx={{ mb: 2 }}>
                 <FormControl size="small" sx={{ minWidth: 180 }}>
-  <InputLabel sx={labelStyles}>System Filter</InputLabel>
-  <Select
-    label="System Filter"
-    value={systemFilter}
-    onChange={(e)=>setSystemFilter(String(e.target.value))}
-    sx={selectStyles}
-    MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
-  >
-    <MenuItem value="">(All)</MenuItem>
-    {distinctSystems.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-  </Select>
-</FormControl>
+                  <InputLabel sx={labelStyles}>System Filter</InputLabel>
+                  <Select
+                    label="System Filter"
+                    value={systemFilter}
+                    onChange={(e)=>setSystemFilter(String(e.target.value))}
+                    sx={selectStyles}
+                    MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
+                  >
+                    <MenuItem value="">(All)</MenuItem>
+                    {distinctSystems.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+                  </Select>
+                </FormControl>
 
                 <Box sx={{ flexGrow: 1 }} />
 
                 <FormControl size="small" sx={{ minWidth: 220 }}>
-  <InputLabel sx={labelStyles}>Assign selected to</InputLabel>
-  <Select
-    label="Assign selected to"
-    value={bulkPanelId}
-    onChange={(e)=>setBulkPanelId(String(e.target.value))}
-    sx={selectStyles}
-    MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
-  >
-    <MenuItem value="">(Choose Panel)</MenuItem>
-    {panels.map(p => (
-      <MenuItem key={p.id} value={String(p.id)}>{p.panel.name || `#${p.id}`}</MenuItem>
-    ))}
-  </Select>
-</FormControl>
+                  <InputLabel sx={labelStyles}>Assign selected to</InputLabel>
+                  <Select
+                    label="Assign selected to"
+                    value={bulkPanelId}
+                    onChange={(e)=>setBulkPanelId(String(e.target.value))}
+                    sx={selectStyles}
+                    MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
+                  >
+                    <MenuItem value="">(Choose Panel)</MenuItem>
+                    {panels.map(p => (
+                      <MenuItem key={p.id} value={String(p.id)}>{p.panel.name || `#${p.id}`}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
                 <PrimaryButton onClick={handleBulkApply} disabled={selectedCodes.length === 0 || !bulkPanelId}>
                   Apply
                 </PrimaryButton>
@@ -1209,16 +1209,16 @@ export default function PoolPage() {
             </Box>
           )}
 
-{assignTab === 2 && (
-  <HardwareTab
-  flatRows={flatRows}
-  assignments={assignments}
-  projectKeyForStorage={projectKeyForStorage}
-  labelStylesDark={labelStylesDark}
-  selectStylesDark={selectStylesDark}
-  setSnackbar={setSnackbar}
-/>
-)}
+          {assignTab === 2 && (
+            <HardwareTab
+              flatRows={flatRows}
+              assignments={assignments}
+              projectKeyForStorage={projectKeyForStorage}
+              labelStylesDark={labelStylesDark}
+              selectStylesDark={selectStylesDark}
+              setSnackbar={setSnackbar}
+            />
+          )}
 
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
@@ -1288,9 +1288,21 @@ function HardwareTab({
   flatRows, assignments, projectKeyForStorage,
   labelStylesDark, selectStylesDark, setSnackbar
 }: HardwareTabProps) {
+
+  // ---------- TYPES (moved to top for TS) ----------
+  type ModuleRow = {
+    Brand:string; Family:string; Model:string; Description?:string;
+    UnitPrice?:number; Currency?:string;
+    AI_cap?:number; AO_cap?:number; DI_cap?:number; DO_cap?:number; UI_cap?:number;
+    Supports_BACnet_IP?:string; Supports_BACnet_MSTP?:string; Supports_Modbus_TCP?:string; Supports_Modbus_RTU?:string; Supports_MBus?:string;
+    GW_Proto?:string; GW_Device_Capacity?:number; GW_Ports?:number;
+    PLC_Max_Slots?:number; PLC_Ethernet?:string; PLC_Redundant?:string; PLC_Webserver?:string;
+    Width_mm?:number; Height_mm?:number; Depth_mm?:number; Weight_kg?:number; DIN_Modules?:number;
+  };
+
   // ---- küçük yardımcılar
-const isPLC = (m: ModuleRow) =>
-  /plc|controller|cpu|station|automation/i.test(`${m.Family} ${m.Model}`);
+  const isPLC = (m: ModuleRow) =>
+    /plc|controller|cpu|station|automation/i.test(`${m.Family} ${m.Model}`);
   const isGateway = (m: ModuleRow) =>
     /gateway/i.test(m.Family || "") || !!String(m.GW_Proto || "");
   const hasIOCap = (m: ModuleRow) =>
@@ -1305,60 +1317,57 @@ const isPLC = (m: ModuleRow) =>
   const yes = (v:any) => /^(yes|y|true|1|evet)$/i.test(String(v).trim());
   const effWidth = (m:any) => { const w = num(m.Width_mm,0); if (w>0) return w; const din=num(m.DIN_Modules,0); return din>0? din*17.5 : 120; };
 
-
   /* === ADD: ortak proto yardımcıları === */
-const normProto = (s?: string) =>
-  String(s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const normProto = (s?: string) =>
+    String(s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
-const PROTO_ALIASES: Record<string,string[]> = {
-  bacnetip:   ["bacnetip","bacnet-ip","bacnet ip"],
-  bacnetmstp: ["bacnetmstp","bacnet-mstp","bacnet mstp","mstp"],
-  modbustcp:  ["modbustcp","modbus-tcp","modbus tcp","modbustcpip"],
-  modbusrtu:  ["modbusrtu","modbus-rtu","modbus rtu","rtu"],
-  mbus:       ["mbus","m-bus","m bus"]
-};
-
-const matchesProto = (value: string, wanted: string) => {
-  const key = normProto(wanted);
-  const aliases = PROTO_ALIASES[key] || [key];
-  const v = normProto(value);
-  return aliases.includes(v);
-};
-
-
-// Panelde atanmış satırlardan IO ve protokol toplamlarını çıkar (spare uygulanır)
-function computeNeedsAndProtocols(pid: number, sparePct: number) {
-  // Bu panele atanmış satırlar
-  const rows = flatRows.filter(r => {
-    const code = String(r.projectCode || "").trim();
-    const asg = assignments[code];
-    return asg?.panelId === pid;
-  });
-
-  // Güvenli toplama (alan adları: ai, ao, di, do, bacnetIp, bacnetMstp, modbusTcp, modbusRtu, mbus)
-  const s = (k: "ai"|"ao"|"di"|"do"|"bacnetIp"|"bacnetMstp"|"modbusTcp"|"modbusRtu"|"mbus") =>
-    rows.reduce((acc, r) => acc + num((r as any)[k], 0), 0);
-
-  // IO ihtiyaçları (spare ile, yukarı yuvarlanır)
-  const needs = {
-    AI: Math.ceil(s("ai") * (1 + sparePct / 100)),
-    AO: Math.ceil(s("ao") * (1 + sparePct / 100)),
-    DI: Math.ceil(s("di") * (1 + sparePct / 100)),
-    DO: Math.ceil(s("do") * (1 + sparePct / 100)),
+  const PROTO_ALIASES: Record<string,string[]> = {
+    bacnetip:   ["bacnetip","bacnet-ip","bacnet ip"],
+    bacnetmstp: ["bacnetmstp","bacnet-mstp","bacnet mstp","mstp"],
+    modbustcp:  ["modbustcp","modbus-tcp","modbus tcp","modbustcpip"],
+    modbusrtu:  ["modbusrtu","modbus-rtu","modbus rtu","rtu"],
+    mbus:       ["mbus","m-bus","m bus"]
   };
 
-  // Protokol toplamları (sparesiz)
-  const proto = {
-    bacnetIp:   s("bacnetIp"),
-    bacnetMstp: s("bacnetMstp"),
-    modbusTcp:  s("modbusTcp"),
-    modbusRtu:  s("modbusRtu"),
-    mbus:       s("mbus"),
+  const matchesProto = (value: string, wanted: string) => {
+    const key = normProto(wanted);
+    const aliases = PROTO_ALIASES[key] || [key];
+    const v = normProto(value);
+    return aliases.includes(v);
   };
 
-  return { needs, proto };
-}
+  // Panelde atanmış satırlardan IO ve protokol toplamlarını çıkar (spare uygulanır)
+  function computeNeedsAndProtocols(pid: number, sparePct: number) {
+    // Bu panele atanmış satırlar
+    const rows = flatRows.filter(r => {
+      const code = String(r.projectCode || "").trim();
+      const asg = assignments[code];
+      return asg?.panelId === pid;
+    });
 
+    // Güvenli toplama
+    const s = (k: "ai"|"ao"|"di"|"do"|"bacnetIp"|"bacnetMstp"|"modbusTcp"|"modbusRtu"|"mbus") =>
+      rows.reduce((acc, r) => acc + num((r as any)[k], 0), 0);
+
+    // IO ihtiyaçları (spare ile, yukarı yuvarlanır)
+    const needs = {
+      AI: Math.ceil(s("ai") * (1 + sparePct / 100)),
+      AO: Math.ceil(s("ao") * (1 + sparePct / 100)),
+      DI: Math.ceil(s("di") * (1 + sparePct / 100)),
+      DO: Math.ceil(s("do") * (1 + sparePct / 100)),
+    };
+
+    // Protokol toplamları (sparesiz)
+    const proto = {
+      bacnetIp:   s("bacnetIp"),
+      bacnetMstp: s("bacnetMstp"),
+      modbusTcp:  s("modbusTcp"),
+      modbusRtu:  s("modbusRtu"),
+      mbus:       s("mbus"),
+    };
+
+    return { needs, proto };
+  }
 
   // ---- rowsByPanel: atanan satırlardan IO toplamlarını üret
   const rowsByPanel = React.useMemo(() => {
@@ -1377,20 +1386,45 @@ function computeNeedsAndProtocols(pid: number, sparePct: number) {
   }, [flatRows, assignments]);
 
   // ---- Module List yükleme / saklama
-  type ModuleRow = {
-    Brand:string; Family:string; Model:string; Description?:string;
-    UnitPrice?:number; Currency?:string;
-    AI_cap?:number; AO_cap?:number; DI_cap?:number; DO_cap?:number; UI_cap?:number;
-    Supports_BACnet_IP?:string; Supports_BACnet_MSTP?:string; Supports_Modbus_TCP?:string; Supports_Modbus_RTU?:string; Supports_MBus?:string;
-    GW_Proto?:string; GW_Device_Capacity?:number; GW_Ports?:number;
-    PLC_Max_Slots?:number; PLC_Ethernet?:string; PLC_Redundant?:string; PLC_Webserver?:string;
-    Width_mm?:number; Height_mm?:number; Depth_mm?:number; Weight_kg?:number; DIN_Modules?:number;
-  };
-
   const MODULE_LIST_KEY = "moduleList:v1";
   const [moduleList, setModuleList] = React.useState<ModuleRow[]>([]);
   React.useEffect(()=>{ try{ const raw=localStorage.getItem(MODULE_LIST_KEY); if(raw) setModuleList(JSON.parse(raw)); }catch{} },[]);
   const persistModuleList = (arr:ModuleRow[]) => { try{ localStorage.setItem(MODULE_LIST_KEY, JSON.stringify(arr)); }catch{} };
+
+  // --- Brand filter for Module List ---
+  const [moduleBrand, setModuleBrand] = React.useState<string>("");
+
+  const distinctModuleBrands = React.useMemo(() => {
+    const uniq = new Set<string>();
+    for (const m of moduleList) {
+      const b = (m.Brand || "").trim();
+      if (b) uniq.add(b);
+    }
+    return Array.from(uniq).sort((a, b) => a.localeCompare(b, "tr"));
+  }, [moduleList]);
+
+  // Tek marka varsa otomatik seç; hiç yoksa sıfırla
+  React.useEffect(() => {
+    if (distinctModuleBrands.length === 1) {
+      setModuleBrand(distinctModuleBrands[0]);
+    } else if (distinctModuleBrands.length === 0) {
+      setModuleBrand("");
+    }
+  }, [distinctModuleBrands]);
+
+  // Seçilen markaya göre çalışma listesi
+  const workingList = React.useMemo<ModuleRow[]>(
+    () =>
+      moduleBrand
+        ? moduleList.filter(
+            (m) => normalize(m.Brand || "") === normalize(moduleBrand)
+          )
+        : moduleList,
+    [moduleList, moduleBrand]
+  );
+
+  // Birden fazla marka varken seçim zorunlu mu?
+  const brandChoiceRequired: boolean = distinctModuleBrands.length > 1 && !moduleBrand;
 
   // sağlam dinamik import
   const loadXLSX = React.useCallback(async()=>{
@@ -1411,13 +1445,13 @@ function computeNeedsAndProtocols(pid: number, sparePct: number) {
         Brand: r["Brand"]??"", Family: r["Family"]??"", Model: r["Model"]??"", Description: r["Description"]??"",
         UnitPrice: num(r["UnitPrice"],0), Currency: r["Currency"]??"",
         AI_cap: num(r["AI_cap"] ?? r["AI"] ?? r["AI Channels"] ?? r["AI Ch"] ?? 0, 0),
-AO_cap: num(r["AO_cap"] ?? r["AO"] ?? r["AO Channels"] ?? r["AO Ch"] ?? 0, 0),
-DI_cap: num(r["DI_cap"] ?? r["DI"] ?? r["DI Channels"] ?? r["DI Ch"] ?? 0, 0),
-DO_cap: num(r["DO_cap"] ?? r["DO"] ?? r["DO Channels"] ?? r["DO Ch"] ?? 0, 0),
-UI_cap: num(
-  r["UI_cap"] ?? r["UI"] ?? r["Universal"] ?? r["Universal IO"] ?? r["Universal_IO"] ?? r["U/I"] ?? 0,
-  0
-),
+        AO_cap: num(r["AO_cap"] ?? r["AO"] ?? r["AO Channels"] ?? r["AO Ch"] ?? 0, 0),
+        DI_cap: num(r["DI_cap"] ?? r["DI"] ?? r["DI Channels"] ?? r["DI Ch"] ?? 0, 0),
+        DO_cap: num(r["DO_cap"] ?? r["DO"] ?? r["DO Channels"] ?? r["DO Ch"] ?? 0, 0),
+        UI_cap: num(
+          r["UI_cap"] ?? r["UI"] ?? r["Universal"] ?? r["Universal IO"] ?? r["Universal_IO"] ?? r["U/I"] ?? 0,
+          0
+        ),
         Supports_BACnet_IP: r["Supports_BACnet_IP"]??"", Supports_BACnet_MSTP: r["Supports_BACnet_MSTP"]??"",
         Supports_Modbus_TCP: r["Supports_Modbus_TCP"]??"", Supports_Modbus_RTU: r["Supports_Modbus_RTU"]??"", Supports_MBus: r["Supports_MBus"]??"",
         GW_Proto: r["GW_Proto"]??"", GW_Device_Capacity: num(r["GW_Device_Capacity"],0), GW_Ports: num(r["GW_Ports"],0),
@@ -1445,20 +1479,102 @@ UI_cap: num(
   React.useEffect(()=>{ try{ const raw=localStorage.getItem(HARDWARE_KEY); setHardware(raw? JSON.parse(raw): {});}catch{ setHardware({}); } },[HARDWARE_KEY]);
   const persistHardware = (next:Record<number,HardwarePick>) => { try{ localStorage.setItem(HARDWARE_KEY, JSON.stringify(next)); }catch{} };
 
+// --- Materials (row bazlı seçimleri localStorage'tan oku) ---
+const MATERIALS_KEY_HW = "materials:selections:v1";
+const [materialsMap, setMaterialsMap] = React.useState<RowSelectionMap>({});
+
+React.useEffect(() => {
+  try {
+    const raw = localStorage.getItem(MATERIALS_KEY_HW);
+    setMaterialsMap(raw ? JSON.parse(raw) : {});
+  } catch {
+    setMaterialsMap({});
+  }
+}, []);
+
+const materialLabel = (it: CatalogItem) =>
+  it.name || it.code || it.model || [it.brand, it.family].filter(Boolean).join(" ") || "item";
+
+// ——— Materials: açıklama ve adet için yardımcılar ———
+const DESC_KEYS = ["description", "açıklama", "desc", "details", "detay"];
+
+// Tüm kopyaları (tekilleştirmeden) topla:
+const materialsForPanelAll = React.useCallback((pid: number): CatalogItem[] => {
+  const acc: CatalogItem[] = [];
+  flatRows.forEach((row, idx) => {
+    const code = String(row.projectCode || "").trim();
+    const asg = assignments[code];
+    if (asg?.panelId === pid) {
+      const key = buildRowKey(row, idx);
+      const arr = materialsMap[key] || [];
+      acc.push(...arr);
+    }
+  });
+  return acc;
+}, [flatRows, assignments, materialsMap]);
+
+const materialDesc = (it: CatalogItem) => {
+  const raw = (it.raw || {}) as Record<string, string>;
+  const lower = Object.fromEntries(Object.keys(raw).map(k => [k.toLowerCase(), raw[k]]));
+  for (const k of DESC_KEYS) if (lower[k]) return String(lower[k]).trim();
+  const parts = [it.brand, it.family || it.category, it.measuring, it.signal, it.mounting]
+    .filter(Boolean)
+    .map(String);
+  return parts.join(", ");
+};
+
+const aggregateMaterialsForPanel = React.useCallback((pid: number) => {
+  const all = materialsForPanelAll(pid);
+  const map = new Map<string, { item: CatalogItem; qty: number }>();
+  for (const it of all) {
+    const k = it.id || `${it.brand}|${it.family}|${it.model}|${it.code}|${it.name}`;
+    if (!map.has(k)) map.set(k, { item: it, qty: 0 });
+    map.get(k)!.qty += 1;
+  }
+  return Array.from(map.values())
+    .map(({ item, qty }) => ({
+      qty,
+      label: materialLabel(item),
+      desc: materialDesc(item),
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label, "tr"));
+}, [materialsForPanelAll]);
+
+const materialsForPanel = React.useCallback((pid: number): CatalogItem[] => {
+  const acc: CatalogItem[] = [];
+  flatRows.forEach((row, idx) => {
+    const code = String(row.projectCode || "").trim();
+    const asg = assignments[code];
+    if (asg?.panelId === pid) {
+      const key = buildRowKey(row, idx);
+      const arr = materialsMap[key] || [];
+      acc.push(...arr);
+    }
+  });
+  // tekilleştir
+  const seen = new Set<string>();
+  const uniq: CatalogItem[] = [];
+  for (const it of acc) {
+    const k = it.id || `${it.brand}|${it.family}|${it.model}|${it.code}|${it.name}`;
+    if (!seen.has(k)) { seen.add(k); uniq.push(it); }
+  }
+  return uniq;
+}, [flatRows, assignments, materialsMap]);
+
   // ---- UI State
   const [panelId, setPanelId] = React.useState<number | ''>('');
   const [spare, setSpare] = React.useState<number>(10);
   const [objective, setObjective] = React.useState<"cost"|"width"|"balanced">("cost");
   const [uiPolicy, setUiPolicy] = React.useState<"AI_FIRST"|"DI_FIRST">("AI_FIRST");
-  
 
-    // ---- optimizer
+  // ---- optimizer
   function pickBest(
     plcs: ModuleRow[],
     needs: { AI:number; AO:number; DI:number; DO:number },
-    proto: { bacnetIp:number; bacnetMstp:number; modbusTcp:number; modbusRtu:number; mbus:number }
+    proto: { bacnetIp:number; bacnetMstp:number; modbusTcp:number; modbusRtu:number; mbus:number },
+    workingList: ModuleRow[]
   ): HardwarePick | null {
-    const ioMods = moduleList.filter(isIOModule);
+    const ioMods: ModuleRow[] = workingList.filter(isIOModule);
     if (plcs.length === 0) return null;
 
     let best: HardwarePick | null = null;
@@ -1467,50 +1583,48 @@ UI_cap: num(
       // Gerekirse gateway ekle (PLC desteklemiyorsa ve gateway yoksa bu PLC elenir)
       const gw: Array<{ item: ModuleRow; qty: number }> = [];
 
-// === gateway helper (self-contained, alias-tolerant) ===
-const _normProto = (s?: string) =>
-  String(s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      // === gateway helper (self-contained, alias-tolerant) ===
+      const _normProto = (s?: string) =>
+        String(s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
-const _PROTO_ALIASES: Record<string,string[]> = {
-  bacnetip:   ["bacnetip","bacnet-ip","bacnet ip","bacnettcpip","bacnet"],
-  bacnetmstp: ["bacnetmstp","bacnet-mstp","bacnet mstp","mstp"],
-  modbustcp:  ["modbustcp","modbus-tcp","modbus tcp","modbustcpip","modbus"],
-  modbusrtu:  ["modbusrtu","modbus-rtu","modbus rtu","rtu"],
-  mbus:       ["mbus","m-bus","m bus"]
-};
+      const _PROTO_ALIASES: Record<string,string[]> = {
+        bacnetip:   ["bacnetip","bacnet-ip","bacnet ip","bacnettcpip","bacnet"],
+        bacnetmstp: ["bacnetmstp","bacnet-mstp","bacnet mstp","mstp"],
+        modbustcp:  ["modbustcp","modbus-tcp","modbus tcp","modbustcpip","modbus"],
+        modbusrtu:  ["modbusrtu","modbus-rtu","modbus rtu","rtu"],
+        mbus:       ["mbus","m-bus","m bus"]
+      };
 
-const _matchesProto = (value: string, wanted: string) => {
-  const key = _normProto(wanted);
-  const aliases = _PROTO_ALIASES[key] || [key];
-  const v = _normProto(value);
-  return aliases.includes(v);
-};
+      const _matchesProto = (value: string, wanted: string) => {
+        const key = _normProto(wanted);
+        const aliases = _PROTO_ALIASES[key] || [key];
+        const v = _normProto(value);
+        return aliases.includes(v);
+      };
 
-const byProto = (name: string) =>
-  moduleList.find(x => isGateway(x) && _matchesProto(String(x.GW_Proto || ""), name));
+      const byProto = (name: string) => workingList.find(x => isGateway(x) && _matchesProto(String(x.GW_Proto||""), name));
 
-const gwCapacity = (g: ModuleRow) => {
-  const capDev  = num(g.GW_Device_Capacity, 0);
-  const capPort = num(g.GW_Ports, 0);
-  return capDev > 0 ? capDev : (capPort > 0 ? capPort : 1);
-};
+      const gwCapacity = (g: ModuleRow): number => {
+        const capDev  = num(g.GW_Device_Capacity, 0);
+        const capPort = num(g.GW_Ports, 0);
+        return capDev > 0 ? capDev : (capPort > 0 ? capPort : 1);
+      };
 
-let bad = false;
-const needGW = (protoName: string, demand: number, plcFlag: keyof ModuleRow) => {
-  if (demand <= 0) return;
-  if (yes((plc as any)[plcFlag])) return; // PLC native destekliyor → gateway gerekmez
-  const g = byProto(protoName);
-  if (!g) { bad = true; return; }         // gateway yok → bu PLC elenir
-  gw.push({ item: g, qty: Math.ceil(demand / gwCapacity(g)) });
-};
+      let bad = false;
+      const needGW = (protoName: string, demand: number, plcFlag: keyof ModuleRow) => {
+        if (demand <= 0) return;
+        if (yes((plc as any)[plcFlag])) return; // PLC native destekliyor → gateway gerekmez
+        const g = byProto(protoName);
+        if (!g) { bad = true; return; }         // gateway yok → bu PLC elenir
+        gw.push({ item: g, qty: Math.ceil(demand / gwCapacity(g)) });
+      };
 
-needGW("BACnet IP",   proto.bacnetIp,   "Supports_BACnet_IP");
-needGW("BACnet MSTP", proto.bacnetMstp, "Supports_BACnet_MSTP");
-needGW("Modbus TCP",  proto.modbusTcp,  "Supports_Modbus_TCP");
-needGW("Modbus RTU",  proto.modbusRtu,  "Supports_Modbus_RTU");
-needGW("M-Bus",       proto.mbus,       "Supports_MBus");
-if (bad) continue;
-
+      needGW("BACnet IP",   proto.bacnetIp,   "Supports_BACnet_IP");
+      needGW("BACnet MSTP", proto.bacnetMstp, "Supports_BACnet_MSTP");
+      needGW("Modbus TCP",  proto.modbusTcp,  "Supports_Modbus_TCP");
+      needGW("Modbus RTU",  proto.modbusRtu,  "Supports_Modbus_RTU");
+      needGW("M-Bus",       proto.mbus,       "Supports_MBus");
+      if (bad) continue;
 
       // Dahili IO + UI tahsisi
       let remAI = Math.max(0, needs.AI - num(plc.AI_cap,0));
@@ -1519,82 +1633,89 @@ if (bad) continue;
       let remDO = Math.max(0, needs.DO - num(plc.DO_cap,0));
       let plcUI = num(plc.UI_cap,0);
 
-// UI kanallarını AI/DI/AO arasında paylaştır
-const alloc = (want: "AI"|"DI"|"AO") => {
-  if (plcUI <= 0) return;
-  if (want === "AI") { const x = Math.min(plcUI, remAI); remAI -= x; plcUI -= x; return; }
-  if (want === "DI") { const x = Math.min(plcUI, remDI); remDI -= x; plcUI -= x; return; }
-  if (want === "AO") { const x = Math.min(plcUI, remAO); remAO -= x; plcUI -= x; return; }
-};
+      // UI kanallarını AI/DI/AO arasında paylaştır
+      const alloc = (want: "AI"|"DI"|"AO") => {
+        if (plcUI <= 0) return;
+        if (want === "AI") { const x = Math.min(plcUI, remAI); remAI -= x; plcUI -= x; return; }
+        if (want === "DI") { const x = Math.min(plcUI, remDI); remDI -= x; plcUI -= x; return; }
+        if (want === "AO") { const x = Math.min(plcUI, remAO); remAO -= x; plcUI -= x; return; }
+      };
 
-if (uiPolicy === "AI_FIRST") {
-  alloc("AI"); alloc("DI"); alloc("AO");
-} else {
-  alloc("DI"); alloc("AI"); alloc("AO");
-}
+      if (uiPolicy === "AI_FIRST") {
+        alloc("AI"); alloc("DI"); alloc("AO");
+      } else {
+        alloc("DI"); alloc("AI"); alloc("AO");
+      }
 
       const modules: Array<{ item: ModuleRow; qty: number; uiAllocAI?: number; uiAllocDI?: number }> = [];
       let slotsUsed = 0;
       const maxSlotsNum = num(plc.PLC_Max_Slots, NaN);
       const slotsLimit = Number.isFinite(maxSlotsNum) && maxSlotsNum > 0 ? maxSlotsNum : undefined;
 
-      // === REPLACE BEGIN ===
-// Çoklu-karşılama bilinçli seçim: seçilen modül birden fazla ihtiyacı aynı anda düşürür
+      // Çoklu-karşılama bilinçli seçim: seçilen modül birden fazla ihtiyacı aynı anda düşürür
+// DI adımında DI modülü (örn. TXM1.8D / TXM1.16D) varsa UI-only (örn. TXM1.8U) adaylardan çıkarılır
 const choose = (kind: "AO"|"DO"|"AI"|"DI") => {
   const unitRemaining = () => ({ AO: remAO, DO: remDO, AI: remAI, DI: remDI }[kind]);
   let guard = 0;
 
   while (unitRemaining() > 0 && guard < 100) {
+    // Katalogda DI kapasiteli bir modül var mı?
+    const diModsExist = ioMods.some(m => num(m.DI_cap,0) > 0);
+
     // En az bir ihtiyaca katkı sağlayan adaylar
-    const cands = ioMods.filter(m =>
-      (num(m.AO_cap,0)>0 && remAO>0) ||
-      (num(m.DO_cap,0)>0 && remDO>0) ||
-      (num(m.AI_cap,0)>0 && remAI>0) ||
-      (num(m.DI_cap,0)>0 && remDI>0) ||
-      (num(m.UI_cap,0)>0 && (remAI>0 || remDI>0 || remAO>0))
-    );
+    const cands = ioMods.filter(m => {
+      const contributes =
+        (num(m.AO_cap,0)>0 && remAO>0) ||
+        (num(m.DO_cap,0)>0 && remDO>0) ||
+        (num(m.AI_cap,0)>0 && remAI>0) ||
+        (num(m.DI_cap,0)>0 && remDI>0) ||
+        (num(m.UI_cap,0)>0 && (remAI>0 || remDI>0 || remAO>0));
+      if (!contributes) return false;
+
+      // KURAL: DI seçiminde, DI modülü mevcutsa UI-only modülleri ele
+      if (kind === "DI" && diModsExist) {
+        return num(m.DI_cap,0) > 0; // DI kanalı olmayan modül (sadece UI) devre dışı
+      }
+      return true;
+    });
+
     if (cands.length === 0) break;
 
-// === PREF: Siemens TXM kuralları (model bazlı ağırlık) ===
-// kind: "AO" | "DO" | "AI" | "DI"
-// a*: bu modül 1 adet alınınca karşıladığı miktarlar
-// rem*: kalan ihtiyaçlar
-const prefFactor = (
-  m: ModuleRow,
-  kind: "AO"|"DO"|"AI"|"DI",
-  a: { aAI:number; aDI:number; aAO:number; aDO:number },
-  rem: { AI:number; DI:number; AO:number; DO:number }
-) => {
-  let f = 1;
-  const model = String(m.Model||"");
-  const is8U   = /TXM1\.8U/i.test(model);
-  const is8D   = /TXM1\.8D/i.test(model);
-  const is16D  = /TXM1\.16D/i.test(model);
-  const is6R   = /TXM1\.6R/i.test(model);
-  const is4D3R = /TXM1\.4D3R/i.test(model);
+    // === PREF: Siemens TXM kuralları (model bazlı ağırlık) ===
+    const prefFactor = (
+      m: ModuleRow,
+      kind: "AO"|"DO"|"AI"|"DI",
+      a: { aAI:number; aDI:number; aAO:number; aDO:number },
+      rem: { AI:number; DI:number; AO:number; DO:number }
+    ) => {
+      let f = 1;
+      const model = String(m.Model||"");
+      const is8U   = /TXM1\.8U/i.test(model);
+      const is8D   = /TXM1\.8D/i.test(model);
+      const is16D  = /TXM1\.16D/i.test(model);
+      const is6R   = /TXM1\.6R/i.test(model);
+      const is4D3R = /TXM1\.4D3R/i.test(model);
 
-  // AI/AO: önce TXM1.8U
-  if ((kind==="AI" || kind==="AO") && is8U) f *= 0.85;
+      // AI/AO: önce TXM1.8U
+      if ((kind==="AI" || kind==="AO") && is8U) f *= 0.85;
 
-  // DO: önce TXM1.6R
-  if (kind==="DO" && is6R) f *= 0.85;
+      // DO: önce TXM1.6R
+      if (kind==="DO" && is6R) f *= 0.85;
 
-  // DI: önce TXM1.8D / TXM1.16D (yüksek DI'da 16D daha mantıklı)
-  if (kind==="DI") {
-    if (rem.DI >= 9 && is16D)      f *= 0.80; // çok DI varsa 16D
-    else if (is8D)                 f *= 0.85; // az DI'da 8D
-  }
+      // DI: çok DI varsa 16D, az DI'da 8D
+      if (kind==="DI") {
+        if (rem.DI >= 9 && is16D)      f *= 0.80;
+        else if (is8D)                 f *= 0.85;
+      }
 
-  // Kombine: 4DI+3DO varsa TXM1.4D3R’ye bonus (modül sayısını azaltır)
-  if (is4D3R && rem.DI>=4 && rem.DO>=3) f *= 0.75;
+      // Kombine: 4DI+3DO varsa TXM1.4D3R’ye bonus (modül sayısını azaltır)
+      if (is4D3R && rem.DI>=4 && rem.DO>=3) f *= 0.75;
 
-  // 8U birden fazla ihtiyacı aynı anda düşürüyorsa ekstra teşvik
-  if (is8U && ((a.aAI>0 && a.aDI>0) || (a.aAI>0 && a.aAO>0))) f *= 0.90;
+      // 8U birden fazla ihtiyacı aynı anda düşürüyorsa ekstra teşvik
+      if (is8U && ((a.aAI>0 && a.aDI>0) || (a.aAI>0 && a.aAO>0))) f *= 0.90;
 
-  return f;
-};
-
-
+      return f;
+    };
 
     const evalCand = (m: ModuleRow) => {
       // Bu modül 1 adet alındığında mevcut ihtiyaçları ne kadar düşürür?
@@ -1603,22 +1724,19 @@ const prefFactor = (
       let aAO = Math.min(remAO, num(m.AO_cap,0));
       let aDO = Math.min(remDO, num(m.DO_cap,0));
 
-      // UI tahsisi (AI/DI'ye, politika ve kalan ihtiyaca göre)
+      // UI tahsisi (AI/DI/AO'ya; politika ve kalan ihtiyaca göre)
       let ui = num(m.UI_cap,0);
-const applyUI = (want: "AI"|"DI"|"AO") => {
-  if (ui <= 0) return;
-  if (want === "AI") { const need = Math.max(0, remAI - aAI); const x = Math.min(need, ui); aAI += x; ui -= x; return; }
-  if (want === "DI") { const need = Math.max(0, remDI - aDI); const x = Math.min(need, ui); aDI += x; ui -= x; return; }
-  if (want === "AO") { const need = Math.max(0, remAO - aAO); const x = Math.min(need, ui); aAO += x; ui -= x; return; }
-};
+      const applyUI = (want: "AI"|"DI"|"AO") => {
+        if (ui <= 0) return;
+        if (want === "AI") { const need = Math.max(0, remAI - aAI); const x = Math.min(need, ui); aAI += x; ui -= x; return; }
+        if (want === "DI") { const need = Math.max(0, remDI - aDI); const x = Math.min(need, ui); aDI += x; ui -= x; return; }
+        if (want === "AO") { const need = Math.max(0, remAO - aAO); const x = Math.min(need, ui); aAO += x; ui -= x; return; }
+      };
 
-if (ui > 0) {
-  if (uiPolicy === "AI_FIRST") {
-    applyUI("AI"); applyUI("DI"); applyUI("AO");
-  } else {
-    applyUI("DI"); applyUI("AI"); applyUI("AO");
-  }
-}
+      if (ui > 0) {
+        if (uiPolicy === "AI_FIRST") { applyUI("AI"); applyUI("DI"); applyUI("AO"); }
+        else                          { applyUI("DI"); applyUI("AI"); applyUI("AO"); }
+      }
 
       const primary = kind==="AO"?aAO:kind==="DO"?aDO:kind==="AI"?aAI:aDI;
       const others  = (aAI + aDI + aAO + aDO) - primary;
@@ -1635,7 +1753,7 @@ if (ui > 0) {
       const factor = prefFactor(m, kind, {aAI, aDI, aAO, aDO}, {AI: remAI, DI: remDI, AO: remAO, DO: remDO});
       const score  = (base * factor) / Math.max(1, effUnits);
 
-      // UI'dan gelen tahsisleri raporlamak için
+      // Rapor için UI tahsisleri (kullanıcıya göstermiyoruz ama tutuyoruz)
       const uiAllocAI = Math.max(0, aAI - Math.min(remAI, num(m.AI_cap,0)));
       const uiAllocDI = Math.max(0, aDI - Math.min(remDI, num(m.DI_cap,0)));
 
@@ -1668,10 +1786,9 @@ if (ui > 0) {
   }
 };
 
-// Seçim sırası aynı kalıyor
-choose("AO"); choose("DO"); choose("AI"); choose("DI");
-// === REPLACE END ===
 
+      // Seçim sırası aynı kalıyor
+      choose("AO"); choose("DO"); choose("AI"); choose("DI");
 
       if (remAI>0 || remAO>0 || remDI>0 || remDO>0) continue;
       if (slotsLimit && slotsUsed > slotsLimit) continue;
@@ -1696,10 +1813,13 @@ choose("AO"); choose("DO"); choose("AI"); choose("DI");
     return best;
   }
 
-  
+  const calculate = (): void => {
+    // BRAND GUARD
+    if (brandChoiceRequired) {
+      setSnackbar({ open: true, msg: "Birden fazla marka var. Lütfen Brand seçin.", color: "#E53935" });
+      return;
+    }
 
-
-  const calculate = () => {
     if (panelId === '') return;
     if (moduleList.length === 0) {
       setSnackbar({ open:true, msg:"Load Module List first", color:"#E53935" });
@@ -1707,54 +1827,53 @@ choose("AO"); choose("DO"); choose("AI"); choose("DI");
     }
 
     const { needs, proto } = computeNeedsAndProtocols(panelId as number, spare);
-    const plcs = moduleList.filter(isPLC);
+    const plcs = workingList.filter(isPLC);
 
-// IO modülleri ve “var mı?” öniyeterlilik
-const ioMods = moduleList.filter(isIOModule);
-const have = {
-  // AO: UI kanalları da AO’yu karşılayabiliyorsa kabul
-  AO: ioMods.some(m => num(m.AO_cap,0)>0 || num(m.UI_cap,0)>0)
-    || plcs.some(p => num(p.AO_cap,0)>0 || num(p.UI_cap,0)>0),
+    // IO modülleri ve “var mı?” öniyeterlilik
+    const ioMods = workingList.filter(isIOModule);
+    const have = {
+      // AO: UI kanalları da AO’yu karşılayabiliyorsa kabul
+      AO: ioMods.some(m => num(m.AO_cap,0)>0 || num(m.UI_cap,0)>0)
+        || plcs.some(p => num(p.AO_cap,0)>0 || num(p.UI_cap,0)>0),
 
-  // DO: UI kabul etmiyoruz
-  DO: ioMods.some(m => num(m.DO_cap,0)>0)
-    || plcs.some(p => num(p.DO_cap,0)>0),
+      // DO: UI kabul etmiyoruz
+      DO: ioMods.some(m => num(m.DO_cap,0)>0)
+        || plcs.some(p => num(p.DO_cap,0)>0),
 
-  // AI/DI: UI kabul
-  AI: ioMods.some(m => num(m.AI_cap,0)>0 || num(m.UI_cap,0)>0)
-    || plcs.some(p => num(p.AI_cap,0)>0 || num(p.UI_cap,0)>0),
+      // AI/DI: UI kabul
+      AI: ioMods.some(m => num(m.AI_cap,0)>0 || num(m.UI_cap,0)>0)
+        || plcs.some(p => num(p.AI_cap,0)>0 || num(p.UI_cap,0)>0),
 
-  DI: ioMods.some(m => num(m.DI_cap,0)>0 || num(m.UI_cap,0)>0)
-    || plcs.some(p => num(p.DI_cap,0)>0 || num(p.UI_cap,0)>0),
-};
+      DI: ioMods.some(m => num(m.DI_cap,0)>0 || num(m.UI_cap,0)>0)
+        || plcs.some(p => num(p.DI_cap,0)>0 || num(p.UI_cap,0)>0),
+    };
 
-// İhtiyaç var ama listede karşılığı yoksa erken çık
-if (needs.AO>0 && !have.AO) { setSnackbar({open:true, msg:"Module List AO/UI ile karşılayamıyor.", color:"#E53935"}); return; }
-if (needs.DO>0 && !have.DO) { setSnackbar({open:true, msg:"Module List'te DO modülü yok.",          color:"#E53935"}); return; }
-if (needs.AI>0 && !have.AI) { setSnackbar({open:true, msg:"Module List AI/UI ile karşılayamıyor.",  color:"#E53935"}); return; }
-if (needs.DI>0 && !have.DI) { setSnackbar({open:true, msg:"Module List DI/UI ile karşılayamıyor.",  color:"#E53935"}); return; }
+    // İhtiyaç var ama listede karşılığı yoksa erken çık
+    if (needs.AO>0 && !have.AO) { setSnackbar({open:true, msg:"Module List AO/UI ile karşılayamıyor.", color:"#E53935"}); return; }
+    if (needs.DO>0 && !have.DO) { setSnackbar({open:true, msg:"Module List'te DO modülü yok.",          color:"#E53935"}); return; }
+    if (needs.AI>0 && !have.AI) { setSnackbar({open:true, msg:"Module List AI/UI ile karşılayamıyor.",  color:"#E53935"}); return; }
+    if (needs.DI>0 && !have.DI) { setSnackbar({open:true, msg:"Module List DI/UI ile karşılayamıyor.",  color:"#E53935"}); return; }
 
-// Protokoller: PLC native değilse uygun gateway var mı?
-const gwExists = (name: string) =>
-  moduleList.some(x => isGateway(x) && matchesProto(String(x.GW_Proto||""), name));
+    // Protokoller: PLC native değilse uygun gateway var mı?
+    const gwExists = (name: string) => workingList.some(x => isGateway(x) && matchesProto(String(x.GW_Proto||""), name));
 
-if (proto.modbusRtu>0 && !plcs.some(p=>yes((p as any).Supports_Modbus_RTU)) && !gwExists("modbus rtu")) {
-  setSnackbar({open:true,msg:"Modbus RTU gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
-}
-if (proto.modbusTcp>0 && !plcs.some(p=>yes((p as any).Supports_Modbus_TCP)) && !gwExists("modbus tcp")) {
-  setSnackbar({open:true,msg:"Modbus TCP gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
-}
-if (proto.bacnetIp>0 && !plcs.some(p=>yes((p as any).Supports_BACnet_IP)) && !gwExists("bacnet ip")) {
-  setSnackbar({open:true,msg:"BACnet/IP gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
-}
-if (proto.bacnetMstp>0 && !plcs.some(p=>yes((p as any).Supports_BACnet_MSTP)) && !gwExists("bacnet mstp")) {
-  setSnackbar({open:true,msg:"BACnet MSTP gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
-}
-if (proto.mbus>0 && !plcs.some(p=>yes((p as any).Supports_MBus)) && !gwExists("m-bus")) {
-  setSnackbar({open:true,msg:"M-Bus gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
-}
+    if (proto.modbusRtu>0 && !plcs.some(p=>yes((p as any).Supports_Modbus_RTU)) && !gwExists("modbus rtu")) {
+      setSnackbar({open:true,msg:"Modbus RTU gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
+    }
+    if (proto.modbusTcp>0 && !plcs.some(p=>yes((p as any).Supports_Modbus_TCP)) && !gwExists("modbus tcp")) {
+      setSnackbar({open:true,msg:"Modbus TCP gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
+    }
+    if (proto.bacnetIp>0 && !plcs.some(p=>yes((p as any).Supports_BACnet_IP)) && !gwExists("bacnet ip")) {
+      setSnackbar({open:true,msg:"BACnet/IP gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
+    }
+    if (proto.bacnetMstp>0 && !plcs.some(p=>yes((p as any).Supports_BACnet_MSTP)) && !gwExists("bacnet mstp")) {
+      setSnackbar({open:true,msg:"BACnet MSTP gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
+    }
+    if (proto.mbus>0 && !plcs.some(p=>yes((p as any).Supports_MBus)) && !gwExists("m-bus")) {
+      setSnackbar({open:true,msg:"M-Bus gerekiyor; uygun gateway yok.", color:"#E53935"}); return;
+    }
 
-    const res = pickBest(plcs, needs, proto);
+    const res = pickBest(plcs, needs, proto, workingList);
     if (!res) {
       setSnackbar({ open:true, msg:"No feasible configuration", color:"#E53935" });
       return;
@@ -1764,14 +1883,12 @@ if (proto.mbus>0 && !plcs.some(p=>yes((p as any).Supports_MBus)) && !gwExists("m
     setHardware(next);
   };
 
-  const save = () => {
+  const save = (): void => {
     if (panelId==='') return;
     if (!hardware[panelId as number]) { setSnackbar({open:true, msg:"Nothing to save. Calculate first.", color:"#E53935"}); return; }
     persistHardware(hardware);
     setSnackbar({open:true, msg:"Hardware saved to panel", color:"#4CAF50"});
   };
-
-
 
   // ---- render
   return (
@@ -1779,22 +1896,43 @@ if (proto.mbus>0 && !plcs.some(p=>yes((p as any).Supports_MBus)) && !gwExists("m
       {/* Üst satır: panel seç + module list yükle */}
       <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="center" sx={{ mb: 2 }}>
         <FormControl size="small" sx={{ minWidth: 240 }}>
-  <InputLabel sx={labelStylesDark}>Select Panel</InputLabel>
-  <Select
-    label="Select Panel"
-    value={panelId === '' ? '' : String(panelId)}
-    onChange={(e)=> setPanelId(e.target.value ? Number(e.target.value) : '')}
-    sx={selectStylesDark}
-    MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
-  >
-    <MenuItem value="">(Choose)</MenuItem>
-    {Array.from(rowsByPanel.entries()).map(([pid, v]) => (
-      <MenuItem key={pid} value={String(pid)}>
-        {v.panelName}
-      </MenuItem>
-    ))}
-  </Select>
-</FormControl>
+          <InputLabel sx={labelStylesDark}>Select Panel</InputLabel>
+          <Select
+            label="Select Panel"
+            value={panelId === '' ? '' : String(panelId)}
+            onChange={(e)=> setPanelId(e.target.value ? Number(e.target.value) : '')}
+            sx={selectStylesDark}
+            MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
+          >
+            <MenuItem value="">(Choose)</MenuItem>
+            {Array.from(rowsByPanel.entries()).map(([pid, v]) => (
+              <MenuItem key={pid} value={String(pid)}>
+                {v.panelName}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl size="small" sx={{ minWidth: 220 }} error={brandChoiceRequired}>
+          <InputLabel sx={labelStylesDark}>Brand</InputLabel>
+          <Select
+            label="Brand"
+            value={moduleBrand}
+            onChange={(e) => setModuleBrand(String(e.target.value))}
+            sx={selectStylesDark}
+            MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
+          >
+            <MenuItem value="">(All)</MenuItem>
+            {distinctModuleBrands.map((b) => (
+              <MenuItem key={b} value={b}>{b}</MenuItem>
+            ))}
+          </Select>
+          <FormHelperText>
+            {brandChoiceRequired
+              ? "Multiple brands found — please select a Brand."
+              : (moduleBrand ? `Seçili marka: ${moduleBrand}` : "Tek marka varsa otomatik seçilir.")}
+          </FormHelperText>
+        </FormControl>
 
         <Box sx={{ flexGrow: 1 }} />
 
@@ -1806,112 +1944,168 @@ if (proto.mbus>0 && !plcs.some(p=>yes((p as any).Supports_MBus)) && !gwExists("m
           onChange={(e)=>{ const f=e.target.files?.[0]; if(f) onModuleExcel(f); (e.target as HTMLInputElement).value=""; }}
         />
         <ModernButton onClick={()=>moduleExcelRef.current?.click()}>
-        Upload Excel
+          Upload Excel
         </ModernButton>
       </Stack>
 
       {/* Parametreler */}
       <Box sx={{ display:'grid', gridTemplateColumns:'repeat(12,1fr)', gap:2, mb:2 }}>
         <TextField
-  label="Spare %"
-  type="number"
-  value={spare}
-  onChange={(e)=> {
-    const n = Math.round(Number(e.target.value));
-    const clamped = Math.min(50, Math.max(0, isFinite(n) ? n : 0));
-    setSpare(clamped);
-  }}
-  size="small"
-  sx={{ gridColumn:'span 2', ...textFieldStylesDark }}
-  InputProps={{ inputProps:{ step:1, min:0, max:50 } }}
-  InputLabelProps={{ sx: { color: '#BDBDBD', '&.Mui-focused': { color: '#E0E0E0' } } }}
-/>
+          label="Spare %"
+          type="number"
+          value={spare}
+          onChange={(e)=> {
+            const n = Math.round(Number(e.target.value));
+            const clamped = Math.min(50, Math.max(0, isFinite(n) ? n : 0));
+            setSpare(clamped);
+          }}
+          size="small"
+          sx={{ gridColumn:'span 2', ...textFieldStylesDark }}
+          InputProps={{ inputProps:{ step:1, min:0, max:50 } }}
+          InputLabelProps={{ sx: { color: '#BDBDBD', '&.Mui-focused': { color: '#E0E0E0' } } }}
+        />
         <FormControl size="small" sx={{ gridColumn:'span 3' }}>
-  <InputLabel sx={labelStylesDark}>Objective</InputLabel>
-  <Select
-    label="Objective"
-    value={objective}
-    onChange={(e)=> setObjective(e.target.value as any)}
-    sx={selectStylesDark}
-    MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
-  >
-    <MenuItem value="cost">Min Cost</MenuItem>
-    <MenuItem value="width">Min Width</MenuItem>
-    <MenuItem value="balanced">Balanced</MenuItem>
-  </Select>
-</FormControl>
+          <InputLabel sx={labelStylesDark}>Objective</InputLabel>
+          <Select
+            label="Objective"
+            value={objective}
+            onChange={(e)=> setObjective(e.target.value as any)}
+            sx={selectStylesDark}
+            MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
+          >
+            <MenuItem value="cost">Min Cost</MenuItem>
+            <MenuItem value="width">Min Width</MenuItem>
+            <MenuItem value="balanced">Balanced</MenuItem>
+          </Select>
+        </FormControl>
         <FormControl size="small" sx={{ gridColumn:'span 3' }}>
-  <InputLabel sx={labelStylesDark}>UI Allocation</InputLabel>
-  <Select
-    label="UI Allocation"
-    value={uiPolicy}
-    onChange={(e)=> setUiPolicy(e.target.value as any)}
-    sx={selectStylesDark}
-    MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
-  >
-    <MenuItem value="AI_FIRST">UI → AI first</MenuItem>
-    <MenuItem value="DI_FIRST">UI → DI first</MenuItem>
-  </Select>
-</FormControl>
+          <InputLabel sx={labelStylesDark}>UI Allocation</InputLabel>
+          <Select
+            label="UI Allocation"
+            value={uiPolicy}
+            onChange={(e)=> setUiPolicy(e.target.value as any)}
+            sx={selectStylesDark}
+            MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
+          >
+            <MenuItem value="AI_FIRST">UI → AI first</MenuItem>
+            <MenuItem value="DI_FIRST">UI → DI first</MenuItem>
+          </Select>
+        </FormControl>
 
         <Box sx={{ gridColumn:'span 12' }}>
-  <Stack direction="row" spacing={1.5} alignItems="center" sx={{ flexWrap:'wrap' }}>
-    <Box sx={{ flexGrow:1 }} />
-    <PrimaryButton onClick={calculate}>Calculate</PrimaryButton>
-    <PrimaryButton onClick={save}>Save</PrimaryButton>
-  </Stack>
-</Box>
+          <Stack direction="row" spacing={1.5} alignItems="center" sx={{ flexWrap:'wrap' }}>
+            <Box sx={{ flexGrow:1 }} />
+            <PrimaryButton onClick={calculate} disabled={brandChoiceRequired}>Calculate</PrimaryButton>
+            <PrimaryButton onClick={save}>Save</PrimaryButton>
+          </Stack>
+        </Box>
       </Box>
+{/* Sonuç */}
+<Box sx={{ border:"1px solid #eee", borderRadius:1, overflow:"hidden" }}>
+  {panelId!=='' && hardware[panelId as number] ? (
+    <Box sx={{ p:2, bgcolor:"#fff", color:"#333" }}>
+      {(() => {
+        const pick = hardware[panelId as number]!;
+        const pi = rowsByPanel.get(panelId as number);
+        const panelName = pi?.panelName || `#${panelId}`;
+        const matsAgg = aggregateMaterialsForPanel(panelId as number);
 
-      {/* Sonuç */}
-      <Box sx={{ border:"1px solid #eee", borderRadius:1, overflow:"hidden" }}>
-        {panelId!=='' && hardware[panelId as number] ? (
-          <Box sx={{ p:2, bgcolor:"#fff", color:"#333" }}>
-            {(() => {
-              const pick = hardware[panelId as number]!;
-              return (
-                <Stack spacing={2}>
-                  <Typography variant="subtitle1" sx={{ fontWeight:700 }}>Selected Controller</Typography>
-                  <Box>
-                    <strong>{pick.plc?.Brand} {pick.plc?.Model}</strong> — {pick.plc?.Description || "-"}
-                    <Box sx={{ mt:0.5, fontSize:13, color:"#555" }}>
-                      Cost: {pick.summary.cost.toFixed(2)} • Width: {pick.summary.width.toFixed(1)} mm
-                      {pick.summary.slotsLimit ? ` • Slots: ${pick.summary.slotsUsed}/${pick.summary.slotsLimit}` : ` • Slots: ${pick.summary.slotsUsed}`}
-                    </Box>
+        // I/O modüllerini marka+model+description'a göre grupla
+        const groupedModules = (() => {
+          const map = new Map<string, { m: ModuleRow; qty: number }>();
+          for (const x of pick.modules) {
+            const key = `${x.item.Brand}|${x.item.Model}|${x.item.Description||""}`;
+            if (!map.has(key)) map.set(key, { m: x.item, qty: 0 });
+            map.get(key)!.qty += x.qty || 1;
+          }
+          return Array.from(map.values());
+        })();
+
+        // Toplam maliyet (Controllers + I/O Modules + Gateways + Materials)
+        const materialsCostEUR = 0; // Şimdilik 0; ileride fiyat verisi eklenirse buradan toplanır
+        const grandTotalEUR =
+          (Number.isFinite(pick.summary.cost) ? pick.summary.cost : 0) + materialsCostEUR;
+
+        return (
+          <Stack spacing={2}>
+            {/* --- Başlık + özet --- */}
+            <Typography variant="subtitle1" sx={{ fontWeight:700 }}>Selected Equipments</Typography>
+            <Box sx={{ mt:0.5, fontSize:13, color:"#555" }}>
+            <div><strong>Panel:</strong> {panelName}</div>
+            <div><strong>Redundancy (Spare):</strong> {spare}%</div>
+            <div><strong>Total Cost:</strong> {pick.summary.cost.toFixed(2)} EUR</div>
+            <Typography variant="caption" sx={{ display:'block', color:'#757575' }}>
+            Includes Controllers, I/O Modules, Gateways, and Materials (Materials currently assumed 0&nbsp;EUR).
+            </Typography>
+            <Typography variant="caption" sx={{ mt: 0.5, display: 'block', color: '#757575', whiteSpace: 'normal' }}>
+            Cost figures are compiled based on UK list pricing data publicly discoverable via Google searches (e.g., “UK Price List”). Provided strictly for information; not a binding offer.
+            </Typography>
+            </Box>
+
+            <Divider />
+
+            {/* --- Controllers --- */}
+            <Typography variant="subtitle1" sx={{ fontWeight:700 }}>Controllers</Typography>
+            {pick.plc ? (
+              <Stack spacing={0.5}>
+                <Box>
+                  1 × <strong>{pick.plc.Brand} {pick.plc.Model}</strong>
+                  {pick.plc.Description ? <> — {pick.plc.Description}</> : null}
+                </Box>
+              </Stack>
+            ) : (
+              <Typography variant="body2">—</Typography>
+            )}
+
+            {/* --- I/O Modules (UI→… parantezleri yok; aynı ürünler gruplu) --- */}
+            <Typography variant="subtitle1" sx={{ fontWeight:700, mt:1 }}>I/O Modules</Typography>
+            {groupedModules.length===0 ? <Typography variant="body2">—</Typography> : (
+              <Stack spacing={0.5}>
+                {groupedModules.map(({m, qty}) => (
+                  <Box key={`${m.Brand}-${m.Model}`}>
+                    {qty} × <strong>{m.Brand} {m.Model}</strong>
+                    {m.Description ? <> — {m.Description}</> : null}
                   </Box>
+                ))}
+              </Stack>
+            )}
 
-                  <Divider />
+            {/* --- Materials (adet + açıklama) --- */}
+            <Typography variant="subtitle1" sx={{ fontWeight:700, mt:1 }}>Materials</Typography>
+            {matsAgg.length===0 ? (
+              <Typography variant="body2">—</Typography>
+            ) : (
+              <Stack spacing={0.5}>
+                {matsAgg.map((x, i) => (
+                  <Box key={i}>
+                    {x.qty} × <strong>{x.label}</strong>{x.desc ? <> — {x.desc}</> : null}
+                  </Box>
+                ))}
+              </Stack>
+            )}
 
-                  <Typography variant="subtitle1" sx={{ fontWeight:700 }}>I/O Modules</Typography>
-                  {pick.modules.length===0 ? <Typography variant="body2">—</Typography> : (
-                    <Stack spacing={0.5}>
-                      {pick.modules.map((x,i)=>(
-                        <Box key={i}>
-                          {x.qty} × <strong>{x.item.Brand} {x.item.Model}</strong>
-                          {(x.uiAllocAI||x.uiAllocDI) ? <em style={{ color:"#666" }}> (UI→AI {x.uiAllocAI||0}, UI→DI {x.uiAllocDI||0})</em> : null}
-                        </Box>
-                      ))}
-                    </Stack>
-                  )}
-
-                  <Typography variant="subtitle1" sx={{ fontWeight:700, mt:1 }}>Gateways</Typography>
-                  {pick.gateways.length===0 ? <Typography variant="body2">—</Typography> : (
-                    <Stack spacing={0.5}>
-                      {pick.gateways.map((g,i)=>(
-                        <Box key={i}>{g.qty} × <strong>{g.item.Brand} {g.item.Model}</strong> ({g.item.GW_Proto})</Box>
-                      ))}
-                    </Stack>
-                  )}
-                </Stack>
-              );
-            })()}
-          </Box>
-        ) : (
-          <Box sx={{ p:2, bgcolor:"#fff", color:"#666" }}>Choose a panel and press <strong>Calculate</strong>.</Box>
-        )}
-      </Box>
+            {/* --- Gateways (varsa) --- */}
+            <Typography variant="subtitle1" sx={{ fontWeight:700, mt:1 }}>Gateways</Typography>
+            {pick.gateways.length===0 ? <Typography variant="body2">—</Typography> : (
+              <Stack spacing={0.5}>
+                {pick.gateways.map((g,i)=>(
+                  <Box key={i}>
+                    {g.qty} × <strong>{g.item.Brand} {g.item.Model}</strong>{g.item.GW_Proto ? <> — {g.item.GW_Proto}</> : null}
+                  </Box>
+                ))}
+              </Stack>
+            )}
+          </Stack>
+        );
+      })()}
     </Box>
-  );
-}
+  ) : (
+    <Box sx={{ p:2, bgcolor:"#fff", color:"#666" }}>
+      Choose a panel and press <strong>Calculate</strong>.
+    </Box>
+  )}
+</Box>
+</Box>
+); 
+} 
 // ================== END HARDWARE TAB ==================
-
