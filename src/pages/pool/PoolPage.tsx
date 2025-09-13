@@ -3,7 +3,7 @@ import {
   Box, Container, Typography, Stack, Button, Snackbar,
   Dialog, DialogTitle, DialogContent, DialogActions,
   TextField, Select, MenuItem, InputLabel, FormControl, IconButton,
-  Tabs, Tab, FormHelperText
+  Tabs, Tab
 } from "@mui/material";
 //import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 //import CalculateOutlinedIcon from "@mui/icons-material/CalculateOutlined";
@@ -1051,12 +1051,12 @@ export default function PoolPage() {
               {/* Üst bar: System Filter + Bulk assign */}
               <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems={{ xs: "stretch", md: "center" }} sx={{ mb: 2 }}>
                 <FormControl size="small" sx={{ minWidth: 180 }}>
-                  <InputLabel sx={labelStyles}>System Filter</InputLabel>
+                  <InputLabel sx={labelStylesDark}>System Filter</InputLabel>
                   <Select
                     label="System Filter"
                     value={systemFilter}
                     onChange={(e)=>setSystemFilter(String(e.target.value))}
-                    sx={selectStyles}
+                    sx={selectStylesDark}
                     MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
                   >
                     <MenuItem value="">(All)</MenuItem>
@@ -1564,8 +1564,10 @@ const materialsForPanel = React.useCallback((pid: number): CatalogItem[] => {
   // ---- UI State
   const [panelId, setPanelId] = React.useState<number | ''>('');
   const [spare, setSpare] = React.useState<number>(10);
-  const [objective, setObjective] = React.useState<"cost"|"width"|"balanced">("cost");
-  const [uiPolicy, setUiPolicy] = React.useState<"AI_FIRST"|"DI_FIRST">("AI_FIRST");
+
+  // İPTAL EDİLEN SEÇİMLERİN SABİT DEĞERLERİ
+  const objective: "cost"|"width"|"balanced" = "cost";
+  const uiPolicy: "AI_FIRST"|"DI_FIRST" = "AI_FIRST";
 
   // ---- optimizer
   function pickBest(
@@ -1742,16 +1744,24 @@ const choose = (kind: "AO"|"DO"|"AI"|"DI") => {
       const others  = (aAI + aDI + aAO + aDO) - primary;
 
       // Çoklu karşılama teşviki: diğer kapsamalara da kredi ver
-      const effUnits = primary + 0.6*others;
+      const effUnits = primary + 0.6 * others;
 
       const price = num(m.UnitPrice, 9999);
       const width = effWidth(m);
-      const base  = (objective==="cost") ? price
-                   : (objective==="width") ? width
-                   : (0.6*price + 0.4*width);
 
-      const factor = prefFactor(m, kind, {aAI, aDI, aAO, aDO}, {AI: remAI, DI: remDI, AO: remAO, DO: remDO});
-      const score  = (base * factor) / Math.max(1, effUnits);
+      // Hedef: minimum maliyet. Genişlik yalnızca çok küçük bir ceza ile bağ-kırıcı.
+      const factor = prefFactor(
+      m,
+      kind,
+      { aAI, aDI, aAO, aDO },
+      { AI: remAI, DI: remDI, AO: remAO, DO: remDO }
+      );
+
+      // cost-per-effective-unit * tercih faktörü  +  minik genişlik cezası
+      const score =
+      (price / Math.max(1, effUnits)) * factor +
+      width * 1e-6;
+
 
       // Rapor için UI tahsisleri (kullanıcıya göstermiyoruz ama tutuyoruz)
       const uiAllocAI = Math.max(0, aAI - Math.min(remAI, num(m.AI_cap,0)));
@@ -1913,27 +1923,36 @@ const choose = (kind: "AO"|"DO"|"AI"|"DI") => {
           </Select>
         </FormControl>
 
-        <FormControl size="small" sx={{ minWidth: 220 }} error={brandChoiceRequired}>
+        <FormControl size="small" sx={{ minWidth: 220 }}>
           <InputLabel sx={labelStylesDark}>Brand</InputLabel>
-          <Select
-            label="Brand"
-            value={moduleBrand}
-            onChange={(e) => setModuleBrand(String(e.target.value))}
-            sx={selectStylesDark}
-            MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
-          >
-            <MenuItem value="">(All)</MenuItem>
-            {distinctModuleBrands.map((b) => (
-              <MenuItem key={b} value={b}>{b}</MenuItem>
-            ))}
+            <Select
+              label="Brand"
+              value={moduleBrand}
+              onChange={(e) => setModuleBrand(String(e.target.value))}
+              sx={selectStylesDark}
+              MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
+            >       
+          <MenuItem value="">(All)</MenuItem>
+        {distinctModuleBrands.map((b) => (
+        <MenuItem key={b} value={b}>{b}</MenuItem>
+          ))}
           </Select>
-          <FormHelperText>
-            {brandChoiceRequired
-              ? "Multiple brands found — please select a Brand."
-              : (moduleBrand ? `Seçili marka: ${moduleBrand}` : "Tek marka varsa otomatik seçilir.")}
-          </FormHelperText>
         </FormControl>
 
+<TextField
+  label="Spare %"
+  type="number"
+  value={spare}
+  onChange={(e) => {
+    const n = Math.round(Number(e.target.value));
+    const clamped = Math.min(50, Math.max(0, isFinite(n) ? n : 0));
+    setSpare(clamped);
+  }}
+  size="small"
+  sx={{ minWidth: 140, ...textFieldStylesDark }}
+  InputProps={{ inputProps: { step: 1, min: 0, max: 50 } }}
+  InputLabelProps={{ sx: { color: '#BDBDBD', '&.Mui-focused': { color: '#E0E0E0' } } }}
+/>
         <Box sx={{ flexGrow: 1 }} />
 
         <input
@@ -1949,61 +1968,17 @@ const choose = (kind: "AO"|"DO"|"AI"|"DI") => {
       </Stack>
 
       {/* Parametreler */}
-      <Box sx={{ display:'grid', gridTemplateColumns:'repeat(12,1fr)', gap:2, mb:2 }}>
-        <TextField
-          label="Spare %"
-          type="number"
-          value={spare}
-          onChange={(e)=> {
-            const n = Math.round(Number(e.target.value));
-            const clamped = Math.min(50, Math.max(0, isFinite(n) ? n : 0));
-            setSpare(clamped);
-          }}
-          size="small"
-          sx={{ gridColumn:'span 2', ...textFieldStylesDark }}
-          InputProps={{ inputProps:{ step:1, min:0, max:50 } }}
-          InputLabelProps={{ sx: { color: '#BDBDBD', '&.Mui-focused': { color: '#E0E0E0' } } }}
-        />
-        <FormControl size="small" sx={{ gridColumn:'span 3' }}>
-          <InputLabel sx={labelStylesDark}>Objective</InputLabel>
-          <Select
-            label="Objective"
-            value={objective}
-            onChange={(e)=> setObjective(e.target.value as any)}
-            sx={selectStylesDark}
-            MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
-          >
-            <MenuItem value="cost">Min Cost</MenuItem>
-            <MenuItem value="width">Min Width</MenuItem>
-            <MenuItem value="balanced">Balanced</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl size="small" sx={{ gridColumn:'span 3' }}>
-          <InputLabel sx={labelStylesDark}>UI Allocation</InputLabel>
-          <Select
-            label="UI Allocation"
-            value={uiPolicy}
-            onChange={(e)=> setUiPolicy(e.target.value as any)}
-            sx={selectStylesDark}
-            MenuProps={{ PaperProps: { sx: { bgcolor: '#1e1e1e', color: '#fff' } } }}
-          >
-            <MenuItem value="AI_FIRST">UI → AI first</MenuItem>
-            <MenuItem value="DI_FIRST">UI → DI first</MenuItem>
-          </Select>
-        </FormControl>
-
-        <Box sx={{ gridColumn:'span 12' }}>
-          <Stack direction="row" spacing={1.5} alignItems="center" sx={{ flexWrap:'wrap' }}>
-            <Box sx={{ flexGrow:1 }} />
+      <Box sx={{ mb: 2 }}>
+        <Stack direction="row" spacing={1.5} alignItems="center" sx={{ flexWrap: 'wrap' }}>
+          <Box sx={{ flexGrow: 1 }} />
             <PrimaryButton onClick={calculate} disabled={brandChoiceRequired}>Calculate</PrimaryButton>
             <PrimaryButton onClick={save}>Save</PrimaryButton>
           </Stack>
         </Box>
-      </Box>
-{/* Sonuç */}
-<Box sx={{ border:"1px solid #eee", borderRadius:1, overflow:"hidden" }}>
-  {panelId!=='' && hardware[panelId as number] ? (
-    <Box sx={{ p:2, bgcolor:"#fff", color:"#333" }}>
+      {/* Sonuç */}
+      <Box sx={{ border:"1px solid #eee", borderRadius:1, overflow:"hidden" }}>
+      {panelId!=='' && hardware[panelId as number] ? (
+      <Box sx={{ p:2, bgcolor:"#fff", color:"#333" }}>
       {(() => {
         const pick = hardware[panelId as number]!;
         const pi = rowsByPanel.get(panelId as number);
